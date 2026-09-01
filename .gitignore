@@ -1,0 +1,13 @@
+# Dependencies & System
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+
+# Temp & Artifacts
+test_*.py
+test_*.png
+capture_*.png
+cdp_*.png
+scr_*.png
+scratch/
