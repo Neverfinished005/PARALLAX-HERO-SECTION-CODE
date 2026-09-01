@@ -194,17 +194,18 @@ body {
 }
 
 .sticky-container {
-  width: 100%;
-  height: 100vh;
   position: sticky;
   top: 0;
+  width: 100%;
+  height: 100vh;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #d8cfc4;
 }
 
-/* Background Scene: Replaced with 2nd Alphakore Image */
+/* Background Scene: 2nd Alphakore Artwork (Zoomed Out for perfect framing) */
 .bg-main {
   position: absolute;
   inset: 0;
@@ -212,11 +213,23 @@ body {
   height: 100vh;
   background-image: url('assets/alphakore_hero_v2.jpg');
   background-position: 50% 50%;
-  background-size: cover;
+  background-size: auto 92vh;
+  background-color: #d8cfc4;
   background-repeat: no-repeat;
   z-index: 0;
   transform-origin: 50% 50%;
   will-change: transform;
+  transition: background-image 0.5s ease;
+}
+
+body.theme-goonies .sticky-container,
+body.theme-goonies .bg-main {
+  background-color: #0c0b0a;
+}
+
+body.theme-goonies .bg-main {
+  background-image: url('assets/goonies_hero.jpg');
+  background-size: cover;
 }
 
 /* Foreground Curtain Trees: Frames Left and Right */
