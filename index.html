@@ -1,459 +1,357 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ALPHAKORE — Building Ideas That Matter</title>
-  <meta name="description" content="ALPHAKORE is a venture collective building generational technology, timeless software, and bold ventures at the intersection of heritage and frontier." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Story of The Goonies — Interactive Parallax Experience</title>
+  <meta name="description" content="An interactive cinematic parallax experience telling the story of The Goonies, Haystack Rock, Cannon Beach, and the journey for One-Eyed Willy's treasure.">
   
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="assets/alphakore_logo.png" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
   
-  <!-- Google Fonts: Syne, Playfair Display, Inter, Space Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
-
-  <!-- CSS Stylesheet -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="alphakore-theme">
+<body>
 
-  <!-- Cinematic Vignette & Fine Architectural Grid -->
-  <div class="cinematic-vignette"></div>
-  <div class="architectural-grid"></div>
-
-  <!-- Custom Cursor -->
-  <div class="custom-cursor" id="customCursor"></div>
-  <div class="custom-cursor-dot" id="customCursorDot"></div>
-
-  <!-- Preloader Screen -->
-  <div class="preloader" id="preloader">
-    <div class="loader-content">
-      <div class="loader-logo">
-        <img src="assets/alphakore_logo.png" alt="Alphakore Monogram" />
+  <!-- =========================================================================
+       AWWWARDS SITE OF THE DAY RIBBON (EXACT MATCH TO REFERENCE)
+       ========================================================================= -->
+  <div id="awwwards" class="awwwards-ribbon">
+    <a href="https://www.awwwards.com" target="_blank" rel="noopener" aria-label="Awwwards Site of the Day">
+      <div class="awwwards-badge">
+        <span class="awwwards-w">W.</span>
+        <span class="awwwards-text">Site of the Day</span>
       </div>
-      <div class="loader-tag">WORK FAST. LIVE SLOW.</div>
-      <h1 class="loader-title">ALPHAKORE</h1>
-      <div class="loader-progress-bar">
-        <div class="loader-progress-fill" id="loaderFill"></div>
-      </div>
-      <div class="loader-percent" id="loaderPercent">0%</div>
-    </div>
+    </a>
   </div>
 
-  <!-- Main Navigation Bar -->
-  <nav class="site-nav" id="siteNav">
-    <!-- Top Left Motto -->
-    <div class="nav-left-motto">
-      <span>WORK FAST.</span>
-      <span>LIVE SLOW.</span>
-    </div>
-
-    <!-- Center Monogram Brand -->
-    <a href="#home" class="brand-monogram-badge">
-      <img src="assets/alphakore_logo.png" alt="Alphakore Emblem" class="brand-logo-img" />
-      <span class="brand-name-text">ALPHAKORE</span>
-    </a>
-
-    <!-- Nav Links -->
-    <ul class="nav-links">
-      <li class="nav-link-item">
-        <a href="#home" class="nav-link active">
-          <span class="nav-dot"></span>
-          <span>Home</span>
-        </a>
+  <!-- =========================================================================
+       TOP NAVIGATION BAR
+       ========================================================================= -->
+  <nav class="nav-bar" id="mainNav">
+    <ul role="list" class="nav-list">
+      <li class="nav-item">
+        <a href="#plot" class="nav-link active" id="navPlot">Plot</a>
+        <div class="pulse-dot-menu" id="dotPlot"></div>
       </li>
-      <li class="nav-link-item">
-        <a href="#impact" class="nav-link">
-          <span>Impact</span>
-        </a>
+      <li class="nav-item">
+        <a href="#goonies" class="nav-link" id="navGoonies">Goonies</a>
+        <div class="pulse-dot-0" id="dotGoonies"></div>
       </li>
-      <li class="nav-link-item">
-        <a href="#books" class="nav-link">
-          <span>Books</span>
-        </a>
+      <li class="nav-item">
+        <a href="#credits" class="nav-link" id="navCredits">Credits</a>
+        <div class="pulse-dot-0" id="dotCredits"></div>
+      </li>
+      <li class="nav-item">
+        <a href="#books" class="nav-link" id="navBooks">Books of Her Choice</a>
+        <div class="pulse-dot-0" id="dotBooks"></div>
       </li>
     </ul>
-
-    <!-- Nav Actions -->
-    <div class="nav-actions">
-      <!-- Web Audio Ambient Sound Toggle -->
-      <button class="sound-toggle-btn" id="soundToggleBtn" aria-label="Toggle Ambient Audio Experience" title="Toggle Soundscape">
-        <div class="sound-bars">
-          <span class="sound-bar"></span>
-          <span class="sound-bar"></span>
-          <span class="sound-bar"></span>
-        </div>
-      </button>
-
-      <!-- Minimalist Hamburger Menu -->
-      <button class="nav-hamburger" id="navHamburger" aria-label="Open Navigation Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
   </nav>
 
   <!-- =========================================================================
-       SECTION 1: #home.scroll-container (SPLIT-PANEL PARALLAX & DEEP ZOOM HERO)
+       HERO SCROLL CONTAINER (CINEMATIC PARALLAX CURTAIN ZOOM)
        ========================================================================= -->
-  <div id="home" class="scroll-container">
-    <div class="sticky-container" id="stickyContainer">
-
-      <!-- Ambient Golden Dust Particle Canvas -->
-      <canvas class="particles-canvas" id="particlesCanvas"></canvas>
-
-      <!-- Background Ambient Glow -->
-      <div class="hero-ambient-glow"></div>
-
-      <!-- LEFT COMPONENT PANEL: Brand Motto, Manifesto, Venture Metadata -->
-      <aside class="hero-side-panel left-panel" id="leftPanel">
-        <div class="panel-card-glass">
-          <div class="panel-tag">// 01 ARCHITECTURE & VENTURE</div>
-          
-          <h2 class="panel-motto-heading">
-            WORK FAST.<br />
-            <span class="gold-accent">LIVE SLOW.</span>
-          </h2>
-
-          <p class="panel-paragraph">
-            A venture collective engineering sovereign digital artifacts, timeless software, and bold companies at the fertile intersection of ancient heritage and frontier technology.
-          </p>
-
-          <div class="panel-meta-list">
-            <div class="meta-item">
-              <span class="meta-label">FOCUS</span>
-              <span class="meta-val">AI • Infrastructure • Design</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">FOUNDED</span>
-              <span class="meta-val">2024 • Global</span>
-            </div>
-          </div>
-
-          <div class="panel-badge-pill">
-            <span class="pulse-indicator"></span>
-            <span>BUILDING GENERATIONAL IMPACT</span>
-          </div>
+  <div id="plot" class="scroll-container">
+    <div class="sticky-container">
+      
+      <!-- Animated Scroll Indicator at Bottom Center -->
+      <img src="assets/goonies_scroll.gif" width="50" alt="Scroll Down" class="scroll-img" id="scrollImg">
+      
+      <!-- Smooth Darkening Overlay (Screenshots 4 & 5) -->
+      <div class="overlay" id="heroOverlay"></div>
+      
+      <!-- Foreground Silhouette Trees Framing Left & Right (Zooms 1.0 -> 1.7 to part aside) -->
+      <div class="bg-scroll" id="bgScroll"></div>
+      
+      <!-- Background Landscape: Cannon Beach & Haystack Rock -->
+      <div class="bg-main" id="bgMain"></div>
+      
+      <!-- Initial Title Overlay: The story of THE GOONIES (Screenshot 1) -->
+      <div class="hero-parent" id="heroParent">
+        <div class="sub-title">The story of</div>
+        <img class="logo-lg" src="assets/goonies_logo.png" width="428" alt="The Goonies Logo" id="heroLogo">
+      </div>
+      
+      <!-- Plot Presentation: SharpGrotesk Headline + Synopsis + Descending Line (Screenshots 3, 4, 5) -->
+      <div class="intro-parent" id="introParent">
+        <h1 class="head">Plot</h1>
+        <p class="text-a-1">Facing foreclosure of their homes in the Goon Docks area of Astoria, Oregon to an expanding country club, a group of children who call themselves &quot;the Goonies&quot; gather for a final weekend together.</p>
+        
+        <!-- Animated 1px Vertical Line Descending Down (Screenshot 5) -->
+        <div class="draw-line" id="drawLine">
+          <div class="draw-line-inner" id="drawLineInner"></div>
         </div>
-      </aside>
-
-      <!-- CENTER PORTAL WINDOW: Initially narrow vertical slit, expands to full-screen on scroll -->
-      <main class="hero-portal-window" id="heroPortalWindow">
-        <div class="portal-inner-frame" id="portalInnerFrame">
-          
-          <!-- Main Hero Image (Lone Traveler, Ancient Temple Ghats, Golden Sunset River) -->
-          <div class="portal-img-layer" id="portalImgLayer">
-            <img src="assets/alphakore_hero.jpg" alt="ALPHAKORE Ancient Heritage & River Sun" class="hero-scenic-img" id="heroScenicImg" />
-            <div class="portal-warm-haze"></div>
-            <div class="portal-depth-vignette"></div>
-          </div>
-
-          <!-- Subtle Central Atmospheric Glow -->
-          <div class="portal-ambient-highlight"></div>
-
-          <!-- Bottom Center Scroll Hint -->
-          <div class="portal-bottom-cue" id="portalBottomCue">
-            <span class="cue-label">SCROLL</span>
-            <span class="cue-arrow">↓</span>
-          </div>
-
-        </div>
-      </main>
-
-      <!-- RIGHT COMPONENT PANEL: Executive Quote, Ecosystem CTA, Social Chips -->
-      <aside class="hero-side-panel right-panel" id="rightPanel">
-        <div class="panel-card-glass">
-          <div class="panel-tag">// 02 MANIFESTO</div>
-
-          <blockquote class="panel-quote-body">
-            "WE BUILD IDEAS THAT MATTER — SHAPING SUSTAINED IMPACT THROUGH ARCHITECTURAL DISCIPLINE, HIGH VELOCITY, AND RADICAL CLARITY."
-          </blockquote>
-
-          <div class="panel-action-wrap">
-            <a href="#impact" class="btn-alphakore-primary">
-              <span>EXPLORE ECOSYSTEM</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-            </a>
-          </div>
-
-          <!-- Social Chip Links -->
-          <div class="panel-social-grid">
-            <a href="https://linkedin.com" target="_blank" rel="noopener" class="social-chip-btn">
-              <span class="chip-icon">🌐</span>
-              <span>GLOBAL</span>
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener" class="social-chip-btn">
-              <span class="chip-icon">in</span>
-              <span>LINKEDIN</span>
-            </a>
-            <a href="https://x.com" target="_blank" rel="noopener" class="social-chip-btn">
-              <span class="chip-icon">𝕏</span>
-              <span>TWITTER</span>
-            </a>
-          </div>
-
-          <div class="panel-scroll-cta">
-            <span>SCROLL TO UNVEIL EXPERIENCE</span>
-            <span class="pulse-arrow">↓</span>
-          </div>
-        </div>
-      </aside>
+      </div>
 
     </div>
   </div>
 
+  <!-- Audio Speaker Control (Bottom Right) -->
+  <div class="music-parent" id="musicToggle" title="Toggle Atmospheric Theme Audio" role="button" tabindex="0" aria-label="Audio Sound Toggle">
+    <img src="assets/goonies_speaker.png" width="16" alt="Audio Sound" class="music-bar" id="speakerIcon">
+  </div>
+
   <!-- =========================================================================
-       SECTION 2: #impact (WE TURN SPARKS INTO IMPACT — EXACT CLONE OF SECOND MOCKUP)
+       SECTION 2: THE GOONIES CAST & CHARACTER DOSSIERS
        ========================================================================= -->
-  <section class="section-impact" id="impact">
-    <div class="impact-inner-container">
-      <div class="impact-grid-layout">
+  <section id="goonies" class="cast-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="eyebrow">// 02 ADVENTURERS</span>
+        <h2 class="section-title">The Goon Docks Crew</h2>
+        <p class="section-subtitle">"Goonies never say die." Meet the misfits who discovered the attic map and unlocked the caverns of One-Eyed Willy.</p>
+      </div>
 
-        <!-- Left Column: Editorial Headline & Thesis -->
-        <div class="impact-left-content">
-          <div class="impact-kicker">// 03 THESIS & VISION</div>
-
-          <h2 class="impact-major-headline">
-            WE TURN<br />
-            <span class="editorial-serif-italic">SPARKS</span> INTO IMPACT.
-          </h2>
-
-          <div class="impact-accent-line"></div>
-
-          <a href="#books" class="impact-action-circle-btn" aria-label="Explore the Bookshelf Library">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-
-          <p class="impact-body-copy">
-            Ideas remain inert until sculpted with relentless execution. We partner with founders, visionary researchers, and institutions to turn foundational breakthroughs into global category leaders.
-          </p>
-
-          <div class="impact-stats-row">
-            <div class="stat-box">
-              <div class="stat-number">100%</div>
-              <div class="stat-desc">Sovereign Architecture</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-number">10x</div>
-              <div class="stat-desc">Execution Velocity</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-number">∞</div>
-              <div class="stat-desc">Timeless Vision</div>
-            </div>
+      <div class="cast-grid">
+        <!-- Mikey -->
+        <article class="cast-card" data-character="mikey">
+          <div class="card-image-wrap">
+            <img src="assets/hero_char_raw.jpg" alt="Mikey Walsh" class="card-img">
+            <div class="card-gradient"></div>
+            <span class="card-tag">LEADER &amp; VISIONARY</span>
           </div>
-        </div>
-
-        <!-- Right Column: Terracotta Watercolor Sun & Ancient Sandstone Ghat Artwork -->
-        <div class="impact-right-stage">
-          <div class="impact-artwork-card">
-            <img src="assets/alphakore_section2.jpg" alt="We Turn Sparks Into Impact - Alphakore" class="impact-scene-image" />
-            
-            <!-- Fine Architectural Drafting Coordinates & Crosshairs -->
-            <div class="draft-axis-cross cross-a"></div>
-            <div class="draft-axis-cross cross-b"></div>
-            <div class="draft-axis-cross cross-c"></div>
-            <div class="draft-rule-line rule-horizontal"></div>
-            <div class="draft-rule-line rule-vertical"></div>
-            <div class="draft-coord-tag">28°36'N 77°12'E</div>
+          <div class="card-body">
+            <h3 class="card-name">Mikey Walsh</h3>
+            <p class="card-actor">Sean Astin</p>
+            <p class="card-desc">The optimistic heart of the Goonies whose relentless faith in his father's stories refused to let Astoria fall.</p>
+            <button class="card-btn" onclick="openModal('mikey')">Inspect Dossier →</button>
           </div>
-        </div>
+        </article>
 
+        <!-- Chunk -->
+        <article class="cast-card" data-character="chunk">
+          <div class="card-image-wrap">
+            <img src="assets/cast_chunk.jpg" alt="Lawrence 'Chunk' Cohen" class="card-img">
+            <div class="card-gradient"></div>
+            <span class="card-tag">THE LOYAL HEAVY</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-name">Chunk Cohen</h3>
+            <p class="card-actor">Jeff Cohen</p>
+            <p class="card-desc">Master of the Truffle Shuffle, chocolate lover, and the one whose open heart bonded forever with Sloth.</p>
+            <button class="card-btn" onclick="openModal('chunk')">Inspect Dossier →</button>
+          </div>
+        </article>
+
+        <!-- Sloth -->
+        <article class="cast-card highlight" data-character="sloth">
+          <div class="card-image-wrap">
+            <img src="assets/goonies_sloth.png" alt="Sloth Fratelli" class="card-img sloth-img">
+            <div class="card-gradient"></div>
+            <span class="card-tag gold">HERO &amp; PROTECTOR</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-name">Sloth Fratelli</h3>
+            <p class="card-actor">John Matuszak</p>
+            <p class="card-desc">"Hey you guys!" Pure strength with a childlike heart of gold who saved the Goonies from certain doom.</p>
+            <button class="card-btn gold" onclick="openModal('sloth')">Inspect Dossier →</button>
+          </div>
+        </article>
+
+        <!-- Mouth -->
+        <article class="cast-card" data-character="mouth">
+          <div class="card-image-wrap">
+            <img src="assets/cast_mouth.jpg" alt="Clark 'Mouth' Devereaux" class="card-img">
+            <div class="card-gradient"></div>
+            <span class="card-tag">TRANSLATOR &amp; WIT</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-name">Mouth Devereaux</h3>
+            <p class="card-actor">Corey Feldman</p>
+            <p class="card-desc">Quick-tongued fluent Spanish speaker who deciphered the cryptic map verses and kept spirits defiant.</p>
+            <button class="card-btn" onclick="openModal('mouth')">Inspect Dossier →</button>
+          </div>
+        </article>
+
+        <!-- Data -->
+        <article class="cast-card" data-character="data">
+          <div class="card-image-wrap">
+            <img src="assets/cast_data.jpg" alt="Richard 'Data' Wang" class="card-img">
+            <div class="card-gradient"></div>
+            <span class="card-tag">INVENTOR &amp; GADGETEER</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-name">Data Wang</h3>
+            <p class="card-actor">Ke Huy Quan</p>
+            <p class="card-desc">Armed with Bully Busters, Slick Shoes, and the Pinchers of Power, saving the crew from fatal booby traps.</p>
+            <button class="card-btn" onclick="openModal('data')">Inspect Dossier →</button>
+          </div>
+        </article>
       </div>
     </div>
   </section>
 
   <!-- =========================================================================
-       SECTION 3: #books (THE ALPHAKORE BOOKSHELF — BOOKS OF HER CHOICE)
+       SECTION 3: BOOKS OF HER CHOICE (CURATED & PERMANENT BOOKSHELF)
        ========================================================================= -->
-  <section class="section-books" id="books">
-    <div class="books-container">
-      
-      <!-- Section Header -->
-      <div class="books-section-header">
-        <div class="books-kicker">// 04 THE CURATED LIBRARY</div>
-        <h2 class="books-headline">Books of Her Choice</h2>
-        <p class="books-subhead">
-          A personal, living bookshelf of literature, ancient lore, and foundational ideas that inspire our creations. Add any book of her choice—every volume is preserved permanently in this digital library.
-        </p>
+  <section id="books" class="bookshelf-section">
+    <div class="section-container">
+      <div class="section-header text-center">
+        <span class="eyebrow gold">// 03 DIGITAL ARCHIVE</span>
+        <h2 class="section-title">Books of Her Choice</h2>
+        <p class="section-subtitle center">A personal living bookshelf preserving literature, timeless lore, and foundational stories. Every volume added by her remains permanently saved in this browser library.</p>
       </div>
 
-      <!-- Controls & Filter Toolbar -->
-      <div class="books-controls-bar">
-        <!-- Live Search -->
-        <div class="search-box-wrap">
-          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="text" id="bookSearchInput" placeholder="Search by title, author, or notes..." aria-label="Search Bookshelf" />
+      <!-- Bookshelf Controls -->
+      <div class="books-toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="bookSearchInput" placeholder="Search by title, author, or reflections..." aria-label="Search Books">
         </div>
-
-        <!-- Genre Filter Pills -->
-        <div class="genre-filter-pills" id="genreFilterPills">
-          <button class="filter-pill active" data-genre="All">All</button>
+        <div class="category-filters">
+          <button class="filter-pill active" data-genre="all">All</button>
           <button class="filter-pill" data-genre="Adventure">Adventure</button>
           <button class="filter-pill" data-genre="Philosophy">Philosophy</button>
           <button class="filter-pill" data-genre="Fantasy">Fantasy</button>
           <button class="filter-pill" data-genre="Classic">Classic</button>
           <button class="filter-pill" data-genre="Lore">Lore</button>
         </div>
-
-        <!-- Trigger Button to Open "Add Book" Modal -->
-        <button class="add-book-trigger-btn" id="openAddBookBtn">
-          <span class="btn-plus-icon">+</span>
-          <span>Add Book of Her Choice</span>
-        </button>
+        <button class="add-book-trigger" id="openAddBookBtn">+ Add Book of Her Choice</button>
       </div>
 
-      <!-- Status Count Bar -->
-      <div class="books-status-bar">
-        <span id="booksCountLabel">Showing 3 Books</span>
-        <span class="persistence-indicator">
-          <span class="dot-green"></span>
-          <span>Permanently Saved in Browser</span>
-        </span>
+      <!-- Storage Confirmation Badge -->
+      <div class="storage-badge-row">
+        <span class="book-count-text" id="bookCountDisplay">Showing 3 of 3 Books</span>
+        <span class="storage-indicator"><span class="storage-dot"></span> Permanently Saved in Browser</span>
       </div>
 
       <!-- Dynamic Books Grid -->
-      <div class="books-grid" id="booksGrid">
-        <!-- Rendered dynamically by script.js -->
+      <div class="books-grid" id="booksGridContainer">
+        <!-- Rendered by script.js with localStorage persistence -->
       </div>
-
     </div>
   </section>
 
   <!-- =========================================================================
-       MODAL: ADD BOOK OF HER CHOICE
+       SECTION 4: CREDITS & CINEMATIC MAP
        ========================================================================= -->
-  <div class="book-modal-backdrop" id="bookModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="book-modal-window">
-      <div class="book-modal-header">
-        <div class="modal-title-wrap">
-          <span class="modal-icon-badge">📖</span>
-          <div>
-            <h3 class="modal-title" id="modalTitle">Add Book of Her Choice</h3>
-            <p class="modal-sub">Add a novel, philosophical treatise, or cherished story to the permanent collection.</p>
+  <section id="credits" class="credits-section">
+    <div class="section-container">
+      <div class="credits-card">
+        <div class="credits-header">
+          <span class="eyebrow">// 04 PRODUCTION</span>
+          <h2 class="credits-title">The Legend of 1985</h2>
+        </div>
+        <div class="credits-grid">
+          <div class="credit-col">
+            <h4>DIRECTED BY</h4>
+            <p>Richard Donner</p>
+            <h4>STORY BY</h4>
+            <p>Steven Spielberg</p>
+          </div>
+          <div class="credit-col">
+            <h4>SCREENPLAY BY</h4>
+            <p>Chris Columbus</p>
+            <h4>ORIGINAL SCORE</h4>
+            <p>Dave Grusin</p>
+          </div>
+          <div class="credit-col">
+            <h4>FILMING LOCATIONS</h4>
+            <p>Astoria & Cannon Beach, Oregon</p>
+            <h4>AWARD</h4>
+            <p>Awwwards Site of the Day Clone</p>
           </div>
         </div>
-        <button class="modal-close-btn" id="closeBookModalBtn" aria-label="Close modal">✕</button>
+        <div class="credits-footer">
+          <p class="copyright-text">Crafted for Neverfinished005 • Interactive Parallax Showcase</p>
+        </div>
       </div>
+    </div>
+  </section>
 
-      <form id="addBookForm" class="book-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="bookTitle">Book Title *</label>
-            <input type="text" id="bookTitle" required placeholder="e.g. The Neverending Story" autocomplete="off" />
-          </div>
-          <div class="form-group">
-            <label for="bookAuthor">Author Name *</label>
-            <input type="text" id="bookAuthor" required placeholder="e.g. Michael Ende" autocomplete="off" />
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="bookGenre">Category / Genre</label>
-            <select id="bookGenre">
-              <option value="Adventure">Adventure</option>
-              <option value="Philosophy">Philosophy</option>
-              <option value="Fantasy">Fantasy</option>
-              <option value="Mystery">Mystery</option>
-              <option value="Classic">Classic</option>
-              <option value="Lore">Lore</option>
-              <option value="Sci-Fi">Sci-Fi</option>
-              <option value="Historical">Historical</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="bookYear">Publication Year</label>
-            <input type="text" id="bookYear" placeholder="e.g. 1985" maxlength="4" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Rating (1 to 5 Stars)</label>
-          <div class="star-rating-picker" id="starRatingPicker" data-rating="5">
-            <button type="button" class="star-pick active" data-val="1">★</button>
-            <button type="button" class="star-pick active" data-val="2">★</button>
-            <button type="button" class="star-pick active" data-val="3">★</button>
-            <button type="button" class="star-pick active" data-val="4">★</button>
-            <button type="button" class="star-pick active" data-val="5">★</button>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Cover Spine Color Palette</label>
-          <div class="cover-palette-picker">
-            <label class="palette-option">
-              <input type="radio" name="coverTheme" value="theme-leather" checked />
-              <span class="palette-swatch swatch-leather"></span>
-              <span class="palette-text">Antique Gold</span>
-            </label>
-            <label class="palette-option">
-              <input type="radio" name="coverTheme" value="theme-ocean" />
-              <span class="palette-swatch swatch-ocean"></span>
-              <span class="palette-text">Deep Sea</span>
-            </label>
-            <label class="palette-option">
-              <input type="radio" name="coverTheme" value="theme-crimson" />
-              <span class="palette-swatch swatch-crimson"></span>
-              <span class="palette-text">Crimson Velvet</span>
-            </label>
-            <label class="palette-option">
-              <input type="radio" name="coverTheme" value="theme-emerald" />
-              <span class="palette-swatch swatch-emerald"></span>
-              <span class="palette-text">Emerald Pine</span>
-            </label>
-            <label class="palette-option">
-              <input type="radio" name="coverTheme" value="theme-obsidian" />
-              <span class="palette-swatch swatch-obsidian"></span>
-              <span class="palette-text">Obsidian Black</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="bookNotes">Personal Reflection / Notes</label>
-          <textarea id="bookNotes" rows="3" placeholder="Why she loves this book, key lessons, or memorable quote..."></textarea>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn-cancel-modal" id="cancelAddBookBtn">Cancel</button>
-          <button type="submit" class="btn-submit-book">
-            <span>Add to Her Bookshelf</span>
-            <span>→</span>
-          </button>
-        </div>
-      </form>
+  <!-- =========================================================================
+       MODAL: CHARACTER DOSSIER
+       ========================================================================= -->
+  <div class="modal-backdrop" id="charModalBackdrop" role="dialog" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()" aria-label="Close Modal">✕</button>
+      <div class="modal-inner" id="modalContent">
+        <!-- Injected via script.js -->
+      </div>
     </div>
   </div>
 
-  <!-- Site Footer -->
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-left">
-        <div class="footer-logo">
-          <img src="assets/alphakore_logo.png" alt="Alphakore" />
-          <span>ALPHAKORE</span>
-        </div>
-        <p class="footer-motto">WORK FAST. LIVE SLOW. BUILDING IDEAS THAT MATTER.</p>
-      </div>
+  <!-- =========================================================================
+       MODAL: ADD BOOK OF HER CHOICE
+       ========================================================================= -->
+  <div class="modal-backdrop" id="bookModalBackdrop" role="dialog" aria-hidden="true">
+    <div class="modal-card book-modal-card">
+      <button class="modal-close" id="closeBookModalBtn" aria-label="Close Modal">✕</button>
+      <div class="book-modal-inner">
+        <span class="eyebrow gold">// CURATE VOLUME</span>
+        <h3 class="modal-title">Add Book of Her Choice</h3>
+        <p class="modal-sub">Add a cherished book to her permanent shelf. It will stay preserved in this browser forever.</p>
 
-      <div class="footer-links">
-        <a href="#home">Home</a>
-        <a href="#impact">Impact</a>
-        <a href="#books">Bookshelf</a>
-        <a href="https://github.com/Neverfinished005/PARALLAX-HERO-SECTION-CODE" target="_blank">GitHub</a>
-      </div>
+        <form id="addBookForm" class="add-book-form">
+          <div class="form-group">
+            <label for="bookTitle">Book Title *</label>
+            <input type="text" id="bookTitle" required placeholder="e.g. The Neverending Story">
+          </div>
 
-      <div class="footer-copy">
-        © 2024–2026 ALPHAKORE. All rights reserved. Sovereign Architecture & Venture Engineering.
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookAuthor">Author *</label>
+              <input type="text" id="bookAuthor" required placeholder="e.g. Michael Ende">
+            </div>
+            <div class="form-group">
+              <label for="bookYear">Publication Year</label>
+              <input type="number" id="bookYear" placeholder="e.g. 1979" min="1000" max="2099">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookGenre">Genre / Category</label>
+              <select id="bookGenre">
+                <option value="Adventure">Adventure</option>
+                <option value="Philosophy">Philosophy</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Classic">Classic</option>
+                <option value="Lore">Lore</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="bookSpine">Spine Palette</label>
+              <select id="bookSpine">
+                <option value="spine-gold">Goonies Antique Gold</option>
+                <option value="spine-sea">Pacific Ocean Azure</option>
+                <option value="spine-forest">Astoria Emerald Forest</option>
+                <option value="spine-amber">Pirate Map Terracotta</option>
+                <option value="spine-obsidian">Inferno Obsidian</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Her Rating</label>
+            <div class="star-rating-picker" id="starPicker">
+              <span class="star-pick active" data-rating="1">★</span>
+              <span class="star-pick active" data-rating="2">★</span>
+              <span class="star-pick active" data-rating="3">★</span>
+              <span class="star-pick active" data-rating="4">★</span>
+              <span class="star-pick active" data-rating="5">★</span>
+            </div>
+            <input type="hidden" id="bookRating" value="5">
+          </div>
+
+          <div class="form-group">
+            <label for="bookNotes">Personal Reflection / Notes</label>
+            <textarea id="bookNotes" rows="3" placeholder="Why she chose this book, a favorite quote, or what it inspired..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" id="cancelBookBtn">Cancel</button>
+            <button type="submit" class="btn-save">Save Forever to Shelf</button>
+          </div>
+        </form>
       </div>
     </div>
-  </footer>
+  </div>
 
-  <!-- JavaScript Engine -->
   <script src="script.js"></script>
 </body>
 </html>

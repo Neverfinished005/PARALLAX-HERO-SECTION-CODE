@@ -1,66 +1,83 @@
-# ALPHAKORE — Cinematic Split-Panel Parallax & Deep Zoom Experience
+# The Story of The Goonies — Interactive Parallax Experience
 
-A state-of-the-art interactive web experience featuring an Awwwards-style **Split-Component Portal Parallax Hero** that parts sideways on scroll to reveal a full-bleed ancient heritage scene with deep in-scene camera zoom, transitioning smoothly into the editorial **"WE TURN *SPARKS* INTO IMPACT"** architectural canvas and the permanent **"Books of Her Choice"** Bookshelf.
+An award-winning, 1-to-1 cinematic parallax recreation of the legendary Awwwards Site of the Day experience for **The Goonies**. Features an organic foreground parting-curtain hero animation, camera push-in over Cannon Beach & Haystack Rock, typography in authentic `Abuget` script & `SharpGroteskBook25`, animated vertical plot guide, full Cast Dossier section, and the permanent **"Books of Her Choice"** digital bookshelf.
 
-![ALPHAKORE Experience Preview](assets/alphakore_hero.jpg)
+![The Goonies Parallax Preview](assets/goonies_hero.jpg)
 
-## ✨ Core Interactive Features
+## 🌟 Interactive Flow & Keyframes
 
-- **Split-Component Parting Curtain Parallax**:
-  - **Left Component**: Architecture & Venture manifesto (`WORK FAST. LIVE SLOW.`, founding year, core mission).
-  - **Right Component**: Philosophy statement, `EXPLORE ECOSYSTEM [↗]` action, social chips `[🌐 GLOBAL] [IN LINKEDIN] [𝕏 TWITTER]`, and scroll indicator.
-  - **Center Portal Aperture**: Initially a framed vertical window (32vw × 74vh) framing the lone traveler looking across the calm river into the golden sunset over ancient temple ghats.
-  - **On Scroll**:
-    - Left component smoothly glides outward to the left (`translateX(-140%)`).
-    - Right component smoothly glides outward to the right (`translateX(+140%)`).
-    - Center portal expands to **100vw × 100vh** full-screen bleed without any jumping or black gaps.
+1. **Initial State (`0% Scroll`)**:
+   - Foreground silhouette foliage frames the left and right borders (`bg-scroll`).
+   - Center aperture showcases the Pacific Ocean waves and the monoliths of Cannon Beach (`bg-main`).
+   - Overlaid script subtitle: `"The story of"` (`Abuget.ttf`).
+   - Cutout title logo: `"THE GOONIES"` (`assets/goonies_logo.png`).
+   - Top navigation bar: `Plot` (with active illuminated dot), `Goonies`, `Credits`, and `Books of Her Choice`.
+   - Floating Awwwards `"Site of the Day"` vertical badge on the right edge.
+   - Mouse scroll indicator gif at bottom center.
 
-- **Guaranteed Viewport-Pinned Deep In-Scene Zoom**:
-  - Pinned viewport engine ensures 100% stable screen lock while inside the hero timeline.
-  - The camera pushes deep forward into the ancient sandstone pillars, the traveler, and the golden misty river.
+2. **Parting Curtain Phase (`20% - 65% Scroll`)**:
+   - As the user scrolls, `bg-scroll` scales up from `1.0` to `1.80`.
+   - Because tree trunks are anchored to the left and right edges, the scale zooms the trees outward to the sides, parting like theatrical curtains.
+   - The central ocean scene pushes forward (`scale: 1.0 -> 1.25`).
+   - The Goonies logo gently zooms and fades to `0` opacity.
 
-- **Editorial Section 2: "WE TURN *SPARKS* INTO IMPACT"**:
-  - High-contrast editorial parchment canvas (`#fcf9f2`).
-  - Bold typography with `SPARKS` in luxury serif italic.
-  - Terracotta watercolor celestial sun sphere and ancient palace ghats.
-  - Architectural drafting crosshairs, fine coordinates, and circular action trigger `(→)`.
-  - Dynamic navbar color adaptation (transitions seamlessly to dark text on light parchment).
+3. **Plot Synopsis Presentation (`45% - 72% Scroll`)**:
+   - The trees have parted out of frame.
+   - The headline `Plot` in `SharpGroteskBook25` and the exact synopsis text glide up into the center with pristine typography.
 
-- **Section 3: Books of Her Choice (Interactive Bookshelf)**:
-  - Curated library of literature and foundational thought.
-  - Glassmorphic modal to add custom books with Title, Author, Genre, Publication Year, 1–5 Star rating, spine palette themes, and personal notes.
-  - **Permanent Browser Storage (`localStorage`)**: Any book added by her is saved in `localStorage` and persistently displays in the bookshelf across all sessions and page refreshes.
-  - Live search filter and category filter pills (*All, Adventure, Philosophy, Fantasy, Classic, Lore*).
+4. **Darkening Overlay & Descending Line (`60% - 85% Scroll`)**:
+   - A smooth dark overlay gently darkens the ocean into rich charcoal.
+   - A 1px crisp vertical line draws downwards from beneath the Plot text, guiding the viewer's eye into the next section.
 
-- **Atmospheric Procedural Web Audio Engine**:
-  - Warm analog ambient synthesizer drone tuned to meditative root and fifth harmonic frequencies.
-  - Dynamic metallic chime feedback on button clicks and book additions.
+5. **The Goon Docks Crew (Cast Section)**:
+   - Full dossiers for Mikey, Chunk, Sloth, Mouth, and Data with high-res character portraits.
+   - Interactive pop-up modals containing full quotes and movie lore.
+
+6. **Books of Her Choice (Permanent Bookshelf)**:
+   - Curated archive pre-loaded with timeless stories (*The Neverending Story*, *Treasure Island*, *The Goonies: The Novel*).
+   - Glassmorphic modal to add custom books with Title, Author, Year, Genre, Spine Color, 1–5 Star ratings, and personal reflections.
+   - **100% Persistent (`localStorage`)**: Any book added by her is permanently preserved across reloads and browser sessions.
+   - Live search filter and genre filter pills (*All, Adventure, Philosophy, Fantasy, Classic, Lore*).
+
+7. **Atmospheric Procedural Web Audio Engine**:
+   - Ambient analog synthesizer pad and sea-breeze noise generator inspired by Dave Grusin's score.
+   - Toggled via the minimalist speaker button in the bottom right corner.
 
 ## 🚀 Running Locally
 
 ```bash
-# Using Python
+# Python
 python -m http.server 8080
 
-# Or using Node / npx
+# Or Node / npx
 npx serve .
 ```
 
 Open [http://localhost:8080](http://localhost:8080) in your browser.
 
-## 📁 Project Structure
+## 📁 Repository Structure
 
 ```
-├── index.html                  # Semantic HTML5 layout with split-panel hero & modal
-├── styles.css                  # Luxury editorial tokens, 3D perspective, responsive styles
-├── script.js                   # 60FPS lerp parallax, viewport pin engine, Bookshelf & Web Audio
-├── assets/                     # High-resolution heritage artwork & vector logos
-│   ├── alphakore_hero.jpg      # Scenic ancient temple ghats & lone traveler hero image
-│   ├── alphakore_section2.jpg  # Terracotta watercolor sun & palace ramparts artwork
-│   └── alphakore_logo.png      # Vector ALPHAKORE monogram emblem
+├── index.html                  # Semantic HTML5 markup
+├── styles.css                  # Typography, exact layout, responsive styling
+├── script.js                   # 60FPS lerp parallax, Bookshelf & Web Audio
+├── assets/                     # High-res assets, fonts, icons
+│   ├── Abuget.ttf              # Official script font
+│   ├── SharpGroteskBook25.ttf  # Official headline font
+│   ├── goonies_hero.jpg        # Background ocean & Haystack Rock
+│   ├── goonies_fg_trees.png    # Foreground silhouette trees framing left & right
+│   ├── goonies_logo.png        # Official Goonies logo
+│   ├── goonies_scroll.gif      # Animated scroll indicator
+│   ├── goonies_speaker.png     # Audio speaker icon
+│   ├── goonies_sloth.png       # Sloth character cutout
+│   ├── cast_chunk.jpg          # Chunk Cohen portrait
+│   ├── cast_data.jpg           # Data Wang portrait
+│   ├── cast_mouth.jpg          # Mouth Devereaux portrait
+│   └── hero_char_raw.jpg       # Mikey Walsh portrait
 └── README.md
 ```
 
-## 📜 Authorship & License
+## 📜 Authorship
 
-Developed with precision and care for **Neverfinished005** (`vablerudra007@gmail.com`). Educational and creative portfolio showcase.
+Crafted for **Neverfinished005** (`vablerudra007@gmail.com`).
+All rights reserved for creative showcase.

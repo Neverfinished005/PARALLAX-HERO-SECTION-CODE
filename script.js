@@ -1,672 +1,729 @@
 /**
- * ALPHAKORE — CINEMATIC SPLIT-PANEL PARALLAX & DEEP ZOOM ENGINE
- * Multi-layer 60FPS Lerp Parallax • Viewport Lock • Procedural Web Audio • Persistent Bookshelf
+ * THE STORY OF THE GOONIES — CINEMATIC PARALLAX ENGINE
+ * Exact 1-to-1 recreation of the Awwwards Site of the Day Experience
+ * With permanent "Books of Her Choice" Bookshelf & Web Audio
  */
 
-(() => {
-  'use strict';
+// ============================================================================
+// 1. STATE & DOM REFERENCES
+// ============================================================================
+const elements = {
+  scrollContainer: document.getElementById('plot'),
+  bgMain: document.getElementById('bgMain'),
+  bgScroll: document.getElementById('bgScroll'),
+  heroParent: document.getElementById('heroParent'),
+  heroLogo: document.getElementById('heroLogo'),
+  introParent: document.getElementById('introParent'),
+  heroOverlay: document.getElementById('heroOverlay'),
+  drawLineInner: document.getElementById('drawLineInner'),
+  scrollImg: document.getElementById('scrollImg'),
+  navBar: document.getElementById('mainNav'),
+  musicToggle: document.getElementById('musicToggle'),
+  speakerIcon: document.getElementById('speakerIcon'),
+  
+  // Nav links & dots
+  dots: {
+    plot: document.getElementById('dotPlot'),
+    goonies: document.getElementById('dotGoonies'),
+    credits: document.getElementById('dotCredits'),
+    books: document.getElementById('dotBooks'),
+  },
+  navLinks: {
+    plot: document.getElementById('navPlot'),
+    goonies: document.getElementById('navGoonies'),
+    credits: document.getElementById('navCredits'),
+    books: document.getElementById('navBooks'),
+  },
+  
+  // Bookshelf elements
+  booksGridContainer: document.getElementById('booksGridContainer'),
+  bookSearchInput: document.getElementById('bookSearchInput'),
+  openAddBookBtn: document.getElementById('openAddBookBtn'),
+  closeBookModalBtn: document.getElementById('closeBookModalBtn'),
+  cancelBookBtn: document.getElementById('cancelBookBtn'),
+  bookModalBackdrop: document.getElementById('bookModalBackdrop'),
+  addBookForm: document.getElementById('addBookForm'),
+  bookCountDisplay: document.getElementById('bookCountDisplay'),
+  starPicker: document.getElementById('starPicker'),
+  bookRating: document.getElementById('bookRating'),
+  filterPills: document.querySelectorAll('.filter-pill'),
+  
+  // Character modal
+  charModalBackdrop: document.getElementById('charModalBackdrop'),
+  modalContent: document.getElementById('modalContent')
+};
 
-  /* ==========================================================================
-     1. STATE MANAGEMENT
-     ========================================================================== */
-  const state = {
-    mouseX: 0,
-    mouseY: 0,
-    targetMouseX: 0,
-    targetMouseY: 0,
-    scrollProgress: 0,
-    rawScrollY: 0,
-    isLoaded: false,
-    audioPlaying: false,
-    lerpFactor: 0.08
-  };
+// ============================================================================
+// 2. PARALLAX SCROLL CHOREOGRAPHY (EXACT MATCH TO 5 REFERENCE SCREENSHOTS)
+// ============================================================================
+let currentProgress = 0;
+let targetProgress = 0;
+let isTicking = false;
 
-  /* ==========================================================================
-     2. DOM ELEMENTS
-     ========================================================================== */
-  const homeSection = document.getElementById('home');
-  const stickyContainer = document.getElementById('stickyContainer');
-  const leftPanel = document.getElementById('leftPanel');
-  const rightPanel = document.getElementById('rightPanel');
-  const heroPortalWindow = document.getElementById('heroPortalWindow');
-  const heroScenicImg = document.getElementById('heroScenicImg');
-  const portalTitleStage = document.getElementById('portalTitleStage');
-  const portalBrandTitle = document.getElementById('portalBrandTitle');
-  const portalLogoMark = document.getElementById('portalLogoMark');
-  const portalSubtitleRow = document.getElementById('portalSubtitleRow');
-  const portalBottomCue = document.getElementById('portalBottomCue');
+function calculateProgress() {
+  if (!elements.scrollContainer) return 0;
+  const rect = elements.scrollContainer.getBoundingClientRect();
+  const totalScroll = elements.scrollContainer.offsetHeight - window.innerHeight;
+  if (totalScroll <= 0) return 0;
+  return Math.min(Math.max(-rect.top / totalScroll, 0), 1);
+}
 
-  const preloader = document.getElementById('preloader');
-  const loaderFill = document.getElementById('loaderFill');
-  const loaderPercent = document.getElementById('loaderPercent');
-  const customCursor = document.getElementById('customCursor');
-  const customCursorDot = document.getElementById('customCursorDot');
-  const soundToggleBtn = document.getElementById('soundToggleBtn');
-  const particlesCanvas = document.getElementById('particlesCanvas');
-  const siteNav = document.getElementById('siteNav');
+function updateParallax() {
+  // Smooth lerp for buttery 60fps movement
+  currentProgress += (targetProgress - currentProgress) * 0.14;
+  if (Math.abs(targetProgress - currentProgress) < 0.0005) {
+    currentProgress = targetProgress;
+  }
+  
+  const p = currentProgress;
 
-  /* ==========================================================================
-     3. PROCEDURAL WEB AUDIO ENGINE
-     ========================================================================== */
-  let audioEngine = null;
+  // --------------------------------------------------------------------------
+  // SCREENSHOT 1 -> 2: FOREGROUND TREES PARTING (bg-scroll)
+  // Scale from 1.0 to 1.80 between p=0.15 and p=0.65
+  // Because tree trunks are on left and right borders, scaling zooms them outward!
+  // --------------------------------------------------------------------------
+  let treeScale = 1.0;
+  let treeTranslateY = 0;
+  let treeOpacity = 1.0;
 
-  function createAudioEngine() {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return null;
-    const ctx = new AudioCtx();
-
-    let droneGain = null;
-    let masterGain = ctx.createGain();
-    masterGain.gain.setValueAtTime(0.35, ctx.currentTime);
-    masterGain.connect(ctx.destination);
-
-    // Warm Ambient Meditative Synth Drone
-    function startDrone() {
-      if (ctx.state === 'suspended') ctx.resume();
-      if (droneGain) return;
-
-      droneGain = ctx.createGain();
-      droneGain.gain.setValueAtTime(0.001, ctx.currentTime);
-      droneGain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 3);
-      droneGain.connect(masterGain);
-
-      // Warm root & fifth harmonic oscillators (A minor / warm heritage scale)
-      const freqs = [110, 164.81, 220, 329.63];
-      freqs.forEach((freq, i) => {
-        const osc = ctx.createOscillator();
-        const oscGain = ctx.createGain();
-        osc.type = i % 2 === 0 ? 'sine' : 'triangle';
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-
-        // Subtle slow frequency modulation (chorus)
-        const lfo = ctx.createOscillator();
-        const lfoGain = ctx.createGain();
-        lfo.frequency.setValueAtTime(0.15 + i * 0.05, ctx.currentTime);
-        lfoGain.gain.setValueAtTime(0.8, ctx.currentTime);
-        lfo.connect(osc.frequency);
-        lfo.start();
-
-        oscGain.gain.setValueAtTime(0.25 / freqs.length, ctx.currentTime);
-        osc.connect(oscGain);
-        oscGain.connect(droneGain);
-        osc.start();
-      });
-    }
-
-    function stopDrone() {
-      if (!droneGain) return;
-      droneGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.5);
-      setTimeout(() => {
-        if (droneGain) {
-          droneGain.disconnect();
-          droneGain = null;
-        }
-      }, 1600);
-    }
-
-    // Metallic chime for clicks and book additions
-    function playChime() {
-      if (ctx.state === 'suspended') ctx.resume();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.18, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
-      osc.connect(gain);
-      gain.connect(masterGain);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.6);
-    }
-
-    return { ctx, startDrone, stopDrone, playChime };
+  if (p >= 0.15 && p <= 0.65) {
+    const t = (p - 0.15) / 0.50;
+    treeScale = 1.0 + t * 0.80; // 1.0 -> 1.80
+  } else if (p > 0.65) {
+    treeScale = 1.80;
   }
 
-  if (soundToggleBtn) {
-    soundToggleBtn.addEventListener('click', () => {
-      if (!audioEngine) audioEngine = createAudioEngine();
-      if (!state.audioPlaying) {
-        if (audioEngine) audioEngine.startDrone();
-        state.audioPlaying = true;
-        soundToggleBtn.classList.add('playing');
-      } else {
-        if (audioEngine) audioEngine.stopDrone();
-        state.audioPlaying = false;
-        soundToggleBtn.classList.remove('playing');
+  // Move up offscreen after p=0.65
+  if (p >= 0.65 && p <= 0.88) {
+    const t = (p - 0.65) / 0.23;
+    treeTranslateY = -t * 380; // 0 -> -380px
+  } else if (p > 0.88) {
+    treeTranslateY = -380;
+  }
+
+  // Fade out gently after p=0.74
+  if (p >= 0.74) {
+    treeOpacity = Math.max(0, 1 - (p - 0.74) / 0.16);
+  }
+
+  if (elements.bgScroll) {
+    elements.bgScroll.style.transform = `translate3d(0, ${treeTranslateY}px, 0) scale(${treeScale})`;
+    elements.bgScroll.style.opacity = treeOpacity;
+  }
+
+  // --------------------------------------------------------------------------
+  // BACKGROUND OCEAN (bg-main)
+  // Subtle camera push forward (1.0 -> 1.25)
+  // --------------------------------------------------------------------------
+  let oceanScale = 1.0;
+  if (p >= 0.15 && p <= 0.72) {
+    const t = (p - 0.15) / 0.57;
+    oceanScale = 1.0 + t * 0.25; // 1.0 -> 1.25
+  } else if (p > 0.72) {
+    oceanScale = 1.25;
+  }
+
+  if (elements.bgMain) {
+    elements.bgMain.style.transform = `scale(${oceanScale})`;
+  }
+
+  // --------------------------------------------------------------------------
+  // TITLE: The story of THE GOONIES (hero-parent)
+  // Screenshot 1: Full opacity at p <= 0.18
+  // Screenshot 2: Logo fades from 1.0 -> 0 between p=0.18 and p=0.38
+  // --------------------------------------------------------------------------
+  let titleOpacity = 1.0;
+  let titleScale = 1.0;
+
+  if (p <= 0.18) {
+    titleOpacity = 1.0;
+    titleScale = 1.0;
+  } else if (p > 0.18 && p <= 0.38) {
+    const t = (p - 0.18) / 0.20;
+    titleOpacity = Math.max(0, 1.0 - t);
+    titleScale = 1.0 + t * 0.12;
+  } else {
+    titleOpacity = 0.0;
+  }
+
+  if (elements.heroParent) {
+    elements.heroParent.style.opacity = titleOpacity;
+    elements.heroParent.style.transform = `scale(${titleScale})`;
+  }
+
+  // Scroll mouse indicator fades out early
+  if (elements.scrollImg) {
+    const scrollIconOp = p < 0.14 ? 1.0 - (p / 0.14) : 0;
+    elements.scrollImg.style.opacity = scrollIconOp;
+  }
+
+  // --------------------------------------------------------------------------
+  // SCREENSHOTS 3 & 4: PLOT HEADLINE & SYNOPSIS (intro-parent)
+  // Fades in at p=0.36, reaches 100% opacity at p=0.50, stays solid until p=0.72
+  // --------------------------------------------------------------------------
+  let plotOpacity = 0.0;
+  let plotTranslateY = 45;
+
+  if (p >= 0.36 && p <= 0.50) {
+    const t = (p - 0.36) / 0.14;
+    plotOpacity = t;
+    plotTranslateY = 45 * (1 - t);
+  } else if (p > 0.50 && p <= 0.72) {
+    plotOpacity = 1.0;
+    plotTranslateY = 0;
+  } else if (p > 0.72 && p <= 0.86) {
+    const t = (p - 0.72) / 0.14;
+    plotOpacity = Math.max(0, 1.0 - t);
+    plotTranslateY = -t * 25;
+  } else {
+    plotOpacity = 0.0;
+  }
+
+  if (elements.introParent) {
+    elements.introParent.style.opacity = plotOpacity;
+    elements.introParent.style.transform = `translate3d(0, ${plotTranslateY}px, 0)`;
+  }
+
+  // --------------------------------------------------------------------------
+  // SCREENSHOT 5: DARKENING OVERLAY & DESCENDING VERTICAL LINE
+  // Keeps ocean bright during Screenshots 3 & 4; darkens smoothly in Screenshot 5
+  // --------------------------------------------------------------------------
+  let overlayOpacity = 0.0;
+  if (p >= 0.60 && p <= 0.80) {
+    const t = (p - 0.60) / 0.20;
+    overlayOpacity = t * 0.78; // 0 -> 0.78 (Screenshot 5)
+  } else if (p > 0.80) {
+    const t = Math.min(1, (p - 0.80) / 0.15);
+    overlayOpacity = 0.78 + t * 0.22; // 0.78 -> 1.0 (Cast Section handoff)
+  }
+
+  if (elements.heroOverlay) {
+    elements.heroOverlay.style.opacity = overlayOpacity;
+  }
+
+  // Vertical line draw below Plot
+  let lineY = -100;
+  if (p >= 0.62 && p <= 0.78) {
+    const t = (p - 0.62) / 0.16;
+    lineY = -100 + t * 100; // -100% -> 0% (drawing down!)
+  } else if (p > 0.78 && p <= 0.90) {
+    const t = (p - 0.78) / 0.12;
+    lineY = t * 100; // 0% -> 100% (exits down)
+  } else if (p > 0.90) {
+    lineY = 100;
+  }
+
+  if (elements.drawLineInner) {
+    elements.drawLineInner.style.transform = `translateY(${lineY}%)`;
+  }
+
+  // Request next frame if still interpolating
+  if (Math.abs(targetProgress - currentProgress) > 0.0005) {
+    requestAnimationFrame(updateParallax);
+  } else {
+    isTicking = false;
+  }
+}
+
+function onScroll() {
+  targetProgress = calculateProgress();
+  if (!isTicking) {
+    isTicking = true;
+    requestAnimationFrame(updateParallax);
+  }
+  updateNavState();
+}
+
+window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', () => {
+  targetProgress = calculateProgress();
+  updateParallax();
+});
+
+// ============================================================================
+// 3. NAVIGATION ACTIVE STATE TRACKING
+// ============================================================================
+function updateNavState() {
+  const scrollY = window.scrollY;
+  const vh = window.innerHeight;
+  
+  if (scrollY > 50) {
+    elements.navBar.classList.add('scrolled');
+  } else {
+    elements.navBar.classList.remove('scrolled');
+  }
+
+  const gooniesSec = document.getElementById('goonies');
+  const booksSec = document.getElementById('books');
+  const creditsSec = document.getElementById('credits');
+
+  let activeSection = 'plot';
+  if (creditsSec && scrollY >= creditsSec.offsetTop - vh * 0.4) {
+    activeSection = 'credits';
+  } else if (booksSec && scrollY >= booksSec.offsetTop - vh * 0.4) {
+    activeSection = 'books';
+  } else if (gooniesSec && scrollY >= gooniesSec.offsetTop - vh * 0.4) {
+    activeSection = 'goonies';
+  }
+
+  Object.keys(elements.navLinks).forEach(sec => {
+    const link = elements.navLinks[sec];
+    const dot = elements.dots[sec];
+    if (sec === activeSection) {
+      if (link) link.classList.add('active');
+      if (dot) {
+        dot.className = 'pulse-dot-menu';
+        dot.style.opacity = '1';
       }
-    });
-  }
-
-  /* ==========================================================================
-     4. PARTICLES ENGINE (GOLDEN DUST & MIST)
-     ========================================================================== */
-  let particles = [];
-  function initParticles() {
-    if (!particlesCanvas) return;
-    const ctx = particlesCanvas.getContext('2d');
-    let width = (particlesCanvas.width = window.innerWidth);
-    let height = (particlesCanvas.height = window.innerHeight);
-
-    window.addEventListener('resize', () => {
-      width = particlesCanvas.width = window.innerWidth;
-      height = particlesCanvas.height = window.innerHeight;
-    });
-
-    const count = window.innerWidth < 768 ? 25 : 55;
-    particles = [];
-    for (let i = 0; i < count; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        radius: Math.random() * 1.8 + 0.5,
-        alpha: Math.random() * 0.4 + 0.1,
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: -Math.random() * 0.45 - 0.1,
-        pulse: Math.random() * Math.PI * 2
-      });
-    }
-
-    function renderParticles() {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.pulse += 0.02;
-        if (p.y < -10) p.y = height + 10;
-        if (p.x < -10) p.x = width + 10;
-        if (p.x > width + 10) p.x = -10;
-
-        const dynamicAlpha = Math.max(0, p.alpha + Math.sin(p.pulse) * 0.15);
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(226, 164, 89, ${dynamicAlpha})`;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = 'rgba(226, 164, 89, 0.4)';
-        ctx.fill();
-      });
-      requestAnimationFrame(renderParticles);
-    }
-    renderParticles();
-  }
-
-  /* ==========================================================================
-     5. SCROLL PINNING & SPLIT-PANEL DEEP ZOOM CHOREOGRAPHY
-     ========================================================================== */
-  function updateScroll() {
-    if (!homeSection || !stickyContainer) return;
-
-    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-    state.rawScrollY = scrollY;
-    const homeTop = homeSection.offsetTop;
-    const totalScrollable = homeSection.offsetHeight - window.innerHeight;
-
-    // Relative scroll offset within the hero section
-    const relY = Math.max(0, Math.min(totalScrollable, scrollY - homeTop));
-    const progress = totalScrollable > 0 ? relY / totalScrollable : 0;
-    state.scrollProgress = progress;
-
-    // HARD VIEWPORT LOCK:
-    // Prevents any page slide or black gaps while inside the hero timeline
-    if (scrollY <= homeTop + totalScrollable) {
-      stickyContainer.style.position = 'fixed';
-      stickyContainer.style.top = '0px';
-      stickyContainer.style.left = '0px';
-      stickyContainer.style.width = '100vw';
-      stickyContainer.style.height = '100vh';
     } else {
-      stickyContainer.style.position = 'absolute';
-      stickyContainer.style.top = `${totalScrollable}px`;
-      stickyContainer.style.left = '0px';
-      stickyContainer.style.width = '100vw';
-      stickyContainer.style.height = '100vh';
-    }
-
-    // Dynamic Nav Theme (Light theme when in Section 2: Impact)
-    const impactSection = document.getElementById('impact');
-    const booksSection = document.getElementById('books');
-    if (siteNav && impactSection) {
-      const impactTop = impactSection.offsetTop;
-      const booksTop = booksSection ? booksSection.offsetTop : Infinity;
-      if (scrollY >= impactTop - 60 && scrollY < booksTop - 60) {
-        siteNav.classList.add('theme-light');
-      } else {
-        siteNav.classList.remove('theme-light');
+      if (link) link.classList.remove('active');
+      if (dot) {
+        dot.className = 'pulse-dot-0';
+        dot.style.opacity = '0';
       }
-    }
-
-    // ------------------------------------------------------------------------
-    // PHASE 1: SPLIT PANELS PART WAYS (Progress 0.00 -> 0.45)
-    // ------------------------------------------------------------------------
-    const p1 = Math.min(1, Math.max(0, progress / 0.42));
-    const panelEase = Math.pow(p1, 1.4); // Smooth acceleration outward
-
-    if (leftPanel) {
-      const leftShiftPercent = -panelEase * 140;
-      leftPanel.style.transform = `translate3d(${leftShiftPercent}%, -50%, 0)`;
-      leftPanel.style.opacity = Math.max(0, 1 - panelEase * 1.3).toString();
-      leftPanel.style.pointerEvents = p1 > 0.8 ? 'none' : 'auto';
-    }
-
-    if (rightPanel) {
-      const rightShiftPercent = panelEase * 140;
-      rightPanel.style.transform = `translate3d(${rightShiftPercent}%, -50%, 0)`;
-      rightPanel.style.opacity = Math.max(0, 1 - panelEase * 1.3).toString();
-      rightPanel.style.pointerEvents = p1 > 0.8 ? 'none' : 'auto';
-    }
-
-    // ------------------------------------------------------------------------
-    // CENTER PORTAL APERTURE EXPANSION (From 32vw x 74vh to 100vw x 100vh)
-    // ------------------------------------------------------------------------
-    if (heroPortalWindow) {
-      const currentWidth = 32 + (100 - 32) * panelEase;
-      const currentHeight = 74 + (100 - 74) * panelEase;
-      const currentRadius = 20 * (1 - panelEase);
-      const currentShadowAlpha = 0.88 * (1 - panelEase);
-
-      heroPortalWindow.style.width = `${currentWidth}vw`;
-      heroPortalWindow.style.height = `${currentHeight}vh`;
-      heroPortalWindow.style.borderRadius = `${currentRadius}px`;
-      heroPortalWindow.style.boxShadow = `0 35px 90px rgba(0, 0, 0, ${currentShadowAlpha})`;
-      heroPortalWindow.style.border = panelEase > 0.95 ? 'none' : '1px solid rgba(226, 164, 89, 0.3)';
-    }
-
-    // ------------------------------------------------------------------------
-    // PHASE 2: DEEP IN-SCENE ZOOM & 3D CAMERA PUSH (Progress 0.35 -> 0.95)
-    // ------------------------------------------------------------------------
-    const p2 = Math.min(1, Math.max(0, (progress - 0.30) / 0.60));
-    const zoomEase = Math.pow(p2, 1.8);
-
-    if (heroScenicImg) {
-      const imgScale = 1.0 + 0.48 * zoomEase;
-      heroScenicImg.style.transform = `scale(${imgScale})`;
-    }
-
-    if (portalBottomCue) {
-      portalBottomCue.style.opacity = Math.max(0, 1 - p1 * 2.5).toString();
-    }
-  }
-
-  window.addEventListener('scroll', updateScroll, { passive: true });
-
-  /* ==========================================================================
-     6. MOUSE TRACKING & 60FPS LERP PARALLAX
-     ========================================================================== */
-  window.addEventListener('mousemove', (e) => {
-    state.targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-    state.targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-
-    if (customCursor && customCursorDot) {
-      customCursor.style.left = `${e.clientX}px`;
-      customCursor.style.top = `${e.clientY}px`;
-      customCursorDot.style.left = `${e.clientX}px`;
-      customCursorDot.style.top = `${e.clientY}px`;
     }
   });
+}
 
-  function renderParallax() {
-    // Smooth lerp
-    state.mouseX += (state.targetMouseX - state.mouseX) * state.lerpFactor;
-    state.mouseY += (state.targetMouseY - state.mouseY) * state.lerpFactor;
+// ============================================================================
+// 4. PERMANENT BOOKSHELF LOGIC ("Books of Her Choice" with localStorage)
+// ============================================================================
+const STORAGE_KEY = 'goonies_books_of_her_choice';
 
-    // Subtle 3D tilt on panels when at low scroll
-    if (state.scrollProgress < 0.25) {
-      if (leftPanel) {
-        const tiltX = state.mouseY * 4;
-        const tiltY = -state.mouseX * 6;
-        leftPanel.style.transform = `translate3d(0, -50%, 0) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-      }
-      if (rightPanel) {
-        const tiltX = state.mouseY * 4;
-        const tiltY = -state.mouseX * 6;
-        rightPanel.style.transform = `translate3d(0, -50%, 0) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-      }
+const defaultBooks = [
+  {
+    id: 'b1',
+    title: 'The Neverending Story',
+    author: 'Michael Ende',
+    year: '1979',
+    genre: 'Fantasy',
+    spine: 'spine-sea',
+    rating: 5,
+    notes: 'A lonely boy reads a magical book in an old bookstore attic and discovers that his own courage is needed to save the world of Fantastica from the Nothing.'
+  },
+  {
+    id: 'b2',
+    title: 'Treasure Island',
+    author: 'Robert Louis Stevenson',
+    year: '1883',
+    genre: 'Adventure',
+    spine: 'spine-amber',
+    rating: 5,
+    notes: 'The immortal tale of the Spanish Main, the sea chest, the dead man’s map, and Long John Silver that directly inspired Spielberg and Donner’s One-Eyed Willy.'
+  },
+  {
+    id: 'b3',
+    title: 'The Goonies: The Novel',
+    author: 'James Kahn',
+    year: '1985',
+    genre: 'Lore',
+    spine: 'spine-gold',
+    rating: 5,
+    notes: 'The definitive companion novel written alongside the 1985 screenplay, delving deep into One-Eyed Willy’s armada and the brotherhood of the Goon Docks.'
+  }
+];
+
+function getBooks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultBooks));
+      return defaultBooks;
     }
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error('Storage access error:', e);
+    return defaultBooks;
+  }
+}
 
-    requestAnimationFrame(renderParallax);
+function saveBooks(books) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+  } catch (e) {
+    console.error('Failed to save to localStorage:', e);
+  }
+}
+
+let activeGenre = 'all';
+let searchQuery = '';
+
+function renderBookshelf() {
+  const books = getBooks();
+  const container = elements.booksGridContainer;
+  if (!container) return;
+
+  const filtered = books.filter(book => {
+    const matchGenre = (activeGenre === 'all') || (book.genre.toLowerCase() === activeGenre.toLowerCase());
+    const matchSearch = !searchQuery || 
+      book.title.toLowerCase().includes(searchQuery) ||
+      book.author.toLowerCase().includes(searchQuery) ||
+      (book.notes && book.notes.toLowerCase().includes(searchQuery));
+    return matchGenre && matchSearch;
+  });
+
+  if (elements.bookCountDisplay) {
+    elements.bookCountDisplay.textContent = `Showing ${filtered.length} of ${books.length} Books`;
   }
 
-  /* ==========================================================================
-     7. PRELOADER
-     ========================================================================== */
-  function initPreloader() {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.floor(Math.random() * 18) + 10;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-        setTimeout(() => {
-          if (preloader) preloader.classList.add('loaded');
-          state.isLoaded = true;
-          updateScroll();
-        }, 300);
-      }
-      if (loaderFill) loaderFill.style.width = `${progress}%`;
-      if (loaderPercent) loaderPercent.textContent = `${progress}%`;
-    }, 45);
+  container.innerHTML = '';
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
+        <p style="font-size: 1.2rem; font-family: var(--font-sharp); margin-bottom: 0.5rem;">No volumes found</p>
+        <p style="font-size: 0.88rem; color: var(--text-dim);">Try a different search query or clear the filter.</p>
+      </div>
+    `;
+    return;
   }
 
-  /* ==========================================================================
-     8. ALPHAKORE INTERACTIVE BOOKSHELF & LOCALSTORAGE ENGINE (BOOKS OF HER CHOICE)
-     ========================================================================== */
-  const DEFAULT_ALPHAKORE_BOOKS = [
-    {
-      id: 'book_alchemist_1988',
-      title: 'The Alchemist',
-      author: 'Paulo Coelho',
-      genre: 'Philosophy',
-      year: '1988',
-      rating: 5,
-      theme: 'theme-leather',
-      notes: 'A timeless fable about following one\'s personal legend, listening to the signs of the universe, and discovering the treasure hidden within.'
-    },
-    {
-      id: 'book_meditations_180',
-      title: 'Meditations',
-      author: 'Marcus Aurelius',
-      genre: 'Classic',
-      year: '180',
-      rating: 5,
-      theme: 'theme-obsidian',
-      notes: 'Unfiltered private journals of an emperor. An immortal blueprint for inner stillness, architectural discipline, and living without vanity.'
-    },
-    {
-      id: 'book_dune_1965',
-      title: 'Dune',
-      author: 'Frank Herbert',
-      genre: 'Sci-Fi',
-      year: '1965',
-      rating: 5,
-      theme: 'theme-ocean',
-      notes: 'A monumental epic of ecology, power, prophecy, and human potential across desert sands.'
-    }
-  ];
-
-  const STORAGE_KEY = 'alphakore_books_shelf';
-
-  function getSavedBooks() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch (e) {
-      console.warn('LocalStorage error:', e);
-    }
-    saveBooks(DEFAULT_ALPHAKORE_BOOKS);
-    return [...DEFAULT_ALPHAKORE_BOOKS];
-  }
-
-  function saveBooks(books) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
-    } catch (e) {
-      console.warn('LocalStorage save error:', e);
-    }
-  }
-
-  let currentBooks = [];
-  let currentSearchFilter = '';
-  let currentGenreFilter = 'All';
-
-  const booksGrid = document.getElementById('booksGrid');
-  const booksCountLabel = document.getElementById('booksCountLabel');
-  const bookSearchInput = document.getElementById('bookSearchInput');
-  const genreFilterPills = document.getElementById('genreFilterPills');
-  const bookModalBackdrop = document.getElementById('bookModalBackdrop');
-  const openAddBookBtn = document.getElementById('openAddBookBtn');
-  const closeBookModalBtn = document.getElementById('closeBookModalBtn');
-  const cancelAddBookBtn = document.getElementById('cancelAddBookBtn');
-  const addBookForm = document.getElementById('addBookForm');
-  const starRatingPicker = document.getElementById('starRatingPicker');
-
-  const THEME_EMBLEMS = {
-    'theme-leather': '✦',
-    'theme-ocean': '◈',
-    'theme-crimson': '▲',
-    'theme-emerald': '◆',
-    'theme-obsidian': '■'
-  };
-
-  function renderBooks() {
-    if (!booksGrid) return;
-
-    let filtered = currentBooks.filter((b) => {
-      const matchSearch =
-        !currentSearchFilter ||
-        b.title.toLowerCase().includes(currentSearchFilter) ||
-        b.author.toLowerCase().includes(currentSearchFilter) ||
-        (b.notes && b.notes.toLowerCase().includes(currentSearchFilter));
-
-      const matchGenre =
-        currentGenreFilter === 'All' ||
-        b.genre.toLowerCase() === currentGenreFilter.toLowerCase();
-
-      return matchSearch && matchGenre;
-    });
-
-    if (booksCountLabel) {
-      booksCountLabel.textContent = `Showing ${filtered.length} of ${currentBooks.length} Book${currentBooks.length === 1 ? '' : 's'}`;
-    }
-
-    if (filtered.length === 0) {
-      booksGrid.innerHTML = `
-        <div class="books-empty-state">
-          <div class="empty-icon">📖</div>
-          <h3 class="empty-title">No Volumes Found</h3>
-          <p class="empty-desc">No books match your current query or category filter. Add a new book of her choice to the library!</p>
+  filtered.forEach(book => {
+    const stars = '★'.repeat(book.rating || 5) + '☆'.repeat(5 - (book.rating || 5));
+    const card = document.createElement('article');
+    card.className = 'book-card';
+    card.innerHTML = `
+      <div class="book-card-top">
+        <div class="book-spine-badge ${book.spine || 'spine-gold'}">📖</div>
+        <div class="book-meta">
+          <span class="book-genre-tag">${book.genre}</span>
+          <h4 class="book-title">${escapeHTML(book.title)}</h4>
+          <p class="book-author">by ${escapeHTML(book.author)}${book.year ? ` • ${book.year}` : ''}</p>
         </div>
-      `;
-      return;
-    }
-
-    booksGrid.innerHTML = filtered
-      .map((book) => {
-        const emblem = THEME_EMBLEMS[book.theme] || '✦';
-        const starsHtml = '★'.repeat(book.rating || 5) + '☆'.repeat(5 - (book.rating || 5));
-
-        return `
-          <div class="book-card" data-id="${book.id}">
-            <div class="book-card-header">
-              <div class="book-spine-preview ${book.theme || 'theme-leather'}">
-                <span class="book-spine-emblem">${emblem}</span>
-              </div>
-              <div class="book-header-info">
-                <span class="book-tag">${escapeHtml(book.genre || 'Philosophy')}</span>
-                <h3 class="book-card-title">${escapeHtml(book.title)}</h3>
-                <div class="book-card-author">by ${escapeHtml(book.author)}${book.year ? ` • ${book.year}` : ''}</div>
-                <div class="book-card-stars" title="${book.rating || 5} out of 5 stars">${starsHtml}</div>
-              </div>
-            </div>
-
-            <div class="book-card-body">
-              <div class="book-card-notes">
-                "${escapeHtml(book.notes || 'A cherished volume chosen for the ALPHAKORE archive.')}"
-              </div>
-              <div class="book-card-footer">
-                <span>Her Bookshelf Choice</span>
-                <button class="btn-delete-book" data-delete-id="${book.id}" title="Remove volume" aria-label="Delete book">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>
-                  <span>Remove</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-      })
-      .join('');
-
-    // Delete handlers
-    booksGrid.querySelectorAll('.btn-delete-book').forEach((delBtn) => {
-      delBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = delBtn.dataset.deleteId;
-        if (confirm('Remove this volume from her bookshelf?')) {
-          currentBooks = currentBooks.filter((b) => b.id !== id);
-          saveBooks(currentBooks);
-          renderBooks();
-          if (!audioEngine) audioEngine = createAudioEngine();
-          if (audioEngine) audioEngine.playChime();
-        }
-      });
-    });
-  }
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
-
-  function initBookshelf() {
-    currentBooks = getSavedBooks();
-    renderBooks();
-
-    // Search input
-    if (bookSearchInput) {
-      bookSearchInput.addEventListener('input', (e) => {
-        currentSearchFilter = e.target.value.trim().toLowerCase();
-        renderBooks();
-      });
-    }
-
-    // Genre filters
-    if (genreFilterPills) {
-      genreFilterPills.querySelectorAll('.filter-pill').forEach((pill) => {
-        pill.addEventListener('click', () => {
-          genreFilterPills.querySelectorAll('.filter-pill').forEach((p) => p.classList.remove('active'));
-          pill.classList.add('active');
-          currentGenreFilter = pill.dataset.genre || 'All';
-          renderBooks();
-          if (!audioEngine) audioEngine = createAudioEngine();
-          if (audioEngine) audioEngine.playChime();
-        });
-      });
-    }
-
-    // Modal open/close
-    function openModal() {
-      if (bookModalBackdrop) {
-        bookModalBackdrop.classList.add('active');
-        if (!audioEngine) audioEngine = createAudioEngine();
-        if (audioEngine) audioEngine.playChime();
-        const titleInput = document.getElementById('bookTitle');
-        if (titleInput) setTimeout(() => titleInput.focus(), 100);
-      }
-    }
-
-    function closeModal() {
-      if (bookModalBackdrop) {
-        bookModalBackdrop.classList.remove('active');
-      }
-      if (addBookForm) addBookForm.reset();
-      resetStarPicker();
-    }
-
-    if (openAddBookBtn) openAddBookBtn.addEventListener('click', openModal);
-    if (closeBookModalBtn) closeBookModalBtn.addEventListener('click', closeModal);
-    if (cancelAddBookBtn) cancelAddBookBtn.addEventListener('click', closeModal);
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
-
-    // Star rating picker
-    if (starRatingPicker) {
-      const stars = starRatingPicker.querySelectorAll('.star-pick');
-      stars.forEach((s) => {
-        s.addEventListener('click', () => {
-          const val = parseInt(s.dataset.val, 10);
-          starRatingPicker.dataset.rating = val;
-          stars.forEach((star) => {
-            const starVal = parseInt(star.dataset.val, 10);
-            if (starVal <= val) {
-              star.classList.add('active');
-            } else {
-              star.classList.remove('active');
-            }
-          });
-          if (!audioEngine) audioEngine = createAudioEngine();
-          if (audioEngine) audioEngine.playChime();
-        });
-      });
-    }
-
-    function resetStarPicker() {
-      if (starRatingPicker) {
-        starRatingPicker.dataset.rating = '5';
-        starRatingPicker.querySelectorAll('.star-pick').forEach((star) => star.classList.add('active'));
-      }
-    }
-
-    // Form submission
-    if (addBookForm) {
-      addBookForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const title = (document.getElementById('bookTitle')?.value || '').trim();
-        const author = (document.getElementById('bookAuthor')?.value || '').trim();
-        const genre = document.getElementById('bookGenre')?.value || 'Philosophy';
-        const year = (document.getElementById('bookYear')?.value || '').trim();
-        const rating = parseInt(starRatingPicker?.dataset.rating || '5', 10);
-        const selectedTheme = document.querySelector('input[name="coverTheme"]:checked')?.value || 'theme-leather';
-        const notes = (document.getElementById('bookNotes')?.value || '').trim();
-
-        if (!title || !author) {
-          alert('Please enter both volume title and author name!');
-          return;
-        }
-
-        const newBook = {
-          id: 'book_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-          title,
-          author,
-          genre,
-          year,
-          rating,
-          theme: selectedTheme,
-          notes: notes || 'A book of her choice added to the permanent ALPHAKORE collection.'
-        };
-
-        // Prepend and persist
-        currentBooks.unshift(newBook);
-        saveBooks(currentBooks);
-        renderBooks();
-
-        closeModal();
-
-        if (!audioEngine) audioEngine = createAudioEngine();
-        if (audioEngine) audioEngine.playChime();
-
-        // Highlight newly added volume
-        setTimeout(() => {
-          const newCard = booksGrid.querySelector(`[data-id="${newBook.id}"]`);
-          if (newCard) {
-            newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            newCard.style.outline = '2px solid var(--accent-gold)';
-            setTimeout(() => {
-              newCard.style.outline = 'none';
-            }, 1800);
-          }
-        }, 150);
-      });
-    }
-  }
-
-  /* ==========================================================================
-     9. INITIALIZATION
-     ========================================================================== */
-  window.addEventListener('DOMContentLoaded', () => {
-    initPreloader();
-    initParticles();
-    initBookshelf();
-    renderParallax();
-    updateScroll();
+      </div>
+      <div class="book-stars">${stars}</div>
+      <div class="book-quote-box">"${escapeHTML(book.notes || 'A cherished volume chosen for the shelf.')}"</div>
+      <div class="book-card-footer">
+        <span>Permanently Saved</span>
+        <button class="btn-remove-book" onclick="removeBook('${book.id}')">Remove</button>
+      </div>
+    `;
+    container.appendChild(card);
   });
-})();
+}
+
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.replace(/[&<>'"]/g, 
+    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+  );
+}
+
+window.removeBook = function(id) {
+  const books = getBooks();
+  const updated = books.filter(b => b.id !== id);
+  saveBooks(updated);
+  renderBookshelf();
+};
+
+// Search & Filter Listeners
+if (elements.bookSearchInput) {
+  elements.bookSearchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value.trim().toLowerCase();
+    renderBookshelf();
+  });
+}
+
+if (elements.filterPills) {
+  elements.filterPills.forEach(btn => {
+    btn.addEventListener('click', () => {
+      elements.filterPills.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeGenre = btn.dataset.genre || 'all';
+      renderBookshelf();
+    });
+  });
+}
+
+// Modal open / close
+function openBookModal() {
+  if (elements.bookModalBackdrop) {
+    elements.bookModalBackdrop.classList.add('open');
+    elements.bookModalBackdrop.setAttribute('aria-hidden', 'false');
+  }
+}
+
+function closeBookModal() {
+  if (elements.bookModalBackdrop) {
+    elements.bookModalBackdrop.classList.remove('open');
+    elements.bookModalBackdrop.setAttribute('aria-hidden', 'true');
+    if (elements.addBookForm) elements.addBookForm.reset();
+    setRating(5);
+  }
+}
+
+if (elements.openAddBookBtn) elements.openAddBookBtn.addEventListener('click', openBookModal);
+if (elements.closeBookModalBtn) elements.closeBookModalBtn.addEventListener('click', closeBookModal);
+if (elements.cancelBookBtn) elements.cancelBookBtn.addEventListener('click', closeBookModal);
+
+// Star rating picker
+function setRating(val) {
+  if (elements.bookRating) elements.bookRating.value = val;
+  const stars = elements.starPicker ? elements.starPicker.querySelectorAll('.star-pick') : [];
+  stars.forEach((s, idx) => {
+    if (idx < val) s.classList.add('active');
+    else s.classList.remove('active');
+  });
+}
+
+if (elements.starPicker) {
+  elements.starPicker.addEventListener('click', (e) => {
+    if (e.target.classList.contains('star-pick')) {
+      const r = parseInt(e.target.dataset.rating, 10) || 5;
+      setRating(r);
+    }
+  });
+}
+
+// Handle Add Book Submission
+if (elements.addBookForm) {
+  elements.addBookForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = document.getElementById('bookTitle').value.trim();
+    const author = document.getElementById('bookAuthor').value.trim();
+    const year = document.getElementById('bookYear').value.trim();
+    const genre = document.getElementById('bookGenre').value;
+    const spine = document.getElementById('bookSpine').value;
+    const rating = parseInt(elements.bookRating.value, 10) || 5;
+    const notes = document.getElementById('bookNotes').value.trim();
+
+    if (!title || !author) return;
+
+    const newBook = {
+      id: 'book_' + Date.now(),
+      title,
+      author,
+      year,
+      genre,
+      spine,
+      rating,
+      notes
+    };
+
+    const books = getBooks();
+    books.unshift(newBook);
+    saveBooks(books);
+    closeBookModal();
+    renderBookshelf();
+
+    // Trigger celebratory chime if audio is running
+    playCelebrationChime();
+  });
+}
+
+// ============================================================================
+// 5. CHARACTER DOSSIER MODALS
+// ============================================================================
+const characterDossiers = {
+  mikey: {
+    name: "Mikey Walsh",
+    actor: "Sean Astin",
+    tagline: "The Visionary & Leader",
+    quote: "Our parents want the bestest stuff for us. But right now, they got to do what's right for them. Because it's their time. Their time! Up there! Down here, it's our time. It's our time down here!",
+    lore: "Armed with his inhaler and an unshakeable belief in pirate lore, Mikey led his neighborhood friends into the treacherous cavern networks under Astoria to find One-Eyed Willy's fortune and save his home from destruction."
+  },
+  chunk: {
+    name: "Lawrence 'Chunk' Cohen",
+    actor: "Jeff Cohen",
+    tagline: "Heart of the Goon Docks",
+    quote: "First you make me do the Truffle Shuffle, then you put me in the cellar with a dead guy!",
+    lore: "Accidentally captured by the Fratelli family, Chunk formed an unbreakable, legendary bond with Sloth over a shared Baby Ruth bar. His loyalty and empathy became the Goonies' greatest salvation."
+  },
+  sloth: {
+    name: "Sloth Fratelli",
+    actor: "John Matuszak",
+    tagline: "The Gentle Giant",
+    quote: "HEEEEY YOU GUUUUYS! ... Rocky Road? Heh-heh!",
+    lore: "Chained away by his villainous family, Sloth found friendship with Chunk and took up a pirate bicorne hat to become the sworn protector of the Goonies, tearing open bars and breaking boards to save the children."
+  },
+  mouth: {
+    name: "Clark 'Mouth' Devereaux",
+    actor: "Corey Feldman",
+    tagline: "The Translator & Wit",
+    quote: "Yeah, but you know what? This one, this one right here... this was my dream, my wish. And it didn't come true. So I'm taking it back. I'm taking them all back.",
+    lore: "The silver-tongued member of the group fluent in Spanish, Mouth translated the cryptic verses engraved upon Chester Copperpot's skeleton and the ancient Doubloon to guide the crew safely through deadly organ traps."
+  },
+  data: {
+    name: "Richard 'Data' Wang",
+    actor: "Ke Huy Quan",
+    tagline: "The Gadgeteer Genius",
+    quote: "Pinchers of Power! You guys, that was close! That was real close!",
+    lore: "A relentless inventor equipped with a custom utility trench coat housing spring-loaded boxing gloves, Slick Shoes oil dispensers, and dental-wire ziplines that repeatedly cheated death across subterranean perils."
+  }
+};
+
+window.openModal = function(charKey) {
+  const data = characterDossiers[charKey];
+  if (!data || !elements.modalContent || !elements.charModalBackdrop) return;
+
+  elements.modalContent.innerHTML = `
+    <span class="eyebrow gold">// CHARACTER DOSSIER</span>
+    <h3 class="modal-title" style="margin-top: 0.4rem;">${data.name}</h3>
+    <p style="color: var(--accent-gold); font-size: 0.95rem; margin-bottom: 1.5rem; letter-spacing: 0.05em;">Portrayed by ${data.actor} • ${data.tagline}</p>
+    <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--accent-cyan); padding: 1.2rem; border-radius: 4px; margin-bottom: 1.5rem; font-style: italic; line-height: 1.6; color: #fff;">
+      "${data.quote}"
+    </div>
+    <p style="font-size: 0.92rem; line-height: 1.7; color: var(--text-muted);">${data.lore}</p>
+  `;
+
+  elements.charModalBackdrop.classList.add('open');
+  elements.charModalBackdrop.setAttribute('aria-hidden', 'false');
+};
+
+window.closeModal = function() {
+  if (elements.charModalBackdrop) {
+    elements.charModalBackdrop.classList.remove('open');
+    elements.charModalBackdrop.setAttribute('aria-hidden', 'true');
+  }
+};
+
+if (elements.charModalBackdrop) {
+  elements.charModalBackdrop.addEventListener('click', (e) => {
+    if (e.target === elements.charModalBackdrop) closeModal();
+  });
+}
+
+// ============================================================================
+// 6. ATMOSPHERIC WEB AUDIO ENGINE (Dave Grusin Inspired Analog Theme)
+// ============================================================================
+let audioCtx = null;
+let isAudioPlaying = false;
+let audioNodes = [];
+
+function initAudio() {
+  if (audioCtx) return;
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  audioCtx = new AudioContext();
+}
+
+function toggleThemeAudio() {
+  initAudio();
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+
+  if (isAudioPlaying) {
+    stopThemeAudio();
+  } else {
+    startThemeAudio();
+  }
+}
+
+function startThemeAudio() {
+  if (!audioCtx) return;
+  isAudioPlaying = true;
+  if (elements.musicToggle) elements.musicToggle.classList.add('playing');
+
+  // Master Gain
+  const masterGain = audioCtx.createGain();
+  masterGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+  masterGain.connect(audioCtx.destination);
+  audioNodes.push(masterGain);
+
+  // Sea Breeze Pink Noise Generator
+  const bufferSize = audioCtx.sampleRate * 2;
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  let b0 = 0, b1 = 0, b2 = 0;
+  for (let i = 0; i < bufferSize; i++) {
+    const white = Math.random() * 2 - 1;
+    b0 = 0.99 * b0 + white * 0.05;
+    b1 = 0.96 * b1 + white * 0.08;
+    b2 = 0.88 * b2 + white * 0.12;
+    output[i] = (b0 + b1 + b2) * 0.3;
+  }
+
+  const whiteNoise = audioCtx.createBufferSource();
+  whiteNoise.buffer = noiseBuffer;
+  whiteNoise.loop = true;
+
+  const noiseFilter = audioCtx.createBiquadFilter();
+  noiseFilter.type = 'lowpass';
+  noiseFilter.frequency.setValueAtTime(320, audioCtx.currentTime);
+
+  const noiseGain = audioCtx.createGain();
+  noiseGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+
+  whiteNoise.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(masterGain);
+  whiteNoise.start();
+  audioNodes.push(whiteNoise, noiseGain);
+
+  // Warm Synth Pad (Pentatonic harmony D - F# - A - B)
+  const notes = [146.83, 220.00, 293.66, 369.99]; // D3, A3, D4, F#4
+  notes.forEach((freq, idx) => {
+    const osc = audioCtx.createOscillator();
+    osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+    const padGain = audioCtx.createGain();
+    padGain.gain.setValueAtTime(0.035, audioCtx.currentTime);
+
+    // Subtle LFO vibrato
+    const lfo = audioCtx.createOscillator();
+    lfo.frequency.setValueAtTime(0.2 + idx * 0.1, audioCtx.currentTime);
+    const lfoGain = audioCtx.createGain();
+    lfoGain.gain.setValueAtTime(1.5, audioCtx.currentTime);
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(osc.frequency);
+    lfo.start();
+
+    osc.connect(padGain);
+    padGain.connect(masterGain);
+    osc.start();
+
+    audioNodes.push(osc, padGain, lfo, lfoGain);
+  });
+}
+
+function stopThemeAudio() {
+  isAudioPlaying = false;
+  if (elements.musicToggle) elements.musicToggle.classList.remove('playing');
+  audioNodes.forEach(node => {
+    try {
+      if (node.stop) node.stop();
+      if (node.disconnect) node.disconnect();
+    } catch (e) {}
+  });
+  audioNodes = [];
+}
+
+function playCelebrationChime() {
+  if (!audioCtx) return;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  const now = audioCtx.currentTime;
+  const freqs = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+  freqs.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, now + i * 0.08);
+
+    gain.gain.setValueAtTime(0.08, now + i * 0.08);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.6);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(now + i * 0.08);
+    osc.stop(now + i * 0.08 + 0.65);
+  });
+}
+
+if (elements.musicToggle) {
+  elements.musicToggle.addEventListener('click', toggleThemeAudio);
+}
+
+// ============================================================================
+// 7. INITIALIZATION
+// ============================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  renderBookshelf();
+  targetProgress = calculateProgress();
+  currentProgress = targetProgress;
+  updateParallax();
+  updateNavState();
+});
