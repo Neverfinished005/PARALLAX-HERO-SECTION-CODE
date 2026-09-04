@@ -967,30 +967,9 @@
       <!-- Vintage Postcard Card Stage -->
       <div class="postcard-stage-wrap" id="postcardStageWrap">
         <div class="vintage-postcard" id="vintagePostcard">
-          
-          <!-- Authentic Postage Stamp with Perforated Edges (Top Right) -->
-          <div class="postcard-stamp-box" title="Ceylon 10 Cents Official Postage Stamp">
-            <img src="assets/vintage_postage_stamp.png" alt="Vintage Postage Stamp" class="postcard-stamp-img">
-            <div class="postcard-postmark" aria-hidden="true">
-              <div class="postmark-circle">
-                <span class="pm-city">NEW DELHI</span>
-                <span class="pm-date">SEP 04 2026</span>
-                <span class="pm-sub">REGISTERED</span>
-              </div>
-              <div class="postmark-waves">
-                <span></span><span></span><span></span>
-              </div>
-            </div>
-          </div>
 
-          <!-- Top Center Title: POST CARD -->
-          <div class="postcard-top-header">
-            <h3 class="postcard-title">POST CARD</h3>
-            <span class="postcard-title-sub">— THIS SPACE FOR ADDRESS ONLY —</span>
-          </div>
-
-          <!-- Postcard Two-Column Body -->
-          <div class="postcard-body">
+          <!-- Two-Column Grid: Left (Form) 52%, Divider 1.5px, Right (Address + Stamp) 48% -->
+          <div class="postcard-body-grid">
             
             <!-- Left Column: The Interactive Form (FROM:) -->
             <div class="postcard-left-col">
@@ -1033,6 +1012,11 @@
                 </div>
 
                 <div class="postcard-field-row">
+                  <label for="contactCountry" class="field-label">COUNTRY</label>
+                  <input type="text" id="contactCountry" name="country" class="postcard-input" placeholder="USA" autocomplete="country-name">
+                </div>
+
+                <div class="postcard-field-row">
                   <label for="contactEmail" class="field-label">E-MAIL</label>
                   <input type="email" id="contactEmail" name="email" required class="postcard-input" placeholder="matt@spudart.org" autocomplete="email">
                 </div>
@@ -1070,16 +1054,39 @@
             <!-- Vertical Divider Line -->
             <div class="postcard-divider-line" aria-hidden="true"></div>
 
-            <!-- Right Column: Recipient & Studio Dispatch Details -->
+            <!-- Right Column: Header, Stamp, Recipient & Studio Dispatch Details -->
             <div class="postcard-right-col">
               
+              <!-- Header Row: Title & Vintage Postage Stamp -->
+              <div class="postcard-right-top-bar">
+                <div class="postcard-title-box">
+                  <h3 class="postcard-title">POST CARD</h3>
+                  <span class="postcard-title-sub">— THIS SPACE FOR ADDRESS ONLY —</span>
+                </div>
+                
+                <!-- Authentic Postage Stamp (Ceylon 10 Cents) with Postmark -->
+                <div class="postcard-stamp-box" title="Ceylon 10 Cents Official Postage Stamp">
+                  <img src="assets/vintage_postage_stamp.png" alt="Vintage Postage Stamp" class="postcard-stamp-img">
+                  <div class="postcard-postmark" aria-hidden="true">
+                    <div class="postmark-circle">
+                      <span class="pm-city">NEW DELHI</span>
+                      <span class="pm-date">SEP 04 2026</span>
+                      <span class="pm-sub">REGISTERED</span>
+                    </div>
+                    <div class="postmark-waves">
+                      <span></span><span></span><span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <!-- Recipient Address (Classic Typewriter Inscription) -->
               <div class="postcard-recipient-block">
                 <div class="recipient-to">To:</div>
-                <div class="recipient-line recipient-title">Askinosie Chocolate</div>
-                <div class="recipient-line">ALPHAKORE &bull; 514 E. Commercial</div>
-                <div class="recipient-line">Springfield, MO 65803</div>
-                <div class="recipient-line recipient-country">U.S.A. &amp; INDIA</div>
+                <div class="recipient-line recipient-title">ALPHA.KORE STUDIO</div>
+                <div class="recipient-line">514 Architectural Dispatch</div>
+                <div class="recipient-line">New Delhi &amp; Mumbai, 110001</div>
+                <div class="recipient-line recipient-country">INDIA</div>
               </div>
 
               <!-- Studio Office Information -->
@@ -1093,7 +1100,7 @@
                 </div>
                 <div class="info-row">
                   <span class="info-lbl">Phone:</span>
-                  <span class="info-val">+1 417 862-9900</span>
+                  <span class="info-val">+91 98200 12345</span>
                 </div>
                 <div class="info-row">
                   <span class="info-lbl">Email:</span>
@@ -1101,13 +1108,14 @@
                 </div>
               </div>
 
-              <!-- Interactive Stamp Demo Button -->
-              <div class="postcard-demo-actions">
-                <button type="button" class="postcard-toggle-stamp-btn" id="toggleStampBtn" onclick="toggleDeliveredStamp()">
-                  <span class="btn-icon">✎</span>
+              <!-- Interactive Stamp Toggle Badge -->
+              <div class="postcard-stamp-toggle-wrapper">
+                <button type="button" class="postcard-seal-toggle-btn" id="toggleStampBtn" onclick="toggleDeliveredStamp()">
+                  <span class="seal-icon">✦</span>
                   <span id="stampToggleLabel">Hide DELIVERED Stamp</span>
                 </button>
               </div>
+
             </div>
 
           </div>
