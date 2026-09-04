@@ -174,14 +174,14 @@ function updateParallax() {
   if (p >= 0.36 && p <= 0.50) {
     const t = (p - 0.36) / 0.14;
     plotOpacity = t;
-    plotTranslateY = 45 * (1 - t);
-  } else if (p > 0.50 && p <= 0.72) {
+    plotTranslateY = 40 * (1 - t);
+  } else if (p > 0.50 && p <= 0.82) {
     plotOpacity = 1.0;
     plotTranslateY = 0;
-  } else if (p > 0.72 && p <= 0.86) {
-    const t = (p - 0.72) / 0.14;
+  } else if (p > 0.82 && p <= 0.98) {
+    const t = (p - 0.82) / 0.16;
     plotOpacity = Math.max(0, 1.0 - t);
-    plotTranslateY = -t * 25;
+    plotTranslateY = -t * 28;
   } else {
     plotOpacity = 0.0;
   }
@@ -192,31 +192,22 @@ function updateParallax() {
   }
 
   // --------------------------------------------------------------------------
-  // SCREENSHOT 5: DARKENING OVERLAY & DESCENDING VERTICAL LINE
-  // Keeps ocean bright during Screenshots 3 & 4; darkens smoothly in Screenshot 5
+  // OVERLAY DISABLED & DESCENDING VERTICAL LINE
   // --------------------------------------------------------------------------
-  let overlayOpacity = 0.0;
-  if (p >= 0.60 && p <= 0.80) {
-    const t = (p - 0.60) / 0.20;
-    overlayOpacity = t * 0.78; // 0 -> 0.78 (Screenshot 5)
-  } else if (p > 0.80) {
-    const t = Math.min(1, (p - 0.80) / 0.15);
-    overlayOpacity = 0.78 + t * 0.22; // 0.78 -> 1.0 (Cast Section handoff)
-  }
-
   if (elements.heroOverlay) {
-    elements.heroOverlay.style.opacity = overlayOpacity;
+    elements.heroOverlay.style.opacity = '0';
+    elements.heroOverlay.style.display = 'none';
   }
 
   // Vertical line draw below Plot
   let lineY = -100;
-  if (p >= 0.62 && p <= 0.78) {
-    const t = (p - 0.62) / 0.16;
+  if (p >= 0.56 && p <= 0.78) {
+    const t = (p - 0.56) / 0.22;
     lineY = -100 + t * 100; // -100% -> 0% (drawing down!)
-  } else if (p > 0.78 && p <= 0.90) {
-    const t = (p - 0.78) / 0.12;
+  } else if (p > 0.78 && p <= 0.96) {
+    const t = (p - 0.78) / 0.18;
     lineY = t * 100; // 0% -> 100% (exits down)
-  } else if (p > 0.90) {
+  } else if (p > 0.96) {
     lineY = 100;
   }
 
