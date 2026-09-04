@@ -62,10 +62,13 @@ Open [http://localhost:8080](http://localhost:8080) in your browser.
 ├── styles.css                  # Typography, exact layout, responsive styling
 ├── script.js                   # 60FPS lerp parallax, Bookshelf & Web Audio
 ├── assets/                     # High-res assets, fonts, icons
+│   ├── pillar_left.png         # Left carved stone pillar & ornate corbel
+│   ├── pillar_right.png        # Right carved stone pillar & ornate corbel
+│   ├── pillars_foreground.png  # High-res composite pillars foreground
 │   ├── Abuget.ttf              # Official script font
 │   ├── SharpGroteskBook25.ttf  # Official headline font
-│   ├── goonies_hero.jpg        # Background ocean & Haystack Rock
-│   ├── goonies_fg_trees.png    # Foreground silhouette trees framing left & right
+│   ├── alphakore_hero_v2.jpg   # Background hero scene
+│   ├── goonies_hero.jpg        # Alternate Goonies background
 │   ├── goonies_logo.png        # Official Goonies logo
 │   ├── goonies_scroll.gif      # Animated scroll indicator
 │   ├── goonies_speaker.png     # Audio speaker icon

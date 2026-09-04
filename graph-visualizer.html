@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codebase Memory — Interactive Knowledge Graph</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #080b10;
+      --bg-card: rgba(18, 24, 38, 0.75);
+      --bg-card-hover: rgba(28, 38, 58, 0.9);
+      --border-glow: rgba(0, 229, 255, 0.2);
+      --accent-cyan: #00e5ff;
+      --accent-gold: #ffd166;
+      --accent-purple: #bd93f9;
+      --accent-green: #50fa7b;
+      --accent-red: #ff5555;
+      --accent-orange: #ffb86c;
+      --text-main: #f8f9fa;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+    }
+
+    /* Top Control Bar / Header */
+    header {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      right: 20px;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .brand {
+      pointer-events: auto;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    .brand h1 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #fff;
+    }
+
+    .brand span {
+      font-size: 12px;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 6px;
+      background: rgba(0, 229, 255, 0.1);
+      border-radius: 4px;
+      border: 1px solid rgba(0, 229, 255, 0.25);
+    }
+
+    .top-actions {
+      pointer-events: auto;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-box {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      border-radius: 10px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      width: 220px;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .btn {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.3);
+    }
+
+    .btn.active {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* Graph Canvas Container */
+    #network {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #0f172a 0%, #06090e 100%);
+    }
+
+    /* Legend floating panel */
+    .legend-panel {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 100;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+      padding: 14px 18px;
+      max-width: 320px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    .legend-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .legend-items {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      font-size: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.2s;
+    }
+
+    .legend-item.dimmed {
+      opacity: 0.35;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    /* Inspector Sidebar */
+    .inspector {
+      position: absolute;
+      top: 80px;
+      right: 20px;
+      bottom: 20px;
+      width: 360px;
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glow);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(400px);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .inspector.open {
+      transform: translateX(0);
+    }
+
+    .inspector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .node-badge {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    .node-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      word-break: break-word;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .close-btn:hover {
+      color: #fff;
+    }
+
+    .inspector-body {
+      overflow-y: auto;
+      flex: 1;
+      padding-right: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-cyan);
+      margin-bottom: 8px;
+    }
+
+    .rel-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rel-item {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .rel-item:hover {
+      background: rgba(0, 229, 255, 0.1);
+      border-color: var(--accent-cyan);
+    }
+
+    .rel-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+    }
+
+    /* Stats Quick Counter in bottom right */
+    .quick-stats {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .quick-stats span strong {
+      color: var(--accent-cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">⌘</div>
+      <h1>Codebase Memory Graph</h1>
+      <span>43 NODES • 111 EDGES</span>
+    </div>
+
+    <div class="top-actions">
+      <div class="search-box">
+        <span style="color: var(--accent-cyan);">🔍</span>
+        <input type="text" id="nodeSearch" placeholder="Search functions, vars..." />
+      </div>
+      <button class="btn" id="btnPhysics" title="Toggle physics simulation">⚡ Physics: ON</button>
+      <button class="btn" id="btnFit" title="Fit graph to view">🎯 Center</button>
+      <button class="btn" id="btnClusters" title="Filter to core calls only">✨ Core Calls</button>
+    </div>
+  </header>
+
+  <!-- Network Canvas -->
+  <div id="network"></div>
+
+  <!-- Legend Panel -->
+  <div class="legend-panel">
+    <div class="legend-title">
+      <span>Node Types (Click to isolate)</span>
+    </div>
+    <div class="legend-items">
+      <div class="legend-item" data-type="Function">
+        <div class="legend-color" style="background: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan);"></div>
+        <span>Function (16)</span>
+      </div>
+      <div class="legend-item" data-type="Variable">
+        <div class="legend-color" style="background: var(--accent-purple); box-shadow: 0 0 8px var(--accent-purple);"></div>
+        <span>Variable (12)</span>
+      </div>
+      <div class="legend-item" data-type="File">
+        <div class="legend-color" style="background: var(--accent-gold); box-shadow: 0 0 8px var(--accent-gold);"></div>
+        <span>File (4)</span>
+      </div>
+      <div class="legend-item" data-type="Module">
+        <div class="legend-color" style="background: var(--accent-orange);"></div>
+        <span>Module (4)</span>
+      </div>
+      <div class="legend-item" data-type="Section">
+        <div class="legend-color" style="background: var(--accent-green);"></div>
+        <span>Section (5)</span>
+      </div>
+      <div class="legend-item" data-type="Project">
+        <div class="legend-color" style="background: #ffffff;"></div>
+        <span>Project (1)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inspector Drawer -->
+  <aside class="inspector" id="inspector">
+    <div class="inspector-header">
+      <div>
+        <span class="node-badge" id="nodeBadge">FUNCTION</span>
+        <h2 class="node-title" id="nodeTitle">updateParallax</h2>
+      </div>
+      <button class="close-btn" id="closeInspector">&times;</button>
+    </div>
+    
+    <div class="inspector-body">
+      <div class="stat-grid" id="statGrid">
+        <div class="stat-card">
+          <div class="stat-label">Lines of Code</div>
+          <div class="stat-value" id="valLines">156</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Cyclomatic Complexity</div>
+          <div class="stat-value" id="valComplexity">26</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Cognitive Score</div>
+          <div class="stat-value" id="valCognitive">37</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Defined In</div>
+          <div class="stat-value" id="valFile" style="font-size: 13px;">script.js</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Description & Architectural Role</div>
+        <p id="nodeDesc" style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Core 60FPS lerp scroll progression engine orchestrating foreground tree parting, ocean push-in, and plot reveals.
+        </p>
+      </div>
+
+      <div>
+        <div class="section-title">Connected Callers & Usages (<span id="inCount">0</span>)</div>
+        <ul class="rel-list" id="inList"></ul>
+      </div>
+
+      <div>
+        <div class="section-title">Outgoing Callees & State Writes (<span id="outCount">0</span>)</div>
+        <ul class="rel-list" id="outList"></ul>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Quick bottom stats -->
+  <div class="quick-stats">
+    <span>Project: <strong>Neverfinished005 / Demo</strong></span>
+    <span>Graph Status: <strong>Synced & Ready</strong></span>
+  </div>
+
+  <script>
+    // Raw Graph Data Extracted from Codebase Memory Knowledge Graph
+    const rawNodes = [
+      { id: 'C-Users-ADMIN-Downloads-demo', label: 'Project\nDemo', group: 'Project', type: 'Project', lines: 0, complexity: 0, cognitive: 0, file: 'root', desc: 'Root project workspace container.' },
+      { id: 'main', label: 'Branch\nmain', group: 'Branch', type: 'Branch', lines: 0, complexity: 0, cognitive: 0, file: 'git', desc: 'Active development branch.' },
+      
+      // Files & Modules
+      { id: 'script.js', label: 'script.js', group: 'File', type: 'File', lines: 730, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Main JavaScript engine with lerp parallax, web audio, and bookshelf state.' },
+      { id: 'styles.css', label: 'styles.css', group: 'File', type: 'File', lines: 650, complexity: 0, cognitive: 0, file: 'styles.css', desc: 'Cinematic CSS styling, typography, glassmorphism, and responsive layout.' },
+      { id: 'index.html', label: 'index.html', group: 'File', type: 'File', lines: 350, complexity: 0, cognitive: 0, file: 'index.html', desc: 'Semantic HTML5 structure and character dossier modals.' },
+      { id: 'README.md', label: 'README.md', group: 'File', type: 'File', lines: 84, complexity: 0, cognitive: 0, file: 'README.md', desc: 'Documentation of keyframes, assets, and project architecture.' },
+
+      // Functions
+      { id: 'updateParallax', label: 'updateParallax()', group: 'Function', type: 'Function', lines: 156, complexity: 26, cognitive: 37, file: 'script.js', desc: 'Main 60FPS lerp animation loop coordinating tree scaling, ocean zoom, and darkening overlays.' },
+      { id: 'calculateProgress', label: 'calculateProgress()', group: 'Function', type: 'Function', lines: 7, complexity: 2, cognitive: 2, file: 'script.js', desc: 'Computes normalized scroll percentage (0.0 to 1.0) from bounding rects.' },
+      { id: 'onScroll', label: 'onScroll()', group: 'Function', type: 'Function', lines: 8, complexity: 1, cognitive: 1, file: 'script.js', desc: 'Scroll & resize listener with requestAnimationFrame ticking lock.' },
+      { id: 'updateNavState', label: 'updateNavState()', group: 'Function', type: 'Function', lines: 41, complexity: 9, cognitive: 16, file: 'script.js', desc: 'Tracks active section and updates pulsing glowing dots on navigation.' },
+      { id: 'getBooks', label: 'getBooks()', group: 'Function', type: 'Function', lines: 13, complexity: 3, cognitive: 5, file: 'script.js', desc: 'Retrieves books array from localStorage with fallback defaults.' },
+      { id: 'saveBooks', label: 'saveBooks()', group: 'Function', type: 'Function', lines: 7, complexity: 2, cognitive: 3, file: 'script.js', desc: 'Persists books array to browser localStorage.' },
+      { id: 'renderBookshelf', label: 'renderBookshelf()', group: 'Function', type: 'Function', lines: 53, complexity: 3, cognitive: 3, file: 'script.js', desc: 'Renders dynamic book cards with star ratings, quotes, and genres.' },
+      { id: 'escapeHTML', label: 'escapeHTML()', group: 'Function', type: 'Function', lines: 6, complexity: 1, cognitive: 1, file: 'script.js', desc: 'Sanitizes user input to prevent XSS in digital bookshelf.' },
+      { id: 'openBookModal', label: 'openBookModal()', group: 'Function', type: 'Function', lines: 6, complexity: 1, cognitive: 1, file: 'script.js', desc: 'Opens glassmorphic Add Book dialog.' },
+      { id: 'closeBookModal', label: 'closeBookModal()', group: 'Function', type: 'Function', lines: 8, complexity: 2, cognitive: 3, file: 'script.js', desc: 'Closes dialog and resets form & star rating.' },
+      { id: 'setRating', label: 'setRating()', group: 'Function', type: 'Function', lines: 8, complexity: 2, cognitive: 2, file: 'script.js', desc: 'Interactive star rating picker setter.' },
+      { id: 'initAudio', label: 'initAudio()', group: 'Function', type: 'Function', lines: 5, complexity: 1, cognitive: 1, file: 'script.js', desc: 'Initializes Web Audio API AudioContext on user gesture.' },
+      { id: 'toggleThemeAudio', label: 'toggleThemeAudio()', group: 'Function', type: 'Function', lines: 12, complexity: 2, cognitive: 2, file: 'script.js', desc: 'Toggles ambient synthesizer and sea-breeze noise generator.' },
+      { id: 'startThemeAudio', label: 'startThemeAudio()', group: 'Function', type: 'Function', lines: 68, complexity: 3, cognitive: 3, file: 'script.js', desc: 'Synthesizes pink noise & D-major pentatonic pad harmony.' },
+      { id: 'stopThemeAudio', label: 'stopThemeAudio()', group: 'Function', type: 'Function', lines: 11, complexity: 5, cognitive: 8, file: 'script.js', desc: 'Disconnects and stops all active audio oscillator nodes.' },
+      { id: 'playCelebrationChime', label: 'playCelebrationChime()', group: 'Function', type: 'Function', lines: 22, complexity: 2, cognitive: 2, file: 'script.js', desc: 'Plays arpeggiated celebratory C-major chord on book addition.' },
+
+      // State Variables
+      { id: 'elements', label: 'elements', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Cached DOM references map.' },
+      { id: 'currentProgress', label: 'currentProgress', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Lerped active scroll interpolation value (0.0 - 1.0).' },
+      { id: 'targetProgress', label: 'targetProgress', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Direct calculated scroll destination.' },
+      { id: 'isTicking', label: 'isTicking', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'RAF animation frame execution lock flag.' },
+      { id: 'STORAGE_KEY', label: 'STORAGE_KEY', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Key identifier for localStorage bookshelf.' },
+      { id: 'defaultBooks', label: 'defaultBooks', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Pre-loaded default novel archive.' },
+      { id: 'activeGenre', label: 'activeGenre', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Active category filter pill value.' },
+      { id: 'searchQuery', label: 'searchQuery', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Active search text filter.' },
+      { id: 'characterDossiers', label: 'characterDossiers', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Lore & quote matrix for Mikey, Chunk, Sloth, Mouth, Data.' },
+      { id: 'audioCtx', label: 'audioCtx', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Active browser AudioContext instance.' },
+      { id: 'isAudioPlaying', label: 'isAudioPlaying', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Audio engine playback state flag.' },
+      { id: 'audioNodes', label: 'audioNodes', group: 'Variable', type: 'Variable', lines: 0, complexity: 0, cognitive: 0, file: 'script.js', desc: 'Array of running oscillator and gain nodes.' },
+
+      // Sections
+      { id: 'The Story of The Goonies — Interactive Parallax Experience', label: 'Hero Story', group: 'Section', type: 'Section', lines: 0, complexity: 0, cognitive: 0, file: 'README.md', desc: 'Hero introduction section.' },
+      { id: '🌟 Interactive Flow & Keyframes', label: 'Interactive Flow', group: 'Section', type: 'Section', lines: 0, complexity: 0, cognitive: 0, file: 'README.md', desc: '5-part parallax keyframe breakdown.' },
+      { id: '🚀 Running Locally', label: 'Local Server', group: 'Section', type: 'Section', lines: 0, complexity: 0, cognitive: 0, file: 'README.md', desc: 'Local running instructions.' },
+      { id: '📁 Repository Structure', label: 'Repo Layout', group: 'Section', type: 'Section', lines: 0, complexity: 0, cognitive: 0, file: 'README.md', desc: 'Directory layout.' },
+      { id: '📜 Authorship', label: 'Authorship', group: 'Section', type: 'Section', lines: 0, complexity: 0, cognitive: 0, file: 'README.md', desc: 'Creator and licensing credits.' }
+    ];
+
+    const rawEdges = [
+      { from: 'C-Users-ADMIN-Downloads-demo', to: 'main', label: 'HAS_BRANCH', arrows: 'to', color: '#64748b' },
+      { from: 'main', to: 'script.js', label: 'CONTAINS_FILE', arrows: 'to', color: '#64748b' },
+      { from: 'main', to: 'styles.css', label: 'CONTAINS_FILE', arrows: 'to', color: '#64748b' },
+      { from: 'main', to: 'index.html', label: 'CONTAINS_FILE', arrows: 'to', color: '#64748b' },
+      { from: 'main', to: 'README.md', label: 'CONTAINS_FILE', arrows: 'to', color: '#64748b' },
+      
+      { from: 'index.html', to: 'styles.css', label: 'IMPORTS', arrows: 'to', color: '#ffd166' },
+      { from: 'index.html', to: 'script.js', label: 'IMPORTS', arrows: 'to', color: '#ffd166' },
+
+      // Call graph edges
+      { from: 'onScroll', to: 'calculateProgress', label: 'CALLS', arrows: 'to', color: '#00e5ff', width: 2.5 },
+      { from: 'onScroll', to: 'updateNavState', label: 'CALLS', arrows: 'to', color: '#00e5ff', width: 2.5 },
+      { from: 'onScroll', to: 'updateParallax', label: 'CALL_REF', arrows: 'to', color: '#00e5ff', dashes: true },
+      
+      { from: 'renderBookshelf', to: 'getBooks', label: 'CALLS', arrows: 'to', color: '#00e5ff', width: 2.5 },
+      { from: 'renderBookshelf', to: 'escapeHTML', label: 'CALLS', arrows: 'to', color: '#00e5ff', width: 2.5 },
+      { from: 'closeBookModal', to: 'setRating', label: 'CALLS', arrows: 'to', color: '#00e5ff', width: 2.5 },
+      
+      { from: 'toggleThemeAudio', to: 'initAudio', label: 'CALLS', arrows: 'to', color: '#00e5ff', width: 2.5 },
+      { from: 'toggleThemeAudio', to: 'startThemeAudio', label: 'CALLS', arrows: 'to', color: '#00e5ff', width: 2.5 },
+      { from: 'toggleThemeAudio', to: 'stopThemeAudio', label: 'CALLS', arrows: 'to', color: '#00e5ff', width: 2.5 },
+
+      // Usages & Writes
+      { from: 'updateParallax', to: 'currentProgress', label: 'WRITES', arrows: 'to', color: '#ff5555' },
+      { from: 'updateParallax', to: 'targetProgress', label: 'USAGE', arrows: 'to', color: '#bd93f9' },
+      { from: 'updateParallax', to: 'elements', label: 'USAGE', arrows: 'to', color: '#bd93f9' },
+      
+      { from: 'onScroll', to: 'targetProgress', label: 'WRITES', arrows: 'to', color: '#ff5555' },
+      { from: 'onScroll', to: 'isTicking', label: 'WRITES', arrows: 'to', color: '#ff5555' },
+      
+      { from: 'getBooks', to: 'STORAGE_KEY', label: 'USAGE', arrows: 'to', color: '#bd93f9' },
+      { from: 'getBooks', to: 'defaultBooks', label: 'USAGE', arrows: 'to', color: '#bd93f9' },
+      { from: 'saveBooks', to: 'STORAGE_KEY', label: 'USAGE', arrows: 'to', color: '#bd93f9' },
+      { from: 'renderBookshelf', to: 'activeGenre', label: 'USAGE', arrows: 'to', color: '#bd93f9' },
+      { from: 'renderBookshelf', to: 'searchQuery', label: 'USAGE', arrows: 'to', color: '#bd93f9' },
+
+      { from: 'startThemeAudio', to: 'audioCtx', label: 'USAGE', arrows: 'to', color: '#bd93f9' },
+      { from: 'startThemeAudio', to: 'audioNodes', label: 'WRITES', arrows: 'to', color: '#ff5555' },
+      { from: 'startThemeAudio', to: 'isAudioPlaying', label: 'WRITES', arrows: 'to', color: '#ff5555' },
+      { from: 'stopThemeAudio', to: 'audioNodes', label: 'WRITES', arrows: 'to', color: '#ff5555' },
+      { from: 'stopThemeAudio', to: 'isAudioPlaying', label: 'WRITES', arrows: 'to', color: '#ff5555' }
+    ];
+
+    // Colors mapping
+    const groupColors = {
+      Function: { background: '#00e5ff', border: '#00b4cc', highlight: { background: '#80f2ff', border: '#fff' } },
+      Variable: { background: '#bd93f9', border: '#9b6bd6', highlight: { background: '#d8baff', border: '#fff' } },
+      File: { background: '#ffd166', border: '#dca626', highlight: { background: '#ffe49e', border: '#fff' } },
+      Module: { background: '#ffb86c', border: '#d68b3e', highlight: { background: '#ffd5a4', border: '#fff' } },
+      Section: { background: '#50fa7b', border: '#2ed95a', highlight: { background: '#8affaa', border: '#fff' } },
+      Branch: { background: '#6272a4', border: '#44475a', highlight: { background: '#8b9bb4', border: '#fff' } },
+      Project: { background: '#ffffff', border: '#00e5ff', highlight: { background: '#ffffff', border: '#00e5ff' } }
+    };
+
+    // Format nodes for Vis.js
+    const nodes = new vis.DataSet(rawNodes.map(n => ({
+      id: n.id,
+      label: n.label,
+      shape: n.type === 'Function' ? 'dot' : (n.type === 'Variable' ? 'diamond' : 'box'),
+      size: n.type === 'Function' ? (16 + (n.complexity || 1) * 0.7) : 18,
+      color: groupColors[n.group] || groupColors.Function,
+      font: { color: '#ffffff', face: 'Inter', size: 12, strokeWidth: 2, strokeColor: '#080b10' },
+      borderWidth: 2,
+      shadow: { enabled: true, color: 'rgba(0,0,0,0.6)', size: 10 },
+      meta: n
+    })));
+
+    const edges = new vis.DataSet(rawEdges.map(e => ({
+      from: e.from,
+      to: e.to,
+      label: e.label,
+      arrows: e.arrows || 'to',
+      color: { color: e.color || 'rgba(148, 163, 184, 0.4)', highlight: '#00e5ff', opacity: 0.8 },
+      font: { color: '#94a3b8', size: 9, face: 'JetBrains Mono', strokeWidth: 0 },
+      width: e.width || 1.5,
+      dashes: e.dashes || false,
+      smooth: { type: 'continuous' }
+    })));
+
+    const container = document.getElementById('network');
+    const data = { nodes, edges };
+    const options = {
+      nodes: {
+        scaling: { min: 10, max: 40 }
+      },
+      edges: {
+        arrowStrikethrough: false
+      },
+      physics: {
+        enabled: true,
+        solver: 'forceAtlas2Based',
+        forceAtlas2Based: {
+          gravitationalConstant: -70,
+          centralGravity: 0.012,
+          springLength: 120,
+          springConstant: 0.08,
+          damping: 0.85
+        },
+        stabilization: { iterations: 150 }
+      },
+      interaction: {
+        hover: true,
+        tooltipDelay: 100,
+        zoomView: true,
+        navigationButtons: false
+      }
+    };
+
+    const network = new vis.Network(container, data, options);
+
+    // Inspector elements
+    const inspector = document.getElementById('inspector');
+    const closeInspector = document.getElementById('closeInspector');
+    const nodeBadge = document.getElementById('nodeBadge');
+    const nodeTitle = document.getElementById('nodeTitle');
+    const nodeDesc = document.getElementById('nodeDesc');
+    const valLines = document.getElementById('valLines');
+    const valComplexity = document.getElementById('valComplexity');
+    const valCognitive = document.getElementById('valCognitive');
+    const valFile = document.getElementById('valFile');
+    const inCount = document.getElementById('inCount');
+    const outCount = document.getElementById('outCount');
+    const inList = document.getElementById('inList');
+    const outList = document.getElementById('outList');
+
+    function showInspector(nodeId) {
+      const nodeObj = rawNodes.find(n => n.id === nodeId);
+      if (!nodeObj) return;
+
+      nodeBadge.textContent = nodeObj.type;
+      nodeBadge.style.background = (groupColors[nodeObj.group] || {}).background || '#00e5ff';
+      nodeBadge.style.color = '#000';
+      nodeTitle.textContent = nodeObj.id;
+      nodeDesc.textContent = nodeObj.desc;
+      valLines.textContent = nodeObj.lines || '-';
+      valComplexity.textContent = nodeObj.complexity || '-';
+      valCognitive.textContent = nodeObj.cognitive || '-';
+      valFile.textContent = nodeObj.file || 'root';
+
+      // Incoming
+      const inEdges = rawEdges.filter(e => e.to === nodeId);
+      inCount.textContent = inEdges.length;
+      inList.innerHTML = inEdges.map(e => `
+        <li class="rel-item" onclick="selectNode('${e.from}')">
+          <span>${e.from}</span>
+          <span class="rel-tag">${e.label}</span>
+        </li>
+      `).join('') || '<li style="color:var(--text-dim);font-size:12px;">None</li>';
+
+      // Outgoing
+      const outEdges = rawEdges.filter(e => e.from === nodeId);
+      outCount.textContent = outEdges.length;
+      outList.innerHTML = outEdges.map(e => `
+        <li class="rel-item" onclick="selectNode('${e.to}')">
+          <span>${e.to}</span>
+          <span class="rel-tag">${e.label}</span>
+        </li>
+      `).join('') || '<li style="color:var(--text-dim);font-size:12px;">None</li>';
+
+      inspector.classList.add('open');
+    }
+
+    window.selectNode = function(id) {
+      network.selectNodes([id]);
+      network.focus(id, { scale: 1.2, animation: true });
+      showInspector(id);
+    };
+
+    network.on('click', (params) => {
+      if (params.nodes.length > 0) {
+        showInspector(params.nodes[0]);
+      } else {
+        inspector.classList.remove('open');
+      }
+    });
+
+    closeInspector.addEventListener('click', () => {
+      inspector.classList.remove('open');
+    });
+
+    // Search Box
+    const searchInput = document.getElementById('nodeSearch');
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      if (!q) return;
+      const match = rawNodes.find(n => n.id.toLowerCase().includes(q) || n.label.toLowerCase().includes(q));
+      if (match) {
+        window.selectNode(match.id);
+      }
+    });
+
+    // Controls
+    let physicsState = true;
+    const btnPhysics = document.getElementById('btnPhysics');
+    btnPhysics.addEventListener('click', () => {
+      physicsState = !physicsState;
+      network.setOptions({ physics: { enabled: physicsState } });
+      btnPhysics.textContent = physicsState ? '⚡ Physics: ON' : '⏸️ Physics: OFF';
+      btnPhysics.classList.toggle('active', physicsState);
+    });
+
+    document.getElementById('btnFit').addEventListener('click', () => {
+      network.fit({ animation: { duration: 600, easingFunction: 'easeInOutQuad' } });
+    });
+
+    let coreOnly = false;
+    const btnClusters = document.getElementById('btnClusters');
+    btnClusters.addEventListener('click', () => {
+      coreOnly = !coreOnly;
+      btnClusters.classList.toggle('active', coreOnly);
+      if (coreOnly) {
+        const coreTypes = ['Function', 'Variable'];
+        const filtered = rawNodes.filter(n => coreTypes.includes(n.type)).map(n => n.id);
+        const filteredEdges = rawEdges.filter(e => filtered.includes(e.from) && filtered.includes(e.to));
+        
+        nodes.clear();
+        nodes.add(rawNodes.filter(n => coreTypes.includes(n.type)).map(n => ({
+          id: n.id,
+          label: n.label,
+          shape: n.type === 'Function' ? 'dot' : 'diamond',
+          size: n.type === 'Function' ? 22 : 18,
+          color: groupColors[n.group],
+          font: { color: '#ffffff', face: 'Inter', size: 12 },
+          borderWidth: 2
+        })));
+        edges.clear();
+        edges.add(filteredEdges);
+      } else {
+        nodes.clear();
+        nodes.add(rawNodes.map(n => ({
+          id: n.id,
+          label: n.label,
+          shape: n.type === 'Function' ? 'dot' : (n.type === 'Variable' ? 'diamond' : 'box'),
+          size: n.type === 'Function' ? (16 + (n.complexity || 1) * 0.7) : 18,
+          color: groupColors[n.group],
+          font: { color: '#ffffff', face: 'Inter', size: 12 },
+          borderWidth: 2
+        })));
+        edges.clear();
+        edges.add(rawEdges);
+      }
+    });
+
+    // Legend isolation filters
+    document.querySelectorAll('.legend-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const t = item.dataset.type;
+        item.classList.toggle('dimmed');
+        const activeTypes = Array.from(document.querySelectorAll('.legend-item:not(.dimmed)')).map(el => el.dataset.type);
+        
+        const visibleNodes = rawNodes.filter(n => activeTypes.includes(n.type)).map(n => n.id);
+        nodes.clear();
+        nodes.add(rawNodes.filter(n => activeTypes.includes(n.type)).map(n => ({
+          id: n.id,
+          label: n.label,
+          shape: n.type === 'Function' ? 'dot' : (n.type === 'Variable' ? 'diamond' : 'box'),
+          size: n.type === 'Function' ? (16 + (n.complexity || 1) * 0.7) : 18,
+          color: groupColors[n.group],
+          font: { color: '#ffffff', face: 'Inter', size: 12 },
+          borderWidth: 2
+        })));
+      });
+    });
+  </script>
+</body>
+</html>

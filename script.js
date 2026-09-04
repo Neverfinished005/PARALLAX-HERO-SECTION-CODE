@@ -11,6 +11,8 @@ const elements = {
   scrollContainer: document.getElementById('plot'),
   bgMain: document.getElementById('bgMain'),
   bgScroll: document.getElementById('bgScroll'),
+  pillarLeft: document.getElementById('pillarLeft'),
+  pillarRight: document.getElementById('pillarRight'),
   heroParent: document.getElementById('heroParent'),
   heroLogo: document.getElementById('heroLogo'),
   introParent: document.getElementById('introParent'),
@@ -24,37 +26,29 @@ const elements = {
   // Nav links & dots
   dots: {
     plot: document.getElementById('dotPlot'),
-    goonies: document.getElementById('dotGoonies'),
-    credits: document.getElementById('dotCredits'),
-    books: document.getElementById('dotBooks'),
+    impact: document.getElementById('dotImpact'),
+    work: document.getElementById('dotWork'),
+    services: document.getElementById('dotServices'),
+    team: document.getElementById('dotTeam'),
+    contact: document.getElementById('dotContact'),
   },
   navLinks: {
     plot: document.getElementById('navPlot'),
-    goonies: document.getElementById('navGoonies'),
-    credits: document.getElementById('navCredits'),
-    books: document.getElementById('navBooks'),
+    impact: document.getElementById('navImpact'),
+    work: document.getElementById('navWork'),
+    services: document.getElementById('navServices'),
+    team: document.getElementById('navTeam'),
+    contact: document.getElementById('navContact'),
   },
   
-  // Bookshelf elements
-  booksGridContainer: document.getElementById('booksGridContainer'),
-  bookSearchInput: document.getElementById('bookSearchInput'),
-  openAddBookBtn: document.getElementById('openAddBookBtn'),
-  closeBookModalBtn: document.getElementById('closeBookModalBtn'),
-  cancelBookBtn: document.getElementById('cancelBookBtn'),
-  bookModalBackdrop: document.getElementById('bookModalBackdrop'),
-  addBookForm: document.getElementById('addBookForm'),
-  bookCountDisplay: document.getElementById('bookCountDisplay'),
-  starPicker: document.getElementById('starPicker'),
-  bookRating: document.getElementById('bookRating'),
-  filterPills: document.querySelectorAll('.filter-pill'),
-  
-  // Character modal
-  charModalBackdrop: document.getElementById('charModalBackdrop'),
-  modalContent: document.getElementById('modalContent')
+  // Alphakore Modals & Interactive Elements
+  projectModalBackdrop: document.getElementById('projectModalBackdrop'),
+  projectModalContent: document.getElementById('projectModalContent'),
+  toastContainer: document.getElementById('toastContainer')
 };
 
 // ============================================================================
-// 2. PARALLAX SCROLL CHOREOGRAPHY (EXACT MATCH TO 5 REFERENCE SCREENSHOTS)
+// 2. PARALLAX SCROLL CHOREOGRAPHY (CINEMATIC PILLARS PARTING)
 // ============================================================================
 let currentProgress = 0;
 let targetProgress = 0;
@@ -78,37 +72,50 @@ function updateParallax() {
   const p = currentProgress;
 
   // --------------------------------------------------------------------------
-  // SCREENSHOT 1 -> 2: FOREGROUND TREES PARTING (bg-scroll)
-  // Scale from 1.0 to 1.80 between p=0.15 and p=0.65
-  // Because tree trunks are on left and right borders, scaling zooms them outward!
+  // FOREGROUND CARVED STONE PILLARS PARTING (Left & Right Outward Zoom)
+  // Scale from 1.0 to 1.70 between p=0.15 and p=0.65
+  // Left pillar moves -X, Right pillar moves +X
   // --------------------------------------------------------------------------
-  let treeScale = 1.0;
-  let treeTranslateY = 0;
-  let treeOpacity = 1.0;
+  let pillarScale = 1.0;
+  let pillarTranslateY = 0;
+  let pillarTranslateX = 0;
+  let pillarOpacity = 1.0;
 
   if (p >= 0.15 && p <= 0.65) {
     const t = (p - 0.15) / 0.50;
-    treeScale = 1.0 + t * 0.80; // 1.0 -> 1.80
+    pillarScale = 1.0 + t * 0.70; // 1.0 -> 1.70
+    pillarTranslateX = t * 400; // 0 -> 400px outward parting
   } else if (p > 0.65) {
-    treeScale = 1.80;
+    pillarScale = 1.70;
+    pillarTranslateX = 400;
   }
 
   // Move up offscreen after p=0.65
   if (p >= 0.65 && p <= 0.88) {
     const t = (p - 0.65) / 0.23;
-    treeTranslateY = -t * 380; // 0 -> -380px
+    pillarTranslateY = -t * 380; // 0 -> -380px
   } else if (p > 0.88) {
-    treeTranslateY = -380;
+    pillarTranslateY = -380;
   }
 
   // Fade out gently after p=0.74
   if (p >= 0.74) {
-    treeOpacity = Math.max(0, 1 - (p - 0.74) / 0.16);
+    pillarOpacity = Math.max(0, 1 - (p - 0.74) / 0.16);
   }
 
-  if (elements.bgScroll) {
-    elements.bgScroll.style.transform = `translate3d(0, ${treeTranslateY}px, 0) scale(${treeScale})`;
-    elements.bgScroll.style.opacity = treeOpacity;
+  if (elements.pillarLeft) {
+    elements.pillarLeft.style.transform = `translate3d(${-pillarTranslateX}px, ${pillarTranslateY}px, 0) scale(${pillarScale})`;
+    elements.pillarLeft.style.opacity = pillarOpacity;
+  }
+
+  if (elements.pillarRight) {
+    elements.pillarRight.style.transform = `translate3d(${pillarTranslateX}px, ${pillarTranslateY}px, 0) scale(${pillarScale})`;
+    elements.pillarRight.style.opacity = pillarOpacity;
+  }
+
+  if (elements.bgScroll && !elements.pillarLeft) {
+    elements.bgScroll.style.transform = `translate3d(0, ${pillarTranslateY}px, 0) scale(${pillarScale})`;
+    elements.bgScroll.style.opacity = pillarOpacity;
   }
 
   // --------------------------------------------------------------------------
@@ -253,17 +260,23 @@ function updateNavState() {
     elements.navBar.classList.remove('scrolled');
   }
 
-  const gooniesSec = document.getElementById('goonies');
-  const booksSec = document.getElementById('books');
-  const creditsSec = document.getElementById('credits');
+  const impactSec = document.getElementById('impact');
+  const workSec = document.getElementById('work');
+  const servicesSec = document.getElementById('services');
+  const teamSec = document.getElementById('team');
+  const contactSec = document.getElementById('contact');
 
   let activeSection = 'plot';
-  if (creditsSec && scrollY >= creditsSec.offsetTop - vh * 0.4) {
-    activeSection = 'credits';
-  } else if (booksSec && scrollY >= booksSec.offsetTop - vh * 0.4) {
-    activeSection = 'books';
-  } else if (gooniesSec && scrollY >= gooniesSec.offsetTop - vh * 0.4) {
-    activeSection = 'goonies';
+  if (contactSec && scrollY >= contactSec.offsetTop - vh * 0.45) {
+    activeSection = 'contact';
+  } else if (teamSec && scrollY >= teamSec.offsetTop - vh * 0.45) {
+    activeSection = 'team';
+  } else if (servicesSec && scrollY >= servicesSec.offsetTop - vh * 0.45) {
+    activeSection = 'services';
+  } else if (workSec && scrollY >= workSec.offsetTop - vh * 0.45) {
+    activeSection = 'work';
+  } else if (impactSec && scrollY >= impactSec.offsetTop - vh * 0.45) {
+    activeSection = 'impact';
   }
 
   Object.keys(elements.navLinks).forEach(sec => {
@@ -284,324 +297,1157 @@ function updateNavState() {
     }
   });
 }
-
 // ============================================================================
-// 4. PERMANENT BOOKSHELF LOGIC ("Books of Her Choice" with localStorage)
+// 4. ALPHAKORE PROJECT DOSSIER DATA & MODAL SYSTEM
 // ============================================================================
-const STORAGE_KEY = 'goonies_books_of_her_choice';
-
-const defaultBooks = [
-  {
-    id: 'b1',
-    title: 'The Neverending Story',
-    author: 'Michael Ende',
-    year: '1979',
-    genre: 'Fantasy',
-    spine: 'spine-sea',
-    rating: 5,
-    notes: 'A lonely boy reads a magical book in an old bookstore attic and discovers that his own courage is needed to save the world of Fantastica from the Nothing.'
+const projectDossiers = {
+  prism: {
+    title: 'PRISM',
+    status: 'Live',
+    tagline: 'AI Workflow Orchestration Engine',
+    desc: 'Next-generation workflow orchestration engine visualizing real-time prompt topologies, multi-step LLM routing, and automated inference pipelines with zero latency bottlenecks.',
+    architecture: 'Features a low-latency WebGL graph engine calculating real-time prompt token weightings, dynamic branch pruning, and asynchronous fallbacks across multi-cloud inference providers. Enables teams to monitor complex chained LLM flows with millisecond trace resolution.',
+    tags: ['WebGL Canvas', 'AI Flow Topology', 'Streaming WebSockets', 'Edge Inference Routing', 'Multi-LLM Fallback', 'TypeScript'],
+    link: 'https://prism-ai-flow.vercel.app/',
+    linkLabel: 'Open PRISM Engine ↗'
   },
-  {
-    id: 'b2',
-    title: 'Treasure Island',
-    author: 'Robert Louis Stevenson',
-    year: '1883',
-    genre: 'Adventure',
-    spine: 'spine-amber',
-    rating: 5,
-    notes: 'The immortal tale of the Spanish Main, the sea chest, the dead man’s map, and Long John Silver that directly inspired Spielberg and Donner’s One-Eyed Willy.'
+  delta: {
+    title: 'DELTA',
+    status: 'In Progress',
+    tagline: 'Edge Infrastructure & Telemetry',
+    desc: 'High-throughput data telemetry and edge infrastructure layer designed for autonomous cloud micro-services, distributed sensor feeds, and low-latency message queues.',
+    architecture: 'Underlying zero-copy packet ingestion layer engineered with Rust primitives, compiling directly to edge worker nodes. Capable of handling over 250,000 telemetry events per second per cluster with distributed consensus and geo-redundancy.',
+    tags: ['Rust Edge Primitives', 'Distributed Telemetry', 'Kafka / Redpanda Queues', 'Zero-Copy Serialization', 'Microservices'],
+    link: 'https://delta-kappa-pink.vercel.app/',
+    linkLabel: 'Inspect Edge Preview ↗'
   },
-  {
-    id: 'b3',
-    title: 'The Goonies: The Novel',
-    author: 'James Kahn',
-    year: '1985',
-    genre: 'Lore',
-    spine: 'spine-gold',
-    rating: 5,
-    notes: 'The definitive companion novel written alongside the 1985 screenplay, delving deep into One-Eyed Willy’s armada and the brotherhood of the Goon Docks.'
-  }
-];
-
-function getBooks() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultBooks));
-      return defaultBooks;
-    }
-    return JSON.parse(raw);
-  } catch (e) {
-    console.error('Storage access error:', e);
-    return defaultBooks;
-  }
-}
-
-function saveBooks(books) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
-  } catch (e) {
-    console.error('Failed to save to localStorage:', e);
-  }
-}
-
-let activeGenre = 'all';
-let searchQuery = '';
-
-function renderBookshelf() {
-  const books = getBooks();
-  const container = elements.booksGridContainer;
-  if (!container) return;
-
-  const filtered = books.filter(book => {
-    const matchGenre = (activeGenre === 'all') || (book.genre.toLowerCase() === activeGenre.toLowerCase());
-    const matchSearch = !searchQuery || 
-      book.title.toLowerCase().includes(searchQuery) ||
-      book.author.toLowerCase().includes(searchQuery) ||
-      (book.notes && book.notes.toLowerCase().includes(searchQuery));
-    return matchGenre && matchSearch;
-  });
-
-  if (elements.bookCountDisplay) {
-    elements.bookCountDisplay.textContent = `Showing ${filtered.length} of ${books.length} Books`;
-  }
-
-  container.innerHTML = '';
-
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
-        <p style="font-size: 1.2rem; font-family: var(--font-sharp); margin-bottom: 0.5rem;">No volumes found</p>
-        <p style="font-size: 0.88rem; color: var(--text-dim);">Try a different search query or clear the filter.</p>
-      </div>
-    `;
-    return;
-  }
-
-  filtered.forEach(book => {
-    const stars = '★'.repeat(book.rating || 5) + '☆'.repeat(5 - (book.rating || 5));
-    const card = document.createElement('article');
-    card.className = 'book-card';
-    card.innerHTML = `
-      <div class="book-card-top">
-        <div class="book-spine-badge ${book.spine || 'spine-gold'}">📖</div>
-        <div class="book-meta">
-          <span class="book-genre-tag">${book.genre}</span>
-          <h4 class="book-title">${escapeHTML(book.title)}</h4>
-          <p class="book-author">by ${escapeHTML(book.author)}${book.year ? ` • ${book.year}` : ''}</p>
-        </div>
-      </div>
-      <div class="book-stars">${stars}</div>
-      <div class="book-quote-box">"${escapeHTML(book.notes || 'A cherished volume chosen for the shelf.')}"</div>
-      <div class="book-card-footer">
-        <span>Permanently Saved</span>
-        <button class="btn-remove-book" onclick="removeBook('${book.id}')">Remove</button>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-}
-
-function escapeHTML(str) {
-  if (!str) return '';
-  return str.replace(/[&<>'"]/g, 
-    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-  );
-}
-
-window.removeBook = function(id) {
-  const books = getBooks();
-  const updated = books.filter(b => b.id !== id);
-  saveBooks(updated);
-  renderBookshelf();
-};
-
-// Search & Filter Listeners
-if (elements.bookSearchInput) {
-  elements.bookSearchInput.addEventListener('input', (e) => {
-    searchQuery = e.target.value.trim().toLowerCase();
-    renderBookshelf();
-  });
-}
-
-if (elements.filterPills) {
-  elements.filterPills.forEach(btn => {
-    btn.addEventListener('click', () => {
-      elements.filterPills.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeGenre = btn.dataset.genre || 'all';
-      renderBookshelf();
-    });
-  });
-}
-
-// Modal open / close
-function openBookModal() {
-  if (elements.bookModalBackdrop) {
-    elements.bookModalBackdrop.classList.add('open');
-    elements.bookModalBackdrop.setAttribute('aria-hidden', 'false');
-  }
-}
-
-function closeBookModal() {
-  if (elements.bookModalBackdrop) {
-    elements.bookModalBackdrop.classList.remove('open');
-    elements.bookModalBackdrop.setAttribute('aria-hidden', 'true');
-    if (elements.addBookForm) elements.addBookForm.reset();
-    setRating(5);
-  }
-}
-
-if (elements.openAddBookBtn) elements.openAddBookBtn.addEventListener('click', openBookModal);
-if (elements.closeBookModalBtn) elements.closeBookModalBtn.addEventListener('click', closeBookModal);
-if (elements.cancelBookBtn) elements.cancelBookBtn.addEventListener('click', closeBookModal);
-
-// Star rating picker
-function setRating(val) {
-  if (elements.bookRating) elements.bookRating.value = val;
-  const stars = elements.starPicker ? elements.starPicker.querySelectorAll('.star-pick') : [];
-  stars.forEach((s, idx) => {
-    if (idx < val) s.classList.add('active');
-    else s.classList.remove('active');
-  });
-}
-
-if (elements.starPicker) {
-  elements.starPicker.addEventListener('click', (e) => {
-    if (e.target.classList.contains('star-pick')) {
-      const r = parseInt(e.target.dataset.rating, 10) || 5;
-      setRating(r);
-    }
-  });
-}
-
-// Handle Add Book Submission
-if (elements.addBookForm) {
-  elements.addBookForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const title = document.getElementById('bookTitle').value.trim();
-    const author = document.getElementById('bookAuthor').value.trim();
-    const year = document.getElementById('bookYear').value.trim();
-    const genre = document.getElementById('bookGenre').value;
-    const spine = document.getElementById('bookSpine').value;
-    const rating = parseInt(elements.bookRating.value, 10) || 5;
-    const notes = document.getElementById('bookNotes').value.trim();
-
-    if (!title || !author) return;
-
-    const newBook = {
-      id: 'book_' + Date.now(),
-      title,
-      author,
-      year,
-      genre,
-      spine,
-      rating,
-      notes
-    };
-
-    const books = getBooks();
-    books.unshift(newBook);
-    saveBooks(books);
-    closeBookModal();
-    renderBookshelf();
-
-    // Trigger celebratory chime if audio is running
-    playCelebrationChime();
-  });
-}
-
-// ============================================================================
-// 5. CHARACTER DOSSIER MODALS
-// ============================================================================
-const characterDossiers = {
-  mikey: {
-    name: "Mikey Walsh",
-    actor: "Sean Astin",
-    tagline: "The Visionary & Leader",
-    quote: "Our parents want the bestest stuff for us. But right now, they got to do what's right for them. Because it's their time. Their time! Up there! Down here, it's our time. It's our time down here!",
-    lore: "Armed with his inhaler and an unshakeable belief in pirate lore, Mikey led his neighborhood friends into the treacherous cavern networks under Astoria to find One-Eyed Willy's fortune and save his home from destruction."
+  lazycook: {
+    title: 'LAZYCOOK',
+    status: 'Live',
+    tagline: 'Autonomous Terminal Assistant',
+    desc: 'An autonomous multi-agent AI assistant that runs natively in your terminal. Powered by Gemini 2.5 Flash with a four-agent architecture — engineered for maximum output with minimum human intervention.',
+    architecture: 'Architected around a hierarchical supervisor model where an Executive Planner decomposes natural language intents and dynamically orchestrates specialized sub-agents: Code Synthesizer, Shell Operator, Diagnostics Inspector, and Documentation Oracle. Operates locally within sandbox isolation with zero external memory leaks.',
+    tags: ['Gemini 2.5 Flash', 'Autonomous Agents', 'Terminal CLI', 'Multi-Agent Supervisor', 'Python / Node.js', 'Zero-Latency RPC'],
+    link: 'https://thelazycook.in/',
+    linkLabel: 'Launch Live Assistant ↗'
   },
-  chunk: {
-    name: "Lawrence 'Chunk' Cohen",
-    actor: "Jeff Cohen",
-    tagline: "Heart of the Goon Docks",
-    quote: "First you make me do the Truffle Shuffle, then you put me in the cellar with a dead guy!",
-    lore: "Accidentally captured by the Fratelli family, Chunk formed an unbreakable, legendary bond with Sloth over a shared Baby Ruth bar. His loyalty and empathy became the Goonies' greatest salvation."
+  rezum: {
+    title: 'REZUM',
+    status: 'Live',
+    tagline: 'Machine-Readable Portfolio Protocol',
+    desc: 'An AI-readable portfolio builder that turns your resume into a machine-optimized format — so recruiters’ AI tools and ATS systems parse your experience exactly as intended.',
+    architecture: 'Generates dual-layered assets: human-crafted editorial typographic presentations paired with machine-optimized structured data schema (JSON-LD, microdata, vector embeddings). Bypasses legacy ATS truncation bugs and guarantees parsing fidelity across modern LLM recruiting pipelines.',
+    tags: ['AI Schema Optimization', 'JSON-LD Architecture', 'Vector Normalization', 'ATS Parsing Fidelity', 'Next.js Edge'],
+    link: 'https://rezum-alphakore.vercel.app/',
+    linkLabel: 'Generate Machine Resume ↗'
   },
-  sloth: {
-    name: "Sloth Fratelli",
-    actor: "John Matuszak",
-    tagline: "The Gentle Giant",
-    quote: "HEEEEY YOU GUUUUYS! ... Rocky Road? Heh-heh!",
-    lore: "Chained away by his villainous family, Sloth found friendship with Chunk and took up a pirate bicorne hat to become the sworn protector of the Goonies, tearing open bars and breaking boards to save the children."
-  },
-  mouth: {
-    name: "Clark 'Mouth' Devereaux",
-    actor: "Corey Feldman",
-    tagline: "The Translator & Wit",
-    quote: "Yeah, but you know what? This one, this one right here... this was my dream, my wish. And it didn't come true. So I'm taking it back. I'm taking them all back.",
-    lore: "The silver-tongued member of the group fluent in Spanish, Mouth translated the cryptic verses engraved upon Chester Copperpot's skeleton and the ancient Doubloon to guide the crew safely through deadly organ traps."
-  },
-  data: {
-    name: "Richard 'Data' Wang",
-    actor: "Ke Huy Quan",
-    tagline: "The Gadgeteer Genius",
-    quote: "Pinchers of Power! You guys, that was close! That was real close!",
-    lore: "A relentless inventor equipped with a custom utility trench coat housing spring-loaded boxing gloves, Slick Shoes oil dispensers, and dental-wire ziplines that repeatedly cheated death across subterranean perils."
+  '3f1': {
+    title: '3F1',
+    status: 'Live',
+    tagline: 'Bespoke Spatial Digital Commerce',
+    desc: 'Bespoke digital commerce platform and brand experience built with cinematic 3D product visualizers, responsive spatial physics, and luxury architectural typography.',
+    architecture: 'Combines GPU-accelerated Three.js shader pipelines with instant micro-checkout transactions. Features custom PBR materials that replicate real-world light caustics on mobile browsers with consistent 60fps performance.',
+    tags: ['Three.js WebGL', 'Custom PBR Shaders', 'Headless Commerce', 'Spatial Physics', 'Ultra-Low Latency UX'],
+    link: 'https://www.3f1.in/',
+    linkLabel: 'Experience 3F1 ↗'
   }
 };
 
-window.openModal = function(charKey) {
-  const data = characterDossiers[charKey];
-  if (!data || !elements.modalContent || !elements.charModalBackdrop) return;
+function openProjectModal(projectId) {
+  const data = projectDossiers[projectId];
+  if (!data || !elements.projectModalBackdrop || !elements.projectModalContent) return;
 
-  elements.modalContent.innerHTML = `
-    <span class="eyebrow gold">// CHARACTER DOSSIER</span>
-    <h3 class="modal-title" style="margin-top: 0.4rem;">${data.name}</h3>
-    <p style="color: var(--accent-gold); font-size: 0.95rem; margin-bottom: 1.5rem; letter-spacing: 0.05em;">Portrayed by ${data.actor} • ${data.tagline}</p>
-    <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--accent-cyan); padding: 1.2rem; border-radius: 4px; margin-bottom: 1.5rem; font-style: italic; line-height: 1.6; color: #fff;">
-      "${data.quote}"
+  elements.projectModalContent.innerHTML = `
+    <div class="project-modal-eyebrow">PROJECT SPECIFICATIONS</div>
+    <h3 class="project-modal-title">${data.title}</h3>
+    <span class="project-modal-status ${data.status.toLowerCase().includes('live') ? 'live' : 'progress'}">${data.status}</span>
+    <p class="project-modal-desc">${data.desc}</p>
+    
+    <div class="project-modal-section-title">Architecture &amp; Design</div>
+    <p class="project-modal-desc">${data.architecture}</p>
+
+    <div class="project-modal-section-title">Engineered Stack</div>
+    <div class="project-modal-tags">
+      ${data.tags.map(t => `<span class="project-modal-tag">${t}</span>`).join('')}
     </div>
-    <p style="font-size: 0.92rem; line-height: 1.7; color: var(--text-muted);">${data.lore}</p>
+
+    <div class="project-modal-actions">
+      <a href="${data.link}" target="_blank" rel="noopener noreferrer" class="work-btn-primary">${data.linkLabel}</a>
+      <button class="work-btn-ghost" onclick="closeProjectModal()">Dismiss</button>
+    </div>
   `;
 
-  elements.charModalBackdrop.classList.add('open');
-  elements.charModalBackdrop.setAttribute('aria-hidden', 'false');
-};
+  elements.projectModalBackdrop.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
 
-window.closeModal = function() {
-  if (elements.charModalBackdrop) {
-    elements.charModalBackdrop.classList.remove('open');
-    elements.charModalBackdrop.setAttribute('aria-hidden', 'true');
+function closeProjectModal() {
+  if (!elements.projectModalBackdrop) return;
+  elements.projectModalBackdrop.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+window.openProjectModal = openProjectModal;
+window.closeProjectModal = closeProjectModal;
+
+if (elements.projectModalBackdrop) {
+  elements.projectModalBackdrop.addEventListener('click', (e) => {
+    if (e.target === elements.projectModalBackdrop) {
+      closeProjectModal();
+    }
+  });
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeProjectModal();
   }
-};
+});
 
-if (elements.charModalBackdrop) {
-  elements.charModalBackdrop.addEventListener('click', (e) => {
-    if (e.target === elements.charModalBackdrop) closeModal();
+// ============================================================================
+// 5. SKIPER-17 GSAP STICKY ROTATING CARD DECK ANIMATION
+// ============================================================================
+let skiper17Timeline = null;
+
+function initSkiper17CardStack() {
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+    console.warn('GSAP or ScrollTrigger not detected');
+    return;
+  }
+  gsap.registerPlugin(ScrollTrigger);
+
+  const section = document.querySelector('.skiper-deck-section');
+  const cardElements = document.querySelectorAll('.skiper17-card');
+  const counterEl = document.getElementById('skiper17Counter');
+  const dots = document.querySelectorAll('.skiper17-dot');
+
+  if (!section || !cardElements.length) return;
+
+  const totalCards = cardElements.length;
+
+  // Set initial states exactly matching Skiper-17:
+  // Card 0 at y: "0%", scale: 1, rotation: 0
+  // Next cards down below at y: "100%"
+  gsap.set(cardElements[0], { y: '0%', scale: 1, rotation: 0, opacity: 1 });
+  for (let i = 1; i < totalCards; i++) {
+    gsap.set(cardElements[i], { y: '100%', scale: 1, rotation: 0, opacity: 1 });
+  }
+
+  if (skiper17Timeline) {
+    skiper17Timeline.kill();
+  }
+
+  // Create scrubbed ScrollTrigger timeline synced to the native sticky stage
+  skiper17Timeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: section,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.6,
+      onUpdate: (self) => {
+        const activeIdx = Math.min(
+          totalCards - 1,
+          Math.floor(self.progress * (totalCards - 0.05))
+        );
+        if (counterEl) {
+          counterEl.textContent = `0${activeIdx + 1} / 0${totalCards}`;
+        }
+        dots.forEach((dot, idx) => {
+          if (idx === activeIdx) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+    }
+  });
+
+  // Skiper-17 Card Stack Animation Loop:
+  // Current card scales down (scale: 0.88), rotates (rotation: 4deg or -4deg), while next card slides up to y: 0%
+  for (let i = 0; i < totalCards - 1; i++) {
+    const currentCard = cardElements[i];
+    const nextCard = cardElements[i + 1];
+    const position = i;
+
+    // Current card scales down, tilts, and recedes cleanly into the stack without transparency bleed-through
+    skiper17Timeline.to(
+      currentCard,
+      {
+        scale: 0.92,
+        rotation: i % 2 === 0 ? 3 : -3,
+        duration: 1,
+        ease: 'none',
+      },
+      position
+    );
+
+    // Next card ascends smoothly from y: 100% to y: 0%
+    skiper17Timeline.to(
+      nextCard,
+      {
+        y: '0%',
+        scale: 1,
+        rotation: 0,
+        duration: 1,
+        ease: 'none',
+      },
+      position
+    );
+  }
+
+  // Allow clicking on dots to jump smoothly to that card
+  dots.forEach((dot, idx) => {
+    dot.addEventListener('click', () => {
+      const trigger = skiper17Timeline.scrollTrigger;
+      if (trigger) {
+        const targetScroll = trigger.start + (trigger.end - trigger.start) * (idx / (totalCards - 1));
+        window.scrollTo({
+          top: targetScroll,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    ScrollTrigger.refresh();
   });
 }
 
 // ============================================================================
-// 6. ATMOSPHERIC WEB AUDIO ENGINE (Dave Grusin Inspired Analog Theme)
+// 5. SKIPER39 INTERACTIVE CROWD CANVAS SYSTEM
+// ============================================================================
+function initSkiper39CrowdCanvas() {
+  const canvas = document.getElementById('crowdCanvas');
+  const wrapper = document.getElementById('crowdWrapper');
+  const dossier = document.getElementById('crowdDossierCard');
+  if (!canvas || !wrapper) return;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  // Configuration for 15 rows x 7 cols Open Peeps sprite sheet (3600 x 2268)
+  const SPRITE_CONFIG = {
+    src: 'images/peeps/all-peeps.png',
+    rows: 15,
+    cols: 7,
+    cellWidth: 240,
+    cellHeight: 324
+  };
+
+  // The 9 Core Team Members - All with guy with hoodie avatar (index 26) in distinctive studio colors
+  const HOODIE_SPRITE_INDEX = 26; // Open Peeps iconic guy with hoodie
+  const TEAM_MEMBERS = [
+    {
+      id: 'hitarth',
+      name: 'Hitarth Trivedi',
+      badge: 'Hitarth Trivedi · Lead Architect',
+      role: 'Lead Architect & Full Stack',
+      category: 'lead engineer',
+      color: '#c84826', // Terracotta
+      spriteIndex: HOODIE_SPRITE_INDEX,
+      initials: 'HT',
+      bio: 'Spearheading core architectural decisions, multi-agent frameworks, and distributed system design.',
+      tags: ['Distributed Systems', 'Multi-Agent', 'Rust', 'TypeScript'],
+      links: [
+        { label: 'in', url: 'https://www.linkedin.com/in/hitarth-trivedi-ba1986300' },
+        { label: 'gh', url: 'https://github.com/HitarthTrivedi' },
+        { label: 'ig', url: 'https://www.instagram.com/htrivedi_' }
+      ]
+    },
+    {
+      id: 'harsh',
+      name: 'Harsh Patel',
+      badge: 'Harsh Patel · AI Architect',
+      role: 'AI & Full-Stack Builder',
+      category: 'engineer',
+      color: '#d97706', // Amber Gold
+      spriteIndex: HOODIE_SPRITE_INDEX,
+      initials: 'HP',
+      bio: 'Developing intelligent autonomous agent layers, prompt topology graphs, and LLM inference pipelines.',
+      tags: ['LLM Routing', 'Agent Workflows', 'Prompt Graphs', 'Python'],
+      links: [
+        { label: 'in', url: 'http://www.linkedin.com/in/harsh8818198' },
+        { label: '↗', url: 'https://harsh8818198portfolio.netlify.app/' },
+        { label: 'ig', url: 'https://www.instagram.com/0_8818198' }
+      ]
+    },
+    {
+      id: 'meet',
+      name: 'Meet Shah',
+      badge: 'Meet Shah · Systems Engineer',
+      role: 'Core Systems Engineer',
+      category: 'engineer',
+      color: '#059669', // Emerald Mint
+      spriteIndex: HOODIE_SPRITE_INDEX,
+      initials: 'MS',
+      bio: 'Building robust algorithmic logic, performance-critical modules, and reliable database architectures.',
+      tags: ['Algorithms', 'PostgreSQL', 'Distributed DB', 'C++'],
+      links: [
+        { label: 'in', url: 'https://www.linkedin.com/in/meetshah0656' },
+        { label: 'gh', url: 'https://github.com/MeetShah0656' }
+      ]
+    },
+    {
+      id: 'het',
+      name: 'Het Vaghela',
+      badge: 'Het Vaghela · Creative Tech',
+      role: 'Creative Technologist & Frontend',
+      category: 'creative',
+      color: '#0284c7', // Electric Blue
+      spriteIndex: HOODIE_SPRITE_INDEX,
+      initials: 'HV',
+      bio: 'Crafting immersive interactive interfaces, responsive physics-based layouts, and motion design.',
+      tags: ['Three.js', 'GSAP Motion', 'Creative Coding', 'Shaders'],
+      links: [
+        { label: 'in', url: 'https://www.linkedin.com/in/het-vaghela-8a8647339/' },
+        { label: '↗', url: 'https://portfolio-website-sigma-lac-93.vercel.app/' }
+      ]
+    },
+    {
+      id: 'deep',
+      name: 'Deep',
+      badge: 'Deep · Creative Direction',
+      role: 'Creative & Technical Direction',
+      category: 'creative',
+      color: '#7c3aed', // Royal Violet
+      spriteIndex: HOODIE_SPRITE_INDEX,
+      initials: 'DP',
+      bio: 'Harmonizing cinematic aesthetics with software architecture to create memorable brand experiences.',
+      tags: ['Creative Direction', 'Brand Strategy', '3D Vision', 'Design'],
+      links: [
+        { label: 'Studio', url: '#contact' }
+      ]
+    },
+    {
+      id: 'parth',
+      name: 'Parth Soni',
+      badge: 'Parth Soni · Cloud Architect',
+      role: 'Systems & Cloud Engineer',
+      category: 'lead engineer',
+      color: '#e11d48', // Crimson Rose
+      spriteIndex: HOODIE_SPRITE_INDEX,
+      initials: 'PS',
+      bio: 'Engineering low-latency backend infrastructure, cloud orchestration, and high-volume data streams.',
+      tags: ['Cloud Infra', 'Zero-Copy Streams', 'Kafka', 'Docker'],
+      links: [
+        { label: 'in', url: 'https://www.linkedin.com/in/parth-soni-54a974288' },
+        { label: '↗', url: 'https://parth-soni.vercel.app' },
+        { label: 'ig', url: 'https://www.instagram.com/parth_soni3010' }
+      ]
+    },
+    {
+      id: 'om',
+      name: 'Om Bhonsle',
+      badge: 'Om Bhonsle · DevOps Engineer',
+      role: 'DevOps & Cloud Systems',
+      category: 'engineer',
+      color: '#ca8a04', // Warm Gold
+      spriteIndex: HOODIE_SPRITE_INDEX,
+      initials: 'OB',
+      bio: 'Managing continuous integration, zero-downtime deployment pipelines, and Kubernetes telemetry.',
+      tags: ['Kubernetes', 'Telemetry', 'Cloud Deploy', 'Monitoring'],
+      links: [
+        { label: 'in', url: 'https://www.linkedin.com/in/om-bhonsle-a674133a3' },
+        { label: 'ig', url: 'https://www.instagram.com/ombhonsle2306' }
+      ]
+    },
+    {
+      id: 'shlok',
+      name: 'Shlok Patel',
+      badge: 'Shlok Patel · Product Designer',
+      role: 'Product Designer & UX',
+      category: 'creative',
+      color: '#c026d3', // Fuchsia
+      spriteIndex: HOODIE_SPRITE_INDEX,
+      initials: 'SP',
+      bio: 'Designing intuitive human-machine interfaces, tactile user flows, and brand design systems.',
+      tags: ['Product UX', 'Interface Design', 'Design Systems', 'Figma'],
+      links: [
+        { label: 'in', url: 'https://www.linkedin.com/in/shlok-patel-051b162b2' },
+        { label: '↗', url: 'https://shlok-portfolio.com' },
+        { label: 'ig', url: 'https://www.instagram.com/shlok_1125' }
+      ]
+    },
+    {
+      id: 'manav',
+      name: 'Manav Patel',
+      badge: 'Manav Patel · AI Researcher',
+      role: 'Research & Engineering',
+      category: 'engineer',
+      color: '#0d9488', // Teal
+      spriteIndex: HOODIE_SPRITE_INDEX,
+      initials: 'MP',
+      bio: 'Investigating next-generation neural architectures, latency optimization, and automated verification.',
+      tags: ['Neural Research', 'Latency Tuning', 'Verification', 'Python'],
+      links: [
+        { label: 'in', url: 'http://www.linkedin.com/in/manav-patel-4930132a6' }
+      ]
+    }
+  ];
+
+  let currentFilter = 'all';
+  let hoveredPeep = null;
+  let isMouseInsideDossier = false;
+
+  const stage = { width: 0, height: 0 };
+  const allSprites = [];
+  const crowd = [];
+
+  // UTILITIES
+  const randomRange = (min, max) => min + Math.random() * (max - min);
+  const randomIndex = (array) => (Math.random() * array.length) | 0;
+
+  // Offscreen pre-rendering of colored sprites for team members
+  function createTintedSpriteCanvas(imageSource, rect, hexColor) {
+    const [sx, sy, sw, sh] = rect;
+    const offCanvas = document.createElement('canvas');
+    offCanvas.width = sw;
+    offCanvas.height = sh;
+    const offCtx = offCanvas.getContext('2d');
+    if (!offCtx) return null;
+
+    // 1. Draw source monochrome sprite
+    offCtx.drawImage(imageSource, sx, sy, sw, sh, 0, 0, sw, sh);
+
+    // 2. Multiply composite with color (white becomes color, black lines stay black)
+    offCtx.globalCompositeOperation = 'multiply';
+    offCtx.fillStyle = hexColor;
+    offCtx.fillRect(0, 0, sw, sh);
+
+    // 3. Keep original sprite's transparency
+    offCtx.globalCompositeOperation = 'destination-in';
+    offCtx.drawImage(imageSource, sx, sy, sw, sh, 0, 0, sw, sh);
+
+    return offCanvas;
+  }
+
+  // Pre-generate all sprite rects from 15x7 grid and load custom hooded masked sprite
+  const img = new Image();
+  img.src = SPRITE_CONFIG.src;
+
+  const maskedHoodieImg = new Image();
+  maskedHoodieImg.src = 'images/peeps/peep_hoodie_masked.png';
+
+  let loadedCount = 0;
+  const onImageReady = () => {
+    loadedCount++;
+    if (loadedCount < 2) return;
+
+    const { rows, cols, cellWidth, cellHeight } = SPRITE_CONFIG;
+    const total = rows * cols; // 105
+
+    for (let i = 0; i < total; i++) {
+      allSprites.push([
+        (i % rows) * cellWidth,
+        ((i / rows) | 0) * cellHeight,
+        cellWidth,
+        cellHeight
+      ]);
+    }
+
+    // Pre-tint team members with the custom hooded & face-covered sprite
+    const maskedRect = [0, 0, 240, 324];
+    TEAM_MEMBERS.forEach(member => {
+      member.rect = maskedRect;
+      member.monochromeImg = maskedHoodieImg;
+      member.tintedCanvas = createTintedSpriteCanvas(maskedHoodieImg, maskedRect, member.color);
+    });
+
+    initSimulation();
+  };
+
+  img.onload = onImageReady;
+  maskedHoodieImg.onload = onImageReady;
+  img.onerror = () => console.error('Failed to load crowd spritesheet');
+  maskedHoodieImg.onerror = () => console.error('Failed to load hooded masked sprite');
+
+  // Peep factory
+  function createPeep(options) {
+    const { isTeam, teamData, rect, scale = 0.85 } = options;
+    return {
+      isTeam: !!isTeam,
+      teamData: teamData || null,
+      rect: rect,
+      width: rect[2],
+      height: rect[3],
+      scale: scale,
+      scaleX: 1,
+      x: 0,
+      y: 0,
+      anchorY: 0,
+      walk: null,
+      bob: null,
+      originalTimeScale: 1,
+      isHovered: false
+    };
+  }
+
+  function resetPeep(peep) {
+    const direction = Math.random() > 0.5 ? 1 : -1;
+    // Walk paths span vertically across lower 50% of canvas with realistic perspective
+    const depth = Math.random();
+    // Scale: 0.72 in background to 0.94 in foreground
+    peep.scale = 0.72 + depth * 0.22;
+
+    const scaledWidth = peep.width * peep.scale;
+
+    // Y position between 56% and 94% of stage height for comfortable ground line
+    const startY = stage.height * 0.56 + depth * (stage.height * 0.38);
+    peep.y = startY;
+    peep.anchorY = startY;
+
+    let startX, endX;
+    if (direction === 1) {
+      startX = -scaledWidth - randomRange(40, 160);
+      endX = stage.width + scaledWidth + 60;
+      peep.scaleX = 1;
+    } else {
+      startX = stage.width + scaledWidth + randomRange(40, 160);
+      endX = -scaledWidth - 60;
+      peep.scaleX = -1;
+    }
+
+    peep.x = startX;
+
+    // Walking speed: calmed down and slowed for smooth, deliberate gait across full screen
+    const walkDuration = peep.isTeam ? randomRange(34, 48) : randomRange(36, 54);
+    const timeScale = randomRange(0.75, 0.92);
+    peep.originalTimeScale = timeScale;
+
+    // Kill existing animations if any
+    if (peep.walk) peep.walk.kill();
+    if (peep.bob) peep.bob.kill();
+
+    // GSAP Walk timeline (horizontal movement)
+    peep.walk = gsap.to(peep, {
+      duration: walkDuration,
+      x: endX,
+      ease: 'none',
+      onComplete: () => {
+        resetPeep(peep);
+      }
+    });
+    peep.walk.timeScale(timeScale);
+
+    // GSAP Bobbing animation (vertical stepping motion naturally timed to relaxed walking pace)
+    const bobDuration = 0.32 / timeScale;
+    peep.bob = gsap.to(peep, {
+      duration: bobDuration,
+      y: startY - (6 * peep.scale),
+      repeat: -1,
+      yoyo: true,
+      ease: 'power1.inOut'
+    });
+
+    return peep;
+  }
+
+  function initSimulation() {
+    resizeCanvas();
+
+    // 1. Add all 9 team members to crowd, distributed evenly across the full width
+    TEAM_MEMBERS.forEach((member, i) => {
+      const peep = createPeep({
+        isTeam: true,
+        teamData: member,
+        rect: member.rect,
+        scale: 0.85
+      });
+      resetPeep(peep);
+      // Stagger them cleanly across the full screen width
+      const initialProgress = 0.05 + (i / TEAM_MEMBERS.length) * 0.88;
+      peep.walk.progress(initialProgress);
+      crowd.push(peep);
+    });
+
+    // 2. Add 38 background crowd peeps from remaining non-hoodie sprites (lively, rich crowd)
+    const bgSprites = allSprites.filter((_, idx) => idx !== HOODIE_SPRITE_INDEX);
+
+    for (let i = 0; i < 38; i++) {
+      const randomRect = bgSprites[randomIndex(bgSprites)];
+      const peep = createPeep({
+        isTeam: false,
+        rect: randomRect,
+        scale: 0.76
+      });
+      resetPeep(peep);
+      // Evenly distribute progress across the full width with slight random jitter
+      const progress = ((i / 38) + Math.random() * 0.05) % 1;
+      peep.walk.progress(progress);
+      crowd.push(peep);
+    }
+
+    // Start GSAP Ticker for rendering
+    gsap.ticker.add(render);
+
+    // Setup Event Listeners
+    setupInteractions();
+    setupFilters();
+  }
+
+  function resizeCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    stage.width = wrapper.clientWidth;
+    stage.height = wrapper.clientHeight;
+
+    canvas.width = stage.width * dpr;
+    canvas.height = stage.height * dpr;
+    ctx.scale(dpr, dpr);
+  }
+
+  function render() {
+    if (!stage.width || !stage.height) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, stage.width, stage.height);
+
+    // Sort crowd by anchorY (depth): background people drawn first, foreground in front
+    crowd.sort((a, b) => a.anchorY - b.anchorY);
+
+    // Render characters
+    crowd.forEach(peep => {
+      renderPeep(peep);
+    });
+
+    // Render floating head labels for team members with collision prevention tiers
+    const activeTeamPeeps = crowd.filter(p => p.isTeam && (currentFilter === 'all' || p.teamData.category.includes(currentFilter)));
+    // Sort left to right to assign non-overlapping tiers
+    activeTeamPeeps.sort((a, b) => a.x - b.x);
+
+    const tiers = new Map();
+    for (let i = 0; i < activeTeamPeeps.length; i++) {
+      let tier = 0;
+      const curr = activeTeamPeeps[i];
+      for (let j = 0; j < i; j++) {
+        const prev = activeTeamPeeps[j];
+        if (Math.abs(curr.x - prev.x) < 185) {
+          const prevTier = tiers.get(prev) || 0;
+          if (tier <= prevTier) {
+            tier = (prevTier + 1) % 3;
+          }
+        }
+      }
+      tiers.set(curr, tier);
+    }
+
+    activeTeamPeeps.forEach(peep => {
+      renderPeepLabel(peep, tiers.get(peep) || 0);
+    });
+  }
+
+  function renderPeep(peep) {
+    ctx.save();
+    ctx.translate(peep.x, peep.y);
+
+    const isMatch = currentFilter === 'all' || (peep.teamData && peep.teamData.category.includes(currentFilter));
+
+    if (peep.isTeam && isMatch) {
+      // 1. Draw glowing ground spotlight aura
+      const auraRadius = 60 * peep.scale;
+      const grad = ctx.createRadialGradient(0, -peep.height * peep.scale * 0.45, 10, 0, -peep.height * peep.scale * 0.45, auraRadius * 1.6);
+      grad.addColorStop(0, hexToRgba(peep.teamData.color, peep.isHovered ? 0.45 : 0.22));
+      grad.addColorStop(0.7, hexToRgba(peep.teamData.color, peep.isHovered ? 0.2 : 0.06));
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, -peep.height * peep.scale * 0.45, auraRadius * 1.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 2. Active selection ellipse at feet if hovered
+      if (peep.isHovered) {
+        ctx.strokeStyle = peep.teamData.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 45 * peep.scale, 10 * peep.scale, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    // Flip & Scale
+    ctx.scale(peep.scaleX * peep.scale, peep.scale);
+
+    // Opacity handling for filters
+    if (peep.isTeam && !isMatch) {
+      ctx.globalAlpha = 0.22;
+    } else if (!peep.isTeam && currentFilter !== 'all') {
+      ctx.globalAlpha = 0.35;
+    } else {
+      ctx.globalAlpha = 1;
+    }
+
+    // Draw sprite (anchored center-bottom)
+    const drawX = -peep.width / 2;
+    const drawY = -peep.height;
+
+    if (peep.isTeam && isMatch && peep.teamData && peep.teamData.tintedCanvas) {
+      // Draw colored hooded masked version
+      ctx.drawImage(peep.teamData.tintedCanvas, drawX, drawY);
+    } else if (peep.isTeam && peep.teamData && peep.teamData.monochromeImg) {
+      // Draw monochrome hooded masked version for inactive team members
+      ctx.drawImage(peep.teamData.monochromeImg, drawX, drawY);
+    } else {
+      // Draw monochrome version from source sprite sheet for background crowd
+      ctx.drawImage(
+        img,
+        peep.rect[0], peep.rect[1], peep.rect[2], peep.rect[3],
+        drawX, drawY, peep.width, peep.height
+      );
+    }
+
+    ctx.restore();
+  }
+
+  function renderPeepLabel(peep, labelTier = 0) {
+    const isMatch = currentFilter === 'all' || (peep.teamData && peep.teamData.category.includes(currentFilter));
+    if (!isMatch) return;
+
+    // Dynamic vertical offset based on collision tier (Prevents overlapping)
+    const tierOffset = labelTier * 26;
+    const headX = peep.x;
+    const headY = peep.y - (peep.height * peep.scale) - 18 - tierOffset;
+
+    ctx.save();
+
+    // Connecting hairline anchor down to head
+    ctx.beginPath();
+    ctx.moveTo(headX, headY + 11);
+    ctx.lineTo(headX, peep.y - (peep.height * peep.scale) + 2);
+    ctx.strokeStyle = peep.isHovered ? peep.teamData.color : 'rgba(22, 20, 18, 0.24)';
+    ctx.lineWidth = peep.isHovered ? 1.5 : 1;
+    ctx.stroke();
+
+    // Prepare text
+    const nameText = peep.teamData.name;
+    const roleText = '· ' + peep.teamData.role.split('&')[0].trim();
+
+    ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+    const nameWidth = ctx.measureText(nameText).width;
+
+    ctx.font = '500 9px "Space Mono", monospace';
+    const roleWidth = ctx.measureText(roleText).width;
+
+    const totalContentWidth = 14 + nameWidth + 6 + roleWidth + 14;
+    const pillWidth = Math.max(totalContentWidth, 120);
+    const pillHeight = 22;
+    const pillX = headX - pillWidth / 2;
+    const pillY = headY - pillHeight / 2;
+    const radius = 11;
+
+    // Subtle drop shadow for clarity
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 2;
+
+    // Draw Rounded Pill
+    ctx.beginPath();
+    ctx.roundRect(pillX, pillY, pillWidth, pillHeight, radius);
+
+    if (peep.isHovered) {
+      ctx.fillStyle = peep.teamData.color;
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(22, 20, 18, 0.16)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    ctx.shadowColor = 'transparent';
+
+    // Status Dot
+    ctx.beginPath();
+    ctx.arc(pillX + 11, pillY + 11, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = peep.isHovered ? '#ffffff' : peep.teamData.color;
+    ctx.fill();
+
+    // Name text
+    ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+    ctx.fillStyle = peep.isHovered ? '#ffffff' : '#151413';
+    ctx.fillText(nameText, pillX + 20, pillY + 14.5);
+
+    // Role text
+    ctx.font = '500 9px "Space Mono", monospace';
+    ctx.fillStyle = peep.isHovered ? 'rgba(255, 255, 255, 0.9)' : '#7a756c';
+    ctx.fillText(roleText, pillX + 20 + nameWidth + 5, pillY + 14.5);
+
+    ctx.restore();
+  }
+
+  function hexToRgba(hex, alpha) {
+    let c = hex.replace('#', '');
+    if (c.length === 3) c = c.split('').map(x => x + x).join('');
+    const num = parseInt(c, 16);
+    return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+  }
+
+  function setupInteractions() {
+    // Mouse Move Hit Testing
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      let found = null;
+
+      // Check team members in reverse order (foreground first)
+      for (let i = crowd.length - 1; i >= 0; i--) {
+        const peep = crowd[i];
+        if (!peep.isTeam) continue;
+
+        const isMatch = currentFilter === 'all' || (peep.teamData && peep.teamData.category.includes(currentFilter));
+        if (!isMatch) continue;
+
+        const halfW = (peep.width * peep.scale) / 2;
+        const h = peep.height * peep.scale;
+
+        // Body hit test
+        const bodyHit = mouseX >= peep.x - halfW && mouseX <= peep.x + halfW && mouseY >= peep.y - h && mouseY <= peep.y;
+
+        // Head & Badge hit test (covering tiered badge heights up to 90px above head)
+        const badgeHit = mouseX >= peep.x - 90 && mouseX <= peep.x + 90 && mouseY >= peep.y - h - 85 && mouseY <= peep.y - h;
+
+        if (bodyHit || badgeHit) {
+          found = peep;
+          break;
+        }
+      }
+
+      if (found) {
+        if (hoveredPeep !== found) {
+          // Restore previous if any
+          if (hoveredPeep) {
+            hoveredPeep.isHovered = false;
+            gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
+            gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
+          }
+
+          hoveredPeep = found;
+          hoveredPeep.isHovered = true;
+
+          // SLOW MOTION: Decelerate walking speed
+          gsap.to(hoveredPeep.walk, { timeScale: 0.08, duration: 0.35, overwrite: 'auto' });
+          gsap.to(hoveredPeep.bob, { timeScale: 0.08, duration: 0.35, overwrite: 'auto' });
+
+          showDossier(hoveredPeep);
+        } else {
+          // Update position smoothly as person slowly steps
+          updateDossierPosition(hoveredPeep);
+        }
+        canvas.style.cursor = 'pointer';
+      } else {
+        if (hoveredPeep && !isMouseInsideDossier) {
+          hoveredPeep.isHovered = false;
+          gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
+          gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
+          hoveredPeep = null;
+          hideDossier();
+        }
+        canvas.style.cursor = 'default';
+      }
+    });
+
+    // Leave canvas
+    canvas.addEventListener('mouseleave', () => {
+      setTimeout(() => {
+        if (!isMouseInsideDossier && hoveredPeep) {
+          hoveredPeep.isHovered = false;
+          gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
+          gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
+          hoveredPeep = null;
+          hideDossier();
+        }
+      }, 100);
+    });
+
+    // Dossier hover tracking so links remain clickable
+    if (dossier) {
+      dossier.addEventListener('mouseenter', () => {
+        isMouseInsideDossier = true;
+      });
+      dossier.addEventListener('mouseleave', () => {
+        isMouseInsideDossier = false;
+        if (hoveredPeep) {
+          hoveredPeep.isHovered = false;
+          gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
+          gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
+          hoveredPeep = null;
+        }
+        hideDossier();
+      });
+    }
+
+    // Resize handling
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+    });
+  }
+
+  function formatSocialButton(link, color) {
+    let iconSvg = '';
+    let labelText = link.label;
+
+    if (link.label === 'in') {
+      labelText = 'LinkedIn';
+      iconSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.64a1.65 1.65 0 0 0-1.66 1.66 1.66 1.66 0 0 0 1.66 1.66 1.66 1.66 0 0 0 1.66-1.66c0-.92-.74-1.66-1.66-1.66Z"/></svg>`;
+    } else if (link.label === 'gh') {
+      labelText = 'GitHub';
+      iconSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z"/></svg>`;
+    } else if (link.label === 'ig') {
+      labelText = 'Instagram';
+      iconSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`;
+    } else if (link.label === '↗') {
+      labelText = 'Portfolio';
+      iconSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17L17 7M7 7h10v10"/></svg>`;
+    } else {
+      labelText = link.label;
+      iconSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17L17 7M7 7h10v10"/></svg>`;
+    }
+
+    return `
+      <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="dossier-social-chip">
+        ${iconSvg}
+        <span>${labelText}</span>
+        <span class="chip-arrow">↗</span>
+      </a>
+    `;
+  }
+
+  function showDossier(peep) {
+    if (!dossier) return;
+    const data = peep.teamData;
+
+    // Populate Dossier Content
+    const frameEl = document.getElementById('dossierAvatarFrame');
+    const avatarEl = document.getElementById('dossierAvatar');
+    const nameEl = document.getElementById('dossierName');
+    const roleEl = document.getElementById('dossierRole');
+    const statusEl = document.getElementById('dossierStatus');
+    const bioEl = document.getElementById('dossierBio');
+    const bioBar = document.getElementById('dossierBioBar');
+    const tagsEl = document.getElementById('dossierTags');
+    const socialsEl = document.getElementById('dossierSocials');
+
+    // 1. Render Hooded Avatar Canvas Thumbnail
+    if (frameEl && data.tintedCanvas) {
+      frameEl.style.borderColor = hexToRgba(data.color, 0.45);
+      frameEl.style.boxShadow = `0 4px 16px ${hexToRgba(data.color, 0.22)}`;
+      
+      const thumb = document.createElement('canvas');
+      thumb.width = 52;
+      thumb.height = 52;
+      const tCtx = thumb.getContext('2d');
+      // TintedCanvas is 240x324, head is at sx: 35, sy: 8, sw: 170, sh: 170
+      tCtx.drawImage(data.tintedCanvas, 35, 8, 170, 170, 0, 0, 52, 52);
+      frameEl.innerHTML = '';
+      frameEl.appendChild(thumb);
+    } else if (avatarEl) {
+      avatarEl.textContent = data.initials;
+      avatarEl.style.backgroundColor = data.color;
+    }
+
+    // 2. Name & Role
+    if (nameEl) nameEl.textContent = data.name;
+    if (roleEl) {
+      roleEl.textContent = data.role;
+      roleEl.style.color = data.color;
+      roleEl.style.borderColor = hexToRgba(data.color, 0.35);
+      roleEl.style.backgroundColor = hexToRgba(data.color, 0.08);
+    }
+
+    // 3. Status Pill
+    if (statusEl) {
+      statusEl.style.borderColor = hexToRgba(data.color, 0.35);
+      statusEl.style.color = data.color;
+      statusEl.style.backgroundColor = hexToRgba(data.color, 0.09);
+    }
+
+    // 4. Bio with Accent Bar
+    if (bioEl) bioEl.textContent = data.bio;
+    if (bioBar) bioBar.style.backgroundColor = data.color;
+
+    // 5. Domain Tags
+    if (tagsEl) {
+      tagsEl.innerHTML = data.tags.map(t => `<span class="dossier-tag"><span class="tag-hash">#</span>${t}</span>`).join('');
+    }
+
+    // 6. Formatted Social / Action Buttons
+    if (socialsEl) {
+      socialsEl.innerHTML = data.links.map(l => formatSocialButton(l, data.color)).join('');
+    }
+
+    // Dynamic Card Accent & Ambient Glow
+    dossier.style.borderTopColor = data.color;
+    dossier.style.borderBottomColor = data.color;
+    dossier.style.background = `radial-gradient(circle at 90% 10%, ${hexToRgba(data.color, 0.12)} 0%, transparent 62%), #ffffff`;
+
+    updateDossierPosition(peep);
+    dossier.classList.add('visible');
+  }
+
+  function updateDossierPosition(peep) {
+    if (!dossier) return;
+    const cardRect = dossier.getBoundingClientRect();
+    const cardWidth = cardRect.width || 310;
+    const cardHeight = cardRect.height || 260;
+
+    const peepHeadY = peep.y - (peep.height * peep.scale);
+    const availableHeadroom = peepHeadY;
+
+    // Flip card BELOW the character if headroom above head is insufficient (Prevents top clipping!)
+    if (availableHeadroom < cardHeight + 40) {
+      dossier.classList.add('flip-bottom');
+      const targetY = Math.min(peep.y + 16, stage.height - cardHeight - 15);
+      dossier.style.top = `${targetY}px`;
+    } else {
+      dossier.classList.remove('flip-bottom');
+      dossier.style.top = `${peepHeadY - 14}px`;
+    }
+
+    // Horizontal clamping so card NEVER clips against left or right screen edges
+    const halfCard = cardWidth / 2;
+    const minX = halfCard + 24;
+    const maxX = stage.width - halfCard - 24;
+    const posX = Math.max(minX, Math.min(peep.x, maxX));
+
+    dossier.style.left = `${posX}px`;
+  }
+
+  function hideDossier() {
+    if (dossier) {
+      dossier.classList.remove('visible');
+    }
+  }
+
+  function setupFilters() {
+    const teamBtns = document.querySelectorAll('.team-filter-btn');
+    teamBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        teamBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-role') || 'all';
+
+        // Close any active dossier on filter switch
+        if (hoveredPeep) {
+          hoveredPeep.isHovered = false;
+          gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
+          gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
+          hoveredPeep = null;
+        }
+        hideDossier();
+      });
+    });
+  }
+}
+
+// ============================================================================
+// 6. CONTACT & TOAST NOTIFICATION SYSTEM
+// ============================================================================
+function showToast(message) {
+  if (!elements.toastContainer) return;
+
+  const toast = document.createElement('div');
+  toast.className = 'toast-message';
+  toast.textContent = message;
+
+  elements.toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.parentNode.removeChild(toast);
+    }
+  }, 3200);
+}
+
+function initContactForm() {
+  const copyBtn = document.getElementById('copyEmailBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      const email = 'alpha.kore25@gmail.com';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(email).then(() => {
+          showToast('Copied to clipboard: ' + email);
+          playCelebrationChime();
+        }).catch(() => {
+          showToast('Email: ' + email);
+        });
+      } else {
+        showToast('Email: ' + email);
+      }
+    });
+  }
+
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nameInput = document.getElementById('contactName');
+      const name = nameInput ? nameInput.value : 'Partner';
+
+      showToast(`Inquiry transmitted. Thank you, ${name}. Alpha.Kore Studio will respond within 24h.`);
+      playCelebrationChime();
+      contactForm.reset();
+    });
+  }
+}
+
+// ============================================================================
+// 7. NUMERICAL BENCHMARK COUNTER ANIMATION
+// ============================================================================
+function initMetricCounters() {
+  const metricValues = document.querySelectorAll('.metric-val');
+  let animated = false;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !animated) {
+        animated = true;
+        metricValues.forEach(el => {
+          const target = parseFloat(el.getAttribute('data-target') || '0');
+          const isDecimal = target % 1 !== 0;
+          let current = 0;
+          const duration = 1600;
+          const start = performance.now();
+
+          function step(time) {
+            const elapsed = time - start;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease out cubic
+            const ease = 1 - Math.pow(1 - progress, 3);
+            current = ease * target;
+
+            el.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
+
+            if (progress < 1) {
+              requestAnimationFrame(step);
+            } else {
+              el.textContent = isDecimal ? target.toFixed(1) : target;
+            }
+          }
+
+          requestAnimationFrame(step);
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+
+  const banner = document.querySelector('.metrics-banner');
+  if (banner) observer.observe(banner);
+}
+
+// ============================================================================
+// 8. PROCEDURAL ATMOSPHERIC AUDIO SYNTHESIZER (WEB AUDIO API)
 // ============================================================================
 let audioCtx = null;
 let isAudioPlaying = false;
 let audioNodes = [];
 
-function initAudio() {
-  if (audioCtx) return;
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  audioCtx = new AudioContext();
-}
-
 function toggleThemeAudio() {
-  initAudio();
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-
   if (isAudioPlaying) {
     stopThemeAudio();
   } else {
@@ -610,11 +1456,16 @@ function toggleThemeAudio() {
 }
 
 function startThemeAudio() {
-  if (!audioCtx) return;
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+
   isAudioPlaying = true;
   if (elements.musicToggle) elements.musicToggle.classList.add('playing');
 
-  // Master Gain
   const masterGain = audioCtx.createGain();
   masterGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
   masterGain.connect(audioCtx.destination);
@@ -691,7 +1542,9 @@ function stopThemeAudio() {
 }
 
 function playCelebrationChime() {
-  if (!audioCtx) return;
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
   if (audioCtx.state === 'suspended') audioCtx.resume();
 
   const now = audioCtx.currentTime;
@@ -718,12 +1571,281 @@ if (elements.musicToggle) {
 }
 
 // ============================================================================
-// 7. INITIALIZATION
+// 8.5. SITE INTRO LOADER: VENGENCE UI KINETIC TEXT LOADER
+// ============================================================================
+let isLoaderDismissed = false;
+
+function initSiteLoader() {
+  const loader = document.getElementById('siteLoader');
+  const percentEl = document.getElementById('loaderPercent');
+  const progressBar = document.getElementById('loaderProgressBar');
+  const enterBtn = document.getElementById('loaderEnterBtn');
+
+  if (!loader) return;
+
+  // Lock scroll while loader is visible
+  document.body.classList.add('loading-active');
+  window.scrollTo(0, 0);
+
+  // Progressive count from 0 to 100%
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += Math.floor(Math.random() * 8) + 5;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(progressInterval);
+      if (enterBtn) {
+        enterBtn.classList.add('ready');
+      }
+    }
+    if (percentEl) percentEl.textContent = `${progress}%`;
+    if (progressBar) progressBar.style.width = `${progress}%`;
+  }, 35);
+
+  function dismissLoader() {
+    if (isLoaderDismissed) return;
+    isLoaderDismissed = true;
+
+    // Subtle harmonic audio feedback on user entry
+    try {
+      const actx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = actx.createOscillator();
+      const g = actx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, actx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, actx.currentTime + 0.15);
+      g.gain.setValueAtTime(0.06, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.18);
+      osc.connect(g);
+      g.connect(actx.destination);
+      osc.start();
+      osc.stop(actx.currentTime + 0.2);
+    } catch (e) {}
+
+    // Lift curtain to reveal Hero section
+    if (typeof gsap !== 'undefined') {
+      gsap.to(loader, {
+        yPercent: -100,
+        duration: 0.9,
+        ease: 'power3.inOut',
+        onComplete: () => {
+          loader.style.display = 'none';
+          document.body.classList.remove('loading-active');
+          document.body.style.overflow = '';
+
+          // Refresh ScrollTrigger and prime parallax
+          if (typeof ScrollTrigger !== 'undefined') {
+            ScrollTrigger.refresh();
+          }
+          targetProgress = calculateProgress();
+          currentProgress = targetProgress;
+          updateParallax();
+          updateNavState();
+        }
+      });
+    } else {
+      loader.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+      loader.style.transform = 'translateY(-100%)';
+      setTimeout(() => {
+        loader.style.display = 'none';
+        document.body.classList.remove('loading-active');
+        document.body.style.overflow = '';
+      }, 800);
+    }
+  }
+
+  // Click anywhere on loader to open hero
+  loader.addEventListener('click', dismissLoader);
+
+  // Click on enter button
+  if (enterBtn) {
+    enterBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dismissLoader();
+    });
+  }
+
+  // Keyboard Enter or Space key
+  document.addEventListener('keydown', function loaderKeyHandler(e) {
+    if (!isLoaderDismissed && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      dismissLoader();
+      document.removeEventListener('keydown', loaderKeyHandler);
+    }
+  });
+}
+
+// ============================================================================
+// 8.5 INTERACTIVE CAPABILITIES BENTO MATRIX
+// ============================================================================
+function initCapabilitiesBento() {
+  const bentoCards = document.querySelectorAll('.bento-card');
+  if (!bentoCards.length) return;
+
+  // 1. Dynamic Cursor Spotlight & 3D Magnetic Tilt
+  bentoCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`);
+
+      // Damped 3D perspective tilt
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -5;
+      const rotateY = ((x - centerX) / centerX) * 5;
+      card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-6px)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+
+  // 2. Interactive AI Agent Simulation Trigger (Card 01)
+  const aiSimBtn = document.getElementById('aiSimTrigger');
+  const aiStatus = document.getElementById('aiPipelineStatus');
+  const aiStream = document.getElementById('aiStreamOutput');
+  const aiTrack = document.getElementById('aiPipelineTrack');
+
+  if (aiSimBtn && aiStatus && aiStream && aiTrack) {
+    let isSimulating = false;
+    const steps = aiTrack.querySelectorAll('.pipeline-step');
+
+    const sampleSimulations = [
+      {
+        task: 'Autonomous Database Query Optimization',
+        line1: 'Parsing SQL query execution graph for zero-index bottleneck...',
+        line2: 'Neural rewrote plan: Reduced cost from 4.2s to 18ms (99.6% speedup)'
+      },
+      {
+        task: 'Multi-Agent Code Synthesis & Security Audit',
+        line1: 'Synthesizing distributed cache layer with fault-tolerant circuit breaker...',
+        line2: 'Static analyzer verified 0 memory leaks, 100% test coverage passing'
+      },
+      {
+        task: 'Real-Time Telemetry Anomaly Mitigation',
+        line1: 'Ingesting 4.8M ops/sec stream... Spike detected in EU cluster.',
+        line2: 'Auto-scaled 12 edge worker pods. Cluster load balanced to 42% nominal.'
+      }
+    ];
+    let simIndex = 0;
+
+    aiSimBtn.addEventListener('click', () => {
+      if (isSimulating) return;
+      isSimulating = true;
+      aiSimBtn.style.opacity = '0.5';
+      aiSimBtn.style.pointerEvents = 'none';
+      aiStatus.textContent = 'EXECUTING GRAPH...';
+      aiStatus.style.color = '#38bdf8';
+
+      const currentSim = sampleSimulations[simIndex % sampleSimulations.length];
+      simIndex++;
+
+      // Step 1: Ingest
+      steps.forEach(s => s.className = 'pipeline-step');
+      steps[0].classList.add('step-active');
+      aiStream.innerHTML = `<div class="stream-line"><span class="stream-prefix">&gt;</span> <span class="stream-highlight">Task Ingest:</span> ${currentSim.task}...</div>`;
+
+      // Step 2: Route after 600ms
+      setTimeout(() => {
+        steps[0].className = 'pipeline-step step-done';
+        steps[1].className = 'pipeline-step step-active';
+        aiStream.innerHTML += `<div class="stream-line"><span class="stream-prefix">&gt;</span> ${currentSim.line1}</div>`;
+      }, 600);
+
+      // Step 3: Self-Correction after 1300ms
+      setTimeout(() => {
+        steps[1].className = 'pipeline-step step-done';
+        steps[2].className = 'pipeline-step step-active';
+      }, 1300);
+
+      // Step 4: Execution & Artifacts after 2000ms
+      setTimeout(() => {
+        steps[2].className = 'pipeline-step step-done';
+        steps[3].className = 'pipeline-step step-active step-done';
+        aiStream.innerHTML += `<div class="stream-line" style="color: #10b981;"><span class="stream-prefix">&gt;</span> ${currentSim.line2}</div>`;
+        aiStatus.textContent = 'EXECUTION COMPLETE // READY';
+        aiStatus.style.color = '#10b981';
+      }, 2000);
+
+      // Reset button after 3600ms
+      setTimeout(() => {
+        isSimulating = false;
+        aiSimBtn.style.opacity = '1';
+        aiSimBtn.style.pointerEvents = '';
+        aiStatus.textContent = 'PIPELINE IDLE // READY';
+        aiStatus.style.color = '#38bdf8';
+        steps[0].className = 'pipeline-step step-done';
+        steps[1].className = 'pipeline-step step-active';
+        steps[2].className = 'pipeline-step';
+        steps[3].className = 'pipeline-step';
+      }, 3600);
+    });
+  }
+
+  // 3. Live Fluctuating Cloud Latencies (Card 02)
+  const pingUs = document.getElementById('pingUs');
+  const pingEu = document.getElementById('pingEu');
+  const pingAp = document.getElementById('pingAp');
+
+  if (pingUs && pingEu && pingAp) {
+    setInterval(() => {
+      const usVal = Math.floor(10 + Math.random() * 5);
+      const euVal = Math.floor(16 + Math.random() * 6);
+      const apVal = Math.floor(22 + Math.random() * 7);
+
+      pingUs.textContent = `${usVal}ms`;
+      pingEu.textContent = `${euVal}ms`;
+      pingAp.textContent = `${apVal}ms`;
+    }, 2800);
+  }
+
+  // 4. Live Cryptographic Hash Cycling (Card 03)
+  const vaultHash = document.getElementById('vaultHash');
+  if (vaultHash) {
+    const hexChars = '0123456789ABCDEF';
+    setInterval(() => {
+      let randChunk1 = '';
+      let randChunk2 = '';
+      for (let i = 0; i < 4; i++) randChunk1 += hexChars[Math.floor(Math.random() * hexChars.length)];
+      for (let i = 0; i < 4; i++) randChunk2 += hexChars[Math.floor(Math.random() * hexChars.length)];
+      vaultHash.textContent = `SHA256: 0x${randChunk1}...${randChunk2} [VERIFIED]`;
+    }, 3400);
+  }
+
+  // 5. High-Velocity Event Counter (Card 04)
+  const statThroughput = document.getElementById('statThroughput');
+  if (statThroughput) {
+    setInterval(() => {
+      const val = (4.6 + Math.random() * 0.8).toFixed(1);
+      statThroughput.textContent = `${val}M`;
+    }, 2200);
+  }
+}
+
+// ============================================================================
+// 9. INITIALIZATION
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  renderBookshelf();
+  initSiteLoader();
+  initSkiper17CardStack();
+  initCapabilitiesBento();
+  initSkiper39CrowdCanvas();
+  initContactForm();
+  initMetricCounters();
+  
   targetProgress = calculateProgress();
   currentProgress = targetProgress;
   updateParallax();
   updateNavState();
+
+  // Ensure GSAP ScrollTrigger measures DOM correctly
+  if (typeof ScrollTrigger !== 'undefined') {
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+  }
 });

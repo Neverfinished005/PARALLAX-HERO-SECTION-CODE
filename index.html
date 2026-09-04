@@ -3,17 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Story of The Goonies — Interactive Parallax Experience</title>
-  <meta name="description" content="An interactive cinematic parallax experience telling the story of The Goonies, Haystack Rock, Cannon Beach, and the journey for One-Eyed Willy's treasure.">
+  <title>ALPHAKORE — Software, Automation, AI, Content | Studio Portfolio</title>
+  <meta name="description" content="A small studio building the layer between bold ideas and working systems. Software, automation, AI, content.">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@1,500;1,600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260904_india_form_bg_v2">
 </head>
-<body>
+<body class="loading-active">
+
+  <!-- =========================================================================
+       SITE INTRO LOADER: VENGENCE UI KINETIC TEXT LOADER
+       ========================================================================= -->
+  <aside id="siteLoader" class="site-loader" aria-label="Studio Site Loader">
+    <div class="loader-inner">
+      <!-- Top studio header -->
+      <div class="loader-header">
+        <span class="loader-brand-title">ALPHA.KORE</span>
+        <span class="loader-brand-sub">STUDIO ARCHITECTURE</span>
+      </div>
+
+      <!-- Center: Vengence UI Kinetic Text Loader -->
+      <div class="ktl-container">
+        <div class="ktl-wrapper">
+          <!-- The moving bouncing dot -->
+          <div class="ktl-dot"></div>
+          
+          <p class="ktl-text" aria-label="Loading">
+            <span class="ktl-char ktl-char-l">L</span>
+            <span class="ktl-char">o</span>
+            <span class="ktl-char">a</span>
+            <span class="ktl-char">d</span>
+            <span class="ktl-char ktl-char-i">&#305;</span>
+            <span class="ktl-char">n</span>
+            <span class="ktl-char">g</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Bottom action prompt -->
+      <div class="loader-footer">
+        <div class="loader-progress-wrap">
+          <span class="loader-percent" id="loaderPercent">0%</span>
+          <div class="loader-progress-track">
+            <div class="loader-progress-bar" id="loaderProgressBar"></div>
+          </div>
+        </div>
+
+        <button class="loader-enter-btn" id="loaderEnterBtn" aria-label="Enter studio experience">
+          <span class="loader-enter-pulse"></span>
+          <span class="loader-enter-text">ENTER STUDIO</span>
+          <span class="loader-enter-arrow">→</span>
+        </button>
+
+        <span class="loader-prompt-hint">[ CLICK ANYWHERE TO OPEN HERO ]</span>
+      </div>
+    </div>
+  </aside>
 
   <!-- =========================================================================
        AWWWARDS SITE OF THE DAY RIBBON (EXACT MATCH TO REFERENCE)
@@ -33,20 +85,28 @@
   <nav class="nav-bar" id="mainNav">
     <ul role="list" class="nav-list">
       <li class="nav-item">
-        <a href="#plot" class="nav-link active" id="navPlot">Plot</a>
+        <a href="#plot" class="nav-link active" id="navPlot">Hero</a>
         <div class="pulse-dot-menu" id="dotPlot"></div>
       </li>
       <li class="nav-item">
-        <a href="#goonies" class="nav-link" id="navGoonies">Goonies</a>
-        <div class="pulse-dot-0" id="dotGoonies"></div>
+        <a href="#impact" class="nav-link" id="navImpact">Vision</a>
+        <div class="pulse-dot-0" id="dotImpact"></div>
       </li>
       <li class="nav-item">
-        <a href="#credits" class="nav-link" id="navCredits">Credits</a>
-        <div class="pulse-dot-0" id="dotCredits"></div>
+        <a href="#work" class="nav-link" id="navWork">Work</a>
+        <div class="pulse-dot-0" id="dotWork"></div>
       </li>
       <li class="nav-item">
-        <a href="#books" class="nav-link" id="navBooks">Books of Her Choice</a>
-        <div class="pulse-dot-0" id="dotBooks"></div>
+        <a href="#services" class="nav-link" id="navServices">Services</a>
+        <div class="pulse-dot-0" id="dotServices"></div>
+      </li>
+      <li class="nav-item">
+        <a href="#team" class="nav-link" id="navTeam">Team</a>
+        <div class="pulse-dot-0" id="dotTeam"></div>
+      </li>
+      <li class="nav-item">
+        <a href="#contact" class="nav-link" id="navContact">Contact</a>
+        <div class="pulse-dot-0" id="dotContact"></div>
       </li>
     </ul>
   </nav>
@@ -63,16 +123,23 @@
       <!-- Smooth Darkening Overlay (Screenshots 4 & 5) -->
       <div class="overlay" id="heroOverlay"></div>
       
-      <!-- Foreground Silhouette Trees Framing Left & Right (Zooms 1.0 -> 1.7 to part aside) -->
+      <!-- Foreground Carved Stone Pillars Framing Left & Right (Full-Height Grounded Architectural Frame) -->
       <div class="bg-scroll" id="bgScroll"></div>
       
       <!-- Background Landscape: Cannon Beach & Haystack Rock -->
       <div class="bg-main" id="bgMain"></div>
       
-      <!-- Initial Title Overlay: The story of THE GOONIES (Screenshot 1) -->
+      <!-- Initial Title Overlay: ALPHAKORE Hero Branding -->
       <div class="hero-parent" id="heroParent">
-        <div class="sub-title">The story of</div>
-        <img class="logo-lg" src="assets/goonies_logo.png" width="428" alt="The Goonies Logo" id="heroLogo">
+        <div class="alphakore-emblem-wrap">
+          <img src="assets/alphakore_logo.png" width="48" height="48" alt="Alphakore Emblem" class="alphakore-emblem" id="heroEmblem">
+        </div>
+        <h1 class="alphakore-title" id="heroTitle">ALPHAKORE</h1>
+        <p class="alphakore-tagline" id="heroTagline">BUILDING <span class="accent-gold">IDEAS</span> THAT MATTER.</p>
+        
+        <!-- Story subtitle fallback for Goonies theme -->
+        <div class="sub-title goonies-only">The story of</div>
+        <img class="logo-lg goonies-only" src="assets/goonies_logo.png" width="428" alt="The Goonies Logo" id="heroLogo">
       </div>
       
       <!-- Plot Presentation: SharpGrotesk Headline + Synopsis + Descending Line (Screenshots 3, 4, 5) -->
@@ -89,269 +156,877 @@
     </div>
   </div>
 
+  <!-- =========================================================================
+       SECTION 2: ALPHAKORE EDITORIAL VISION (WE TURN SPARKS INTO IMPACT)
+       ========================================================================= -->
+  <section id="impact" class="impact-section">
+    <div class="impact-container">
+      <div class="impact-top-bar">
+        <div class="impact-logo-wrap">
+          <img src="assets/alphakore_logo.png" width="34" height="34" alt="Alphakore" class="impact-logo">
+        </div>
+        <div class="impact-menu-hint" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      
+      <div class="impact-editorial-body">
+        <h2 class="impact-main-heading">
+          <span class="heading-line-1">WE TURN</span>
+          <span class="heading-line-2"><span class="italic-serif">SPARKS</span> INTO IMPACT.</span>
+        </h2>
+        <div class="impact-dash"></div>
+        <a href="#work" class="impact-circle-btn" aria-label="Explore Selected Works">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- Audio Speaker Control (Bottom Right) -->
   <div class="music-parent" id="musicToggle" title="Toggle Atmospheric Theme Audio" role="button" tabindex="0" aria-label="Audio Sound Toggle">
     <img src="assets/goonies_speaker.png" width="16" alt="Audio Sound" class="music-bar" id="speakerIcon">
   </div>
 
   <!-- =========================================================================
-       SECTION 2: THE GOONIES CAST & CHARACTER DOSSIERS
+       SECTION 3: SELECTED WORKS / PROJECTS (#work) — SKIPER-17 STICKY CARD STACK
        ========================================================================= -->
-  <section id="goonies" class="cast-section">
-    <div class="section-container">
-      <div class="section-header">
-        <span class="eyebrow">// 02 ADVENTURERS</span>
-        <h2 class="section-title">The Goon Docks Crew</h2>
-        <p class="section-subtitle">"Goonies never say die." Meet the misfits who discovered the attic map and unlocked the caverns of One-Eyed Willy.</p>
-      </div>
-
-      <div class="cast-grid">
-        <!-- Mikey -->
-        <article class="cast-card" data-character="mikey">
-          <div class="card-image-wrap">
-            <img src="assets/hero_char_raw.jpg" alt="Mikey Walsh" class="card-img">
-            <div class="card-gradient"></div>
-            <span class="card-tag">LEADER &amp; VISIONARY</span>
-          </div>
-          <div class="card-body">
-            <h3 class="card-name">Mikey Walsh</h3>
-            <p class="card-actor">Sean Astin</p>
-            <p class="card-desc">The optimistic heart of the Goonies whose relentless faith in his father's stories refused to let Astoria fall.</p>
-            <button class="card-btn" onclick="openModal('mikey')">Inspect Dossier →</button>
-          </div>
-        </article>
-
-        <!-- Chunk -->
-        <article class="cast-card" data-character="chunk">
-          <div class="card-image-wrap">
-            <img src="assets/cast_chunk.jpg" alt="Lawrence 'Chunk' Cohen" class="card-img">
-            <div class="card-gradient"></div>
-            <span class="card-tag">THE LOYAL HEAVY</span>
-          </div>
-          <div class="card-body">
-            <h3 class="card-name">Chunk Cohen</h3>
-            <p class="card-actor">Jeff Cohen</p>
-            <p class="card-desc">Master of the Truffle Shuffle, chocolate lover, and the one whose open heart bonded forever with Sloth.</p>
-            <button class="card-btn" onclick="openModal('chunk')">Inspect Dossier →</button>
-          </div>
-        </article>
-
-        <!-- Sloth -->
-        <article class="cast-card highlight" data-character="sloth">
-          <div class="card-image-wrap">
-            <img src="assets/goonies_sloth.png" alt="Sloth Fratelli" class="card-img sloth-img">
-            <div class="card-gradient"></div>
-            <span class="card-tag gold">HERO &amp; PROTECTOR</span>
-          </div>
-          <div class="card-body">
-            <h3 class="card-name">Sloth Fratelli</h3>
-            <p class="card-actor">John Matuszak</p>
-            <p class="card-desc">"Hey you guys!" Pure strength with a childlike heart of gold who saved the Goonies from certain doom.</p>
-            <button class="card-btn gold" onclick="openModal('sloth')">Inspect Dossier →</button>
-          </div>
-        </article>
-
-        <!-- Mouth -->
-        <article class="cast-card" data-character="mouth">
-          <div class="card-image-wrap">
-            <img src="assets/cast_mouth.jpg" alt="Clark 'Mouth' Devereaux" class="card-img">
-            <div class="card-gradient"></div>
-            <span class="card-tag">TRANSLATOR &amp; WIT</span>
-          </div>
-          <div class="card-body">
-            <h3 class="card-name">Mouth Devereaux</h3>
-            <p class="card-actor">Corey Feldman</p>
-            <p class="card-desc">Quick-tongued fluent Spanish speaker who deciphered the cryptic map verses and kept spirits defiant.</p>
-            <button class="card-btn" onclick="openModal('mouth')">Inspect Dossier →</button>
-          </div>
-        </article>
-
-        <!-- Data -->
-        <article class="cast-card" data-character="data">
-          <div class="card-image-wrap">
-            <img src="assets/cast_data.jpg" alt="Richard 'Data' Wang" class="card-img">
-            <div class="card-gradient"></div>
-            <span class="card-tag">INVENTOR &amp; GADGETEER</span>
-          </div>
-          <div class="card-body">
-            <h3 class="card-name">Data Wang</h3>
-            <p class="card-actor">Ke Huy Quan</p>
-            <p class="card-desc">Armed with Bully Busters, Slick Shoes, and the Pinchers of Power, saving the crew from fatal booby traps.</p>
-            <button class="card-btn" onclick="openModal('data')">Inspect Dossier →</button>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================================================
-       SECTION 3: BOOKS OF HER CHOICE (CURATED & PERMANENT BOOKSHELF)
-       ========================================================================= -->
-  <section id="books" class="bookshelf-section">
-    <div class="section-container">
+  <section id="work" class="work-section skiper-deck-section">
+    <div class="skiper17-sticky-stage">
+      <div class="section-container">
       <div class="section-header text-center">
-        <span class="eyebrow gold">// 03 DIGITAL ARCHIVE</span>
-        <h2 class="section-title">Books of Her Choice</h2>
-        <p class="section-subtitle center">A personal living bookshelf preserving literature, timeless lore, and foundational stories. Every volume added by her remains permanently saved in this browser library.</p>
+        <span class="eyebrow">SELECTED WORK</span>
+        <h2 class="section-title">Built with Passion &amp; Precision</h2>
+        <p class="section-subtitle center">A small studio building the layer between bold ideas and working systems. Software, automation, and digital products.</p>
       </div>
 
-      <!-- Bookshelf Controls -->
-      <div class="books-toolbar">
-        <div class="search-wrap">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="bookSearchInput" placeholder="Search by title, author, or reflections..." aria-label="Search Books">
+      <!-- Skiper17 Interactive Sticky Deck Container -->
+      <div class="skiper17-deck-outer" id="skiperDeckOuter">
+        <div class="skiper17-deck-viewport" id="skiperDeckViewport">
+          
+          <!-- CARD 01: PRISM (FIRST) -->
+          <article class="skiper17-card" data-project="prism" style="z-index: 1;">
+            <div class="skiper17-card-inner">
+              <div class="skiper17-card-col left">
+                <div class="skiper17-badge-row">
+                  <span class="skiper17-idx">01</span>
+                  <span class="work-status-badge live">Live</span>
+                  <span class="skiper17-category">ORCHESTRATION ENGINE</span>
+                </div>
+
+                <div class="skiper17-card-headline">
+                  <h3 class="skiper17-card-title">PRISM</h3>
+                  <p class="skiper17-card-tagline">AI Workflow Orchestration Engine</p>
+                </div>
+
+                <p class="skiper17-card-desc">Next-generation workflow orchestration engine visualizing real-time prompt topologies, multi-step LLM routing, and automated inference pipelines with zero latency bottlenecks.</p>
+
+                <div class="skiper17-card-actions">
+                  <a href="https://prism-ai-flow.vercel.app/" target="_blank" rel="noopener noreferrer" class="work-btn-primary">Launch Project ↗</a>
+                  <button class="work-btn-ghost" onclick="openProjectModal('prism')">System Specs</button>
+                </div>
+              </div>
+
+              <div class="skiper17-card-col right">
+                <div class="skiper17-panel-title">SYSTEM ARCHITECTURE</div>
+                <div class="skiper17-specs-grid">
+                  <div class="skiper17-spec-box">
+                    <span class="spec-k">CORE ENGINE</span>
+                    <span class="spec-v">WebGL Topology</span>
+                  </div>
+                  <div class="skiper17-spec-box">
+                    <span class="spec-k">ROUTING</span>
+                    <span class="spec-v">Multi-LLM Chaining</span>
+                  </div>
+                  <div class="skiper17-spec-box full">
+                    <span class="spec-k">EXECUTION TRACE</span>
+                    <span class="spec-v">&lt; 12ms Sub-Millisecond</span>
+                  </div>
+                </div>
+
+                <div class="skiper17-panel-title">ENGINEERED STACK</div>
+                <div class="work-tags">
+                  <span class="work-tag">AI Flow</span>
+                  <span class="work-tag">Orchestration</span>
+                  <span class="work-tag">WebGL</span>
+                  <span class="work-tag">Real-Time</span>
+                  <span class="work-tag">TypeScript</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 02: DELTA (SECOND - REQUIRED SEQUENCE) -->
+          <article class="skiper17-card" data-project="delta" style="z-index: 2;">
+            <div class="skiper17-card-inner">
+              <div class="skiper17-card-col left">
+                <div class="skiper17-badge-row">
+                  <span class="skiper17-idx">02</span>
+                  <span class="work-status-badge progress">In Progress</span>
+                  <span class="skiper17-category">EDGE INFRASTRUCTURE</span>
+                </div>
+
+                <div class="skiper17-card-headline">
+                  <h3 class="skiper17-card-title">DELTA</h3>
+                  <p class="skiper17-card-tagline">Edge Infrastructure &amp; Telemetry</p>
+                </div>
+
+                <p class="skiper17-card-desc">High-throughput data telemetry and edge infrastructure layer designed for autonomous cloud micro-services, distributed sensor feeds, and low-latency message queues.</p>
+
+                <div class="skiper17-card-actions">
+                  <a href="https://delta-kappa-pink.vercel.app/" target="_blank" rel="noopener noreferrer" class="work-btn-primary">Preview Build ↗</a>
+                  <button class="work-btn-ghost" onclick="openProjectModal('delta')">System Specs</button>
+                </div>
+              </div>
+
+              <div class="skiper17-card-col right">
+                <div class="skiper17-panel-title">SYSTEM ARCHITECTURE</div>
+                <div class="skiper17-specs-grid">
+                  <div class="skiper17-spec-box">
+                    <span class="spec-k">THROUGHPUT</span>
+                    <span class="spec-v">250k Events/sec</span>
+                  </div>
+                  <div class="skiper17-spec-box">
+                    <span class="spec-k">INGESTION</span>
+                    <span class="spec-v">Zero-Copy Rust</span>
+                  </div>
+                  <div class="skiper17-spec-box full">
+                    <span class="spec-k">TELEMETRY</span>
+                    <span class="spec-v">Kafka / Redpanda</span>
+                  </div>
+                </div>
+
+                <div class="skiper17-panel-title">ENGINEERED STACK</div>
+                <div class="work-tags">
+                  <span class="work-tag">Telemetry</span>
+                  <span class="work-tag">Edge Systems</span>
+                  <span class="work-tag">Rust</span>
+                  <span class="work-tag">Microservices</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 03: LAZYCOOK (THIRD - REQUIRED SEQUENCE) -->
+          <article class="skiper17-card" data-project="lazycook" style="z-index: 3;">
+            <div class="skiper17-card-inner">
+              <div class="skiper17-card-col left">
+                <div class="skiper17-badge-row">
+                  <span class="skiper17-idx">03</span>
+                  <span class="work-status-badge live">Live</span>
+                  <span class="skiper17-category">AUTONOMOUS ASSISTANT</span>
+                </div>
+
+                <div class="skiper17-card-headline">
+                  <h3 class="skiper17-card-title">LAZYCOOK</h3>
+                  <p class="skiper17-card-tagline">Autonomous Terminal Assistant</p>
+                </div>
+
+                <p class="skiper17-card-desc">An autonomous multi-agent AI assistant that runs natively in your terminal. Powered by Gemini 2.5 Flash with a four-agent architecture — maximum output, minimum human intervention.</p>
+
+                <div class="skiper17-card-actions">
+                  <a href="https://thelazycook.in/" target="_blank" rel="noopener noreferrer" class="work-btn-primary">Launch Project ↗</a>
+                  <button class="work-btn-ghost" onclick="openProjectModal('lazycook')">System Specs</button>
+                </div>
+              </div>
+
+              <div class="skiper17-card-col right">
+                <div class="skiper17-panel-title">SYSTEM ARCHITECTURE</div>
+                <div class="skiper17-specs-grid">
+                  <div class="skiper17-spec-box">
+                    <span class="spec-k">MODEL</span>
+                    <span class="spec-v">Gemini 2.5 Flash</span>
+                  </div>
+                  <div class="skiper17-spec-box">
+                    <span class="spec-k">SUPERVISOR</span>
+                    <span class="spec-v">4-Agent Hierarchy</span>
+                  </div>
+                  <div class="skiper17-spec-box full">
+                    <span class="spec-k">SANDBOX</span>
+                    <span class="spec-v">Native Shell Isolation</span>
+                  </div>
+                </div>
+
+                <div class="skiper17-panel-title">ENGINEERED STACK</div>
+                <div class="work-tags">
+                  <span class="work-tag">AI Agents</span>
+                  <span class="work-tag">Terminal CLI</span>
+                  <span class="work-tag">Gemini 2.5</span>
+                  <span class="work-tag">Node / Python</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 04: REZUM (FOURTH) -->
+          <article class="skiper17-card" data-project="rezum" style="z-index: 4;">
+            <div class="skiper17-card-inner">
+              <div class="skiper17-card-col left">
+                <div class="skiper17-badge-row">
+                  <span class="skiper17-idx">04</span>
+                  <span class="work-status-badge live">Live</span>
+                  <span class="skiper17-category">MACHINE PROTOCOL</span>
+                </div>
+
+                <div class="skiper17-card-headline">
+                  <h3 class="skiper17-card-title">REZUM</h3>
+                  <p class="skiper17-card-tagline">Machine-Readable Portfolio Protocol</p>
+                </div>
+
+                <p class="skiper17-card-desc">An AI-readable portfolio builder that turns your resume into a machine-optimized format — so recruiters' AI tools and ATS systems parse your experience exactly as intended.</p>
+
+                <div class="skiper17-card-actions">
+                  <a href="https://rezum-alphakore.vercel.app/" target="_blank" rel="noopener noreferrer" class="work-btn-primary">Launch Project ↗</a>
+                  <button class="work-btn-ghost" onclick="openProjectModal('rezum')">System Specs</button>
+                </div>
+              </div>
+
+              <div class="skiper17-card-col right">
+                <div class="skiper17-panel-title">SYSTEM ARCHITECTURE</div>
+                <div class="skiper17-specs-grid">
+                  <div class="skiper17-spec-box">
+                    <span class="spec-k">SCHEMA</span>
+                    <span class="spec-v">JSON-LD Microdata</span>
+                  </div>
+                  <div class="skiper17-spec-box">
+                    <span class="spec-k">ATS FIDELITY</span>
+                    <span class="spec-v">100% Zero-Truncation</span>
+                  </div>
+                  <div class="skiper17-spec-box full">
+                    <span class="spec-k">DUAL ASSET</span>
+                    <span class="spec-v">Human Typography + AI Vectors</span>
+                  </div>
+                </div>
+
+                <div class="skiper17-panel-title">ENGINEERED STACK</div>
+                <div class="work-tags">
+                  <span class="work-tag">AI Schema</span>
+                  <span class="work-tag">ATS Parser</span>
+                  <span class="work-tag">JSON-LD</span>
+                  <span class="work-tag">Next.js Edge</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 05: 3F1 (FIFTH) -->
+          <article class="skiper17-card" data-project="3f1" style="z-index: 5;">
+            <div class="skiper17-card-inner">
+              <div class="skiper17-card-col left">
+                <div class="skiper17-badge-row">
+                  <span class="skiper17-idx">05</span>
+                  <span class="work-status-badge live">Live</span>
+                  <span class="skiper17-category">SPATIAL COMMERCE</span>
+                </div>
+
+                <div class="skiper17-card-headline">
+                  <h3 class="skiper17-card-title">3F1</h3>
+                  <p class="skiper17-card-tagline">Bespoke Spatial Digital Commerce</p>
+                </div>
+
+                <p class="skiper17-card-desc">Bespoke digital commerce platform and brand experience built with cinematic 3D product visualizers, responsive spatial physics, and luxury architectural typography.</p>
+
+                <div class="skiper17-card-actions">
+                  <a href="https://www.3f1.in/" target="_blank" rel="noopener noreferrer" class="work-btn-primary">Launch Project ↗</a>
+                  <button class="work-btn-ghost" onclick="openProjectModal('3f1')">System Specs</button>
+                </div>
+              </div>
+
+              <div class="skiper17-card-col right">
+                <div class="skiper17-panel-title">SYSTEM ARCHITECTURE</div>
+                <div class="skiper17-specs-grid">
+                  <div class="skiper17-spec-box">
+                    <span class="spec-k">ENGINE</span>
+                    <span class="spec-v">Three.js WebGL</span>
+                  </div>
+                  <div class="skiper17-spec-box">
+                    <span class="spec-k">FPS</span>
+                    <span class="spec-v">60 FPS Mobile GPU</span>
+                  </div>
+                  <div class="skiper17-spec-box full">
+                    <span class="spec-k">SHADERS</span>
+                    <span class="spec-v">Custom PBR Light Caustics</span>
+                  </div>
+                </div>
+
+                <div class="skiper17-panel-title">ENGINEERED STACK</div>
+                <div class="work-tags">
+                  <span class="work-tag">Three.js</span>
+                  <span class="work-tag">WebGL Shaders</span>
+                  <span class="work-tag">Spatial UX</span>
+                  <span class="work-tag">Commerce</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
         </div>
-        <div class="category-filters">
-          <button class="filter-pill active" data-genre="all">All</button>
-          <button class="filter-pill" data-genre="Adventure">Adventure</button>
-          <button class="filter-pill" data-genre="Philosophy">Philosophy</button>
-          <button class="filter-pill" data-genre="Fantasy">Fantasy</button>
-          <button class="filter-pill" data-genre="Classic">Classic</button>
-          <button class="filter-pill" data-genre="Lore">Lore</button>
+
+        <!-- Deck Tracker Pill: Counter + Progress Dots -->
+        <div class="skiper17-tracker">
+          <span class="skiper17-counter" id="skiper17Counter">01 / 05</span>
+          <div class="skiper17-dots" id="skiper17Dots">
+            <button class="skiper17-dot active" data-index="0" aria-label="Project 1: PRISM"></button>
+            <button class="skiper17-dot" data-index="1" aria-label="Project 2: DELTA"></button>
+            <button class="skiper17-dot" data-index="2" aria-label="Project 3: LAZYCOOK"></button>
+            <button class="skiper17-dot" data-index="3" aria-label="Project 4: REZUM"></button>
+            <button class="skiper17-dot" data-index="4" aria-label="Project 5: 3F1"></button>
+          </div>
+          <span class="skiper17-scroll-hint">Scroll down to inspect stack ↓</span>
         </div>
-        <button class="add-book-trigger" id="openAddBookBtn">+ Add Book of Her Choice</button>
-      </div>
-
-      <!-- Storage Confirmation Badge -->
-      <div class="storage-badge-row">
-        <span class="book-count-text" id="bookCountDisplay">Showing 3 of 3 Books</span>
-        <span class="storage-indicator"><span class="storage-dot"></span> Permanently Saved in Browser</span>
-      </div>
-
-      <!-- Dynamic Books Grid -->
-      <div class="books-grid" id="booksGridContainer">
-        <!-- Rendered by script.js with localStorage persistence -->
       </div>
     </div>
   </section>
 
   <!-- =========================================================================
-       SECTION 4: CREDITS & CINEMATIC MAP
+       SECTION 4: CAPABILITIES & ARCHITECTURAL SERVICES (#services)
        ========================================================================= -->
-  <section id="credits" class="credits-section">
+  <section id="services" class="services-section">
     <div class="section-container">
-      <div class="credits-card">
-        <div class="credits-header">
-          <span class="eyebrow">// 04 PRODUCTION</span>
-          <h2 class="credits-title">The Legend of 1985</h2>
+      <!-- Section Header with High-Tech Eyebrow Pill -->
+      <div class="section-header text-center">
+        <div class="capabilities-eyebrow-pill">
+          <span class="capabilities-pulse-dot"></span>
+          <span>SYSTEM ARCHITECTURE // PROVEN CAPABILITIES</span>
         </div>
-        <div class="credits-grid">
-          <div class="credit-col">
-            <h4>DIRECTED BY</h4>
-            <p>Richard Donner</p>
-            <h4>STORY BY</h4>
-            <p>Steven Spielberg</p>
+        <h2 class="section-title">Engineered for scale.<br>Architected for resilience.</h2>
+        <p class="section-subtitle center">From autonomous multi-agent pipelines to zero-trust distributed infrastructure, we build working computational systems that scale without friction.</p>
+      </div>
+
+      <!-- Modern Interactive Bento Grid -->
+      <div class="capabilities-bento-grid" id="capabilitiesBento">
+        
+        <!-- Bento Card 01: Autonomous AI Systems -->
+        <div class="bento-card card-ai" data-card="ai">
+          <div class="bento-spotlight"></div>
+          <div class="bento-card-top">
+            <div class="bento-index-tag">01 // AUTONOMOUS AI</div>
+            <span class="bento-status-badge"><span class="badge-dot pulse-emerald"></span>ONLINE</span>
           </div>
-          <div class="credit-col">
-            <h4>SCREENPLAY BY</h4>
-            <p>Chris Columbus</p>
-            <h4>ORIGINAL SCORE</h4>
-            <p>Dave Grusin</p>
+          <h3 class="bento-title">AI-Powered Automation &amp; Agent Systems</h3>
+          <p class="bento-desc">Self-orchestrating multi-agent architectures that parse ambiguous inputs, route computational graphs, and execute mission-critical operations autonomously.</p>
+          
+          <!-- Interactive Live Agent Pipeline Widget -->
+          <div class="ai-agent-console">
+            <div class="agent-console-top">
+              <div class="console-pills">
+                <span class="pulse-dot"></span>
+                <span class="console-status" id="aiPipelineStatus">PIPELINE IDLE // READY</span>
+              </div>
+              <button type="button" class="agent-sim-btn" id="aiSimTrigger" aria-label="Simulate Agent Pipeline">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>SIMULATE TASK</span>
+              </button>
+            </div>
+            <div class="agent-pipeline-track" id="aiPipelineTrack">
+              <div class="pipeline-step step-1 step-done">
+                <span class="step-num">01</span>
+                <span class="step-title">Intent Parsing</span>
+              </div>
+              <div class="pipeline-connector"><span class="connector-beam"></span></div>
+              <div class="pipeline-step step-2 step-active">
+                <span class="step-num">02</span>
+                <span class="step-title">Neural Routing</span>
+              </div>
+              <div class="pipeline-connector"><span class="connector-beam"></span></div>
+              <div class="pipeline-step step-3">
+                <span class="step-num">03</span>
+                <span class="step-title">Self-Correction</span>
+              </div>
+              <div class="pipeline-connector"><span class="connector-beam"></span></div>
+              <div class="pipeline-step step-4">
+                <span class="step-num">04</span>
+                <span class="step-title">Execution</span>
+              </div>
+            </div>
+            <div class="agent-stream-output" id="aiStreamOutput">
+              <div class="stream-line"><span class="stream-prefix">&gt;</span> <span class="stream-highlight">Task Ingest:</span> Model evaluation loop initialized...</div>
+              <div class="stream-line"><span class="stream-prefix">&gt;</span> Latency: 34ms | Precision: 99.98% | Context: 128k tokens</div>
+            </div>
           </div>
-          <div class="credit-col">
-            <h4>FILMING LOCATIONS</h4>
-            <p>Astoria & Cannon Beach, Oregon</p>
-            <h4>AWARD</h4>
-            <p>Awwwards Site of the Day Clone</p>
+
+          <!-- Feature Domain Tags -->
+          <div class="bento-tags">
+            <span class="bento-chip">#MultiAgentGraphs</span>
+            <span class="bento-chip">#PredictivePipelines</span>
+            <span class="bento-chip">#SelfHealingLogic</span>
+            <span class="bento-chip">#CustomFineTuning</span>
+          </div>
+
+          <!-- Card Action Link -->
+          <div class="bento-card-footer">
+            <a href="#contact" class="bento-action-btn">
+              <span>Explore Agent Framework</span>
+              <span class="btn-arrow">↗</span>
+            </a>
           </div>
         </div>
-        <div class="credits-footer">
-          <p class="copyright-text">Crafted for Neverfinished005 • Interactive Parallax Showcase</p>
+
+        <!-- Bento Card 02: Resilient Cloud Architecture -->
+        <div class="bento-card card-cloud" data-card="cloud">
+          <div class="bento-spotlight"></div>
+          <div class="bento-card-top">
+            <div class="bento-index-tag">02 // CLOUD TOPOLOGY</div>
+            <span class="bento-status-badge"><span class="badge-dot pulse-blue"></span>GLOBAL EDGE</span>
+          </div>
+          <h3 class="bento-title">Seamless Cloud &amp; Distributed Clusters</h3>
+          <p class="bento-desc">High-availability cloud mesh engineered for zero downtime, sub-20ms edge latency, automated Kubernetes scaling, and bulletproof failover resilience.</p>
+          
+          <!-- Live Global Node Telemetry Widget -->
+          <div class="cloud-telemetry-console">
+            <div class="cluster-rows">
+              <div class="cluster-node">
+                <div class="node-info">
+                  <span class="node-status-dot online"></span>
+                  <span class="node-region">US-EAST (N. Virginia)</span>
+                </div>
+                <div class="node-metrics">
+                  <span class="node-latency" id="pingUs">12ms</span>
+                  <span class="node-uptime">100% UP</span>
+                </div>
+                <div class="node-traffic-bar"><span class="bar-fill" style="width: 78%;"></span></div>
+              </div>
+              <div class="cluster-node">
+                <div class="node-info">
+                  <span class="node-status-dot online"></span>
+                  <span class="node-region">EU-CENTRAL (Frankfurt)</span>
+                </div>
+                <div class="node-metrics">
+                  <span class="node-latency" id="pingEu">18ms</span>
+                  <span class="node-uptime">99.99% UP</span>
+                </div>
+                <div class="node-traffic-bar"><span class="bar-fill" style="width: 64%;"></span></div>
+              </div>
+              <div class="cluster-node">
+                <div class="node-info">
+                  <span class="node-status-dot online"></span>
+                  <span class="node-region">AP-SOUTH (Mumbai)</span>
+                </div>
+                <div class="node-metrics">
+                  <span class="node-latency" id="pingAp">24ms</span>
+                  <span class="node-uptime">100% UP</span>
+                </div>
+                <div class="node-traffic-bar"><span class="bar-fill" style="width: 82%;"></span></div>
+              </div>
+            </div>
+            <div class="cloud-global-banner">
+              <span class="global-pulse"></span>
+              <span>SYNCHRONIZED: 280+ GLOBAL EDGE NODES ACTIVE</span>
+            </div>
+          </div>
+
+          <!-- Feature Domain Tags -->
+          <div class="bento-tags">
+            <span class="bento-chip">#ZeroDowntimeDeploy</span>
+            <span class="bento-chip">#KubernetesMesh</span>
+            <span class="bento-chip">#DistributedState</span>
+            <span class="bento-chip">#SubSecondFailover</span>
+          </div>
+
+          <!-- Card Action Link -->
+          <div class="bento-card-footer">
+            <a href="#contact" class="bento-action-btn">
+              <span>Inspect Cloud Topology</span>
+              <span class="btn-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Bento Card 03: Security-First Systems -->
+        <div class="bento-card card-security" data-card="security">
+          <div class="bento-spotlight"></div>
+          <div class="bento-card-top">
+            <div class="bento-index-tag">03 // ZERO-TRUST VAULT</div>
+            <span class="bento-status-badge"><span class="badge-dot pulse-amber"></span>HARDENED</span>
+          </div>
+          <h3 class="bento-title">Security-First Systems &amp; Cryptography</h3>
+          <p class="bento-desc">Hardware-isolated cryptographic enclaves, continuous dependency auditing, zero-data-retention compliance, and military-grade defense in depth.</p>
+          
+          <!-- Live Cryptographic Shield Widget -->
+          <div class="security-vault-console">
+            <div class="vault-shield-wrap">
+              <div class="vault-shield-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+              </div>
+              <div class="vault-status-text">
+                <span class="vault-main-state">ENCLAVE ENCRYPTED // AES-256</span>
+                <span class="vault-hash" id="vaultHash">SHA256: 0x7F2B...9E4C [VERIFIED]</span>
+              </div>
+            </div>
+            <div class="security-audits-list">
+              <div class="audit-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>End-to-End Encrypted Hardware Enclaves</span>
+              </div>
+              <div class="audit-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>SOC2 Type II &amp; ISO 27001 Certified Architecture</span>
+              </div>
+              <div class="audit-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Automated Zero-Day Dependency Fuzzing</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Domain Tags -->
+          <div class="bento-tags">
+            <span class="bento-chip">#ZeroTrustEnclaves</span>
+            <span class="bento-chip">#AES256GCM</span>
+            <span class="bento-chip">#ContinuousAuditing</span>
+            <span class="bento-chip">#PrivacyByDesign</span>
+          </div>
+
+          <!-- Card Action Link -->
+          <div class="bento-card-footer">
+            <a href="#contact" class="bento-action-btn">
+              <span>View Security Protocol</span>
+              <span class="btn-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Bento Card 04: High-Velocity Analytics -->
+        <div class="bento-card card-analytics" data-card="analytics">
+          <div class="bento-spotlight"></div>
+          <div class="bento-card-top">
+            <div class="bento-index-tag">04 // REAL-TIME TELEMETRY</div>
+            <span class="bento-status-badge"><span class="badge-dot pulse-coral"></span>LIVE STREAM</span>
+          </div>
+          <h3 class="bento-title">High-Velocity Analytics &amp; Observability</h3>
+          <p class="bento-desc">Sub-millisecond event streaming ingestion processing millions of data points with predictive anomaly detection and instant executive intelligence.</p>
+          
+          <!-- Live Analytics Sparkline & KPI Widget -->
+          <div class="analytics-chart-console">
+            <div class="chart-stats-row">
+              <div class="stat-box">
+                <span class="stat-num" id="statThroughput">4.8M</span>
+                <span class="stat-label">EVENTS / SEC</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num">99.99%</span>
+                <span class="stat-label">RELIABILITY</span>
+              </div>
+              <div class="stat-box highlight">
+                <span class="stat-num">-64%</span>
+                <span class="stat-label">LATENCY DROP</span>
+              </div>
+            </div>
+            <div class="sparkline-wrapper">
+              <svg class="analytics-sparkline" viewBox="0 0 320 64" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#c84826" stop-opacity="0.32"/>
+                    <stop offset="100%" stop-color="#c84826" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <path class="spark-fill" d="M0,48 Q40,16 80,34 T160,22 T240,42 T320,14 L320,64 L0,64 Z" fill="url(#sparkGrad)" />
+                <path class="spark-line" d="M0,48 Q40,16 80,34 T160,22 T240,42 T320,14" fill="none" stroke="#c84826" stroke-width="2.5" stroke-linecap="round" />
+                <circle class="spark-beacon" cx="320" cy="14" r="4.5" fill="#c84826" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Feature Domain Tags -->
+          <div class="bento-tags">
+            <span class="bento-chip">#RealTimeTelemetry</span>
+            <span class="bento-chip">#AnomalyDetection</span>
+            <span class="bento-chip">#SubMillisecondIngest</span>
+            <span class="bento-chip">#PredictiveMetrics</span>
+          </div>
+
+          <!-- Card Action Link -->
+          <div class="bento-card-footer">
+            <a href="#contact" class="bento-action-btn">
+              <span>Benchmark Telemetry</span>
+              <span class="btn-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SECTION 5: STUDIO METRICS & BENCHMARKS (#metrics)
+       ========================================================================= -->
+  <section class="metrics-banner">
+    <div class="section-container">
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-val-wrap">
+            <span class="metric-val" data-target="50">50</span><span class="metric-suffix">+</span>
+          </div>
+          <div class="metric-label">Active Users</div>
+          <div class="metric-sub">Scaling global deployments</div>
+        </div>
+        <div class="metric-divider-v"></div>
+        <div class="metric-item">
+          <div class="metric-val-wrap">
+            <span class="metric-val" data-target="10">10</span><span class="metric-suffix">+</span>
+          </div>
+          <div class="metric-label">Projects Created</div>
+          <div class="metric-sub">Bespoke software &amp; tools</div>
+        </div>
+        <div class="metric-divider-v"></div>
+        <div class="metric-item">
+          <div class="metric-val-wrap">
+            <span class="metric-val" data-target="5">5</span><span class="metric-suffix">+</span>
+          </div>
+          <div class="metric-label">Tasks Automated</div>
+          <div class="metric-sub">Zero-friction pipelines</div>
+        </div>
+        <div class="metric-divider-v"></div>
+        <div class="metric-item">
+          <div class="metric-val-wrap">
+            <span class="metric-val" data-target="99.9">99.9</span><span class="metric-suffix">%</span>
+          </div>
+          <div class="metric-label">System Reliability</div>
+          <div class="metric-sub">Continuous uptime</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- =========================================================================
-       MODAL: CHARACTER DOSSIER
+       SECTION 6: THE COLLECTIVE / TEAM (#team)
        ========================================================================= -->
-  <div class="modal-backdrop" id="charModalBackdrop" role="dialog" aria-hidden="true">
-    <div class="modal-card">
-      <button class="modal-close" onclick="closeModal()" aria-label="Close Modal">✕</button>
-      <div class="modal-inner" id="modalContent">
+  <section id="team" class="team-section">
+    <div class="section-container">
+      <div class="team-manifesto-header">
+        <div class="crowd-quote-pill">
+          <span class="crowd-quote-dot"></span>
+          <span>BUILT DIFFERENT &bull; THE ALPHAKORE COLLECTIVE</span>
+        </div>
+        <h2 class="team-manifesto-title">
+          "While others follow the crowd, <span class="accent-quote">we engineer the anomaly.</span>"
+        </h2>
+        <p class="team-manifesto-subtext">
+          Not another dev shop. We are a syndicate of obsessive builders architecting systems that defy standard digital limits.
+        </p>
+      </div>
+
+      <!-- Team Filter Tabs -->
+      <div class="team-filter-bar">
+        <button class="team-filter-btn active" data-role="all">All Members</button>
+        <button class="team-filter-btn" data-role="lead">Leadership</button>
+        <button class="team-filter-btn" data-role="engineer">Engineering</button>
+        <button class="team-filter-btn" data-role="creative">Design &amp; Creative</button>
+      </div>
+    </div>
+
+    <!-- Interactive Skiper39 Crowd Canvas Simulation - Full Screen Coverage -->
+    <div class="crowd-canvas-wrapper" id="crowdWrapper">
+      <canvas id="crowdCanvas" class="crowd-canvas"></canvas>
+
+      <!-- Dynamic Floating Dossier Card (Anchors to hovered team person) -->
+      <div id="crowdDossierCard" class="crowd-dossier-popover" aria-hidden="true">
+        <div class="dossier-caret"></div>
+
+        <!-- Top Classification Ribbon -->
+        <div class="dossier-meta-ribbon">
+          <div class="dossier-meta-badge">
+            <span class="dossier-meta-dot"></span>
+            <span class="dossier-meta-label">ALPHAKORE // OPERATOR</span>
+          </div>
+          <div class="dossier-status-pill" id="dossierStatus">
+            <span class="status-pulse-dot"></span>
+            <span class="status-text">ONLINE</span>
+          </div>
+        </div>
+
+        <!-- Main Character Header -->
+        <div class="dossier-header">
+          <div class="dossier-avatar-frame" id="dossierAvatarFrame">
+            <div class="dossier-avatar" id="dossierAvatar">HT</div>
+          </div>
+          <div class="dossier-headline">
+            <h4 class="dossier-name" id="dossierName">Hitarth Trivedi</h4>
+            <div class="dossier-role-wrap">
+              <span class="dossier-role-tag" id="dossierRole">Lead Architect &amp; Full Stack</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bio Brief with Left Accent Line -->
+        <div class="dossier-bio-wrap">
+          <span class="bio-accent-bar" id="dossierBioBar"></span>
+          <p class="dossier-bio" id="dossierBio">Spearheading core architectural decisions, multi-agent frameworks, and distributed system design.</p>
+        </div>
+
+        <!-- Domain Focus / Skills -->
+        <div class="dossier-section-row">
+          <span class="dossier-section-title">CORE CAPABILITIES</span>
+          <span class="dossier-tech-chip">L4_ACCESS</span>
+        </div>
+        <div class="dossier-tags" id="dossierTags">
+          <!-- Dynamic tags -->
+        </div>
+
+        <!-- Interactive Links / Actions -->
+        <div class="dossier-footer">
+          <div class="dossier-socials" id="dossierSocials">
+            <!-- Dynamic links -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Instruction Badge -->
+      <div class="crowd-guide-badge">
+        <span class="guide-pulsar"></span>
+        <span>Hover highlighted members to decelerate motion &amp; view credentials</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SECTION 7: INITIATE DIALOGUE / CONTACT (#contact)
+       ========================================================================= -->
+  <section id="contact" class="contact-section">
+    <div class="section-container">
+      <div class="contact-card">
+        <!-- Vintage India Telegram / Official Form Background Watermark Layer -->
+        <div class="contact-card-watermark" aria-hidden="true"></div>
+        
+        <!-- Archival Dispatch Docket Header -->
+        <div class="contact-card-docket">
+          <span class="docket-ref">TRANSMISSION DOCKET // OFFICIAL INQUIRY REGISTER</span>
+          <span class="docket-seal">STAMP &bull; REGISTERED</span>
+        </div>
+
+        <div class="contact-card-grid">
+          <!-- Left Column: Studio Inquiries & Direct Channel -->
+          <div class="contact-info-col">
+            <span class="eyebrow">INITIATE DIALOGUE</span>
+            <h2 class="contact-title">Let’s build what matters.</h2>
+            <p class="contact-subtitle">Whether you require autonomous agent pipelines, resilient cloud architecture, or bespoke digital products — we stand ready to engineer your future.</p>
+
+            <div class="contact-direct-box">
+              <div class="direct-label">DIRECT INQUIRY</div>
+              <div class="direct-email-row">
+                <a href="mailto:alpha.kore25@gmail.com" class="direct-email-link" id="emailLink">alpha.kore25@gmail.com</a>
+                <button class="copy-email-btn" id="copyEmailBtn" title="Copy email address" aria-label="Copy email address">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span class="copy-text">Copy</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="contact-metadata-grid">
+              <div class="meta-block">
+                <span class="meta-title">STUDIO LOCATION</span>
+                <span class="meta-val">Remote Global • India Base</span>
+              </div>
+              <div class="meta-block">
+                <span class="meta-title">TYPICAL RESPONSE</span>
+                <span class="meta-val">Within 24 Business Hours</span>
+              </div>
+              <div class="meta-block">
+                <span class="meta-title">ENGAGEMENT MODEL</span>
+                <span class="meta-val">Bespoke Projects &amp; Retainers</span>
+              </div>
+              <div class="meta-block">
+                <span class="meta-title">STUDIO STATUS</span>
+                <span class="meta-val highlight-green">● Accepting New Briefs</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Inquiry Form -->
+          <div class="contact-form-col">
+            <form id="contactForm" class="inquiry-form">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="contactName">YOUR NAME *</label>
+                  <input type="text" id="contactName" name="name" required placeholder="e.g. Elena Rostova">
+                </div>
+                <div class="form-group">
+                  <label for="contactEmail">EMAIL ADDRESS *</label>
+                  <input type="email" id="contactEmail" name="email" required placeholder="e.g. elena@venture.io">
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="contactOrg">ORGANIZATION / VENTURE</label>
+                  <input type="text" id="contactOrg" name="organization" placeholder="e.g. Autonomous AI Labs">
+                </div>
+                <div class="form-group">
+                  <label for="contactService">PRIMARY REQUIREMENT</label>
+                  <select id="contactService" name="service">
+                    <option value="AI-Powered Automation">AI-Powered Automation</option>
+                    <option value="Seamless Cloud Integration">Seamless Cloud Integration</option>
+                    <option value="Security-First Engineering">Security-First Engineering</option>
+                    <option value="Advanced Analytics">Advanced Analytics</option>
+                    <option value="Comprehensive Partnership">Comprehensive Partnership</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="contactMessage">PROJECT BRIEF / VISION *</label>
+                <textarea id="contactMessage" name="message" rows="4" required placeholder="Describe what you want to automate, build, or deploy..."></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="submit-inquiry-btn" id="submitInquiryBtn">
+                  <span class="btn-text">Transmit Inquiry →</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Studio Footer -->
+      <footer class="studio-footer">
+        <div class="footer-left">
+          <div class="footer-logo">
+            <img src="assets/alphakore_logo.png" width="28" height="28" alt="Alpha.Kore" class="footer-logo-img">
+            <span class="footer-brand-name">ALPHA.KORE</span>
+          </div>
+          <p class="footer-motto">Building the layer between bold ideas and working systems.</p>
+        </div>
+        <div class="footer-links">
+          <a href="#plot" class="footer-link">Hero</a>
+          <a href="#impact" class="footer-link">Vision</a>
+          <a href="#work" class="footer-link">Work</a>
+          <a href="#services" class="footer-link">Services</a>
+          <a href="#team" class="footer-link">Team</a>
+          <a href="#contact" class="footer-link">Contact</a>
+        </div>
+        <div class="footer-right">
+          <p class="footer-copy">© 2026 ALPHA.KORE STUDIO. ALL RIGHTS RESERVED.</p>
+          <a href="#plot" class="back-to-top" title="Return to Top">↑ Top</a>
+        </div>
+      </footer>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       MODAL: PROJECT ARCHITECTURE DOSSIER
+       ========================================================================= -->
+  <div class="modal-backdrop" id="projectModalBackdrop" role="dialog" aria-hidden="true">
+    <div class="modal-card project-modal-card">
+      <button class="modal-close" onclick="closeProjectModal()" aria-label="Close Modal">✕</button>
+      <div class="modal-inner" id="projectModalContent">
         <!-- Injected via script.js -->
       </div>
     </div>
   </div>
 
-  <!-- =========================================================================
-       MODAL: ADD BOOK OF HER CHOICE
-       ========================================================================= -->
-  <div class="modal-backdrop" id="bookModalBackdrop" role="dialog" aria-hidden="true">
-    <div class="modal-card book-modal-card">
-      <button class="modal-close" id="closeBookModalBtn" aria-label="Close Modal">✕</button>
-      <div class="book-modal-inner">
-        <span class="eyebrow gold">// CURATE VOLUME</span>
-        <h3 class="modal-title">Add Book of Her Choice</h3>
-        <p class="modal-sub">Add a cherished book to her permanent shelf. It will stay preserved in this browser forever.</p>
-
-        <form id="addBookForm" class="add-book-form">
-          <div class="form-group">
-            <label for="bookTitle">Book Title *</label>
-            <input type="text" id="bookTitle" required placeholder="e.g. The Neverending Story">
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="bookAuthor">Author *</label>
-              <input type="text" id="bookAuthor" required placeholder="e.g. Michael Ende">
-            </div>
-            <div class="form-group">
-              <label for="bookYear">Publication Year</label>
-              <input type="number" id="bookYear" placeholder="e.g. 1979" min="1000" max="2099">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="bookGenre">Genre / Category</label>
-              <select id="bookGenre">
-                <option value="Adventure">Adventure</option>
-                <option value="Philosophy">Philosophy</option>
-                <option value="Fantasy">Fantasy</option>
-                <option value="Classic">Classic</option>
-                <option value="Lore">Lore</option>
-                <option value="Sci-Fi">Sci-Fi</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="bookSpine">Spine Palette</label>
-              <select id="bookSpine">
-                <option value="spine-gold">Goonies Antique Gold</option>
-                <option value="spine-sea">Pacific Ocean Azure</option>
-                <option value="spine-forest">Astoria Emerald Forest</option>
-                <option value="spine-amber">Pirate Map Terracotta</option>
-                <option value="spine-obsidian">Inferno Obsidian</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Her Rating</label>
-            <div class="star-rating-picker" id="starPicker">
-              <span class="star-pick active" data-rating="1">★</span>
-              <span class="star-pick active" data-rating="2">★</span>
-              <span class="star-pick active" data-rating="3">★</span>
-              <span class="star-pick active" data-rating="4">★</span>
-              <span class="star-pick active" data-rating="5">★</span>
-            </div>
-            <input type="hidden" id="bookRating" value="5">
-          </div>
-
-          <div class="form-group">
-            <label for="bookNotes">Personal Reflection / Notes</label>
-            <textarea id="bookNotes" rows="3" placeholder="Why she chose this book, a favorite quote, or what it inspired..."></textarea>
-          </div>
-
-          <div class="form-actions">
-            <button type="button" class="btn-cancel" id="cancelBookBtn">Cancel</button>
-            <button type="submit" class="btn-save">Save Forever to Shelf</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+  <!-- Toast Notification Container -->
+  <!-- GSAP & ScrollTrigger Animation Libraries -->
+  <script src="gsap.min.js"></script>
+  <script src="ScrollTrigger.min.js"></script>
+  <script src="script.js?v=20260904_india_form_bg_v2"></script>
 </body>
 </html>
