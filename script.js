@@ -1622,6 +1622,9 @@ function initSiteLoader() {
       osc.stop(actx.currentTime + 0.2);
     } catch (e) {}
 
+    // Trigger cinematic landing text effect as curtain lifts
+    animateHeroLanding();
+
     // Lift curtain to reveal Hero section
     if (typeof gsap !== 'undefined') {
       gsap.to(loader, {
@@ -1827,6 +1830,105 @@ function initCapabilitiesBento() {
 }
 
 // ============================================================================
+// 8.6. CINEMATIC HERO LANDING TEXT REVEAL EFFECT
+// ============================================================================
+let hasLandingAnimated = false;
+
+function animateHeroLanding() {
+  if (hasLandingAnimated) return;
+  hasLandingAnimated = true;
+
+  const heroTitle = document.getElementById('heroTitle');
+  const heroTagline = document.getElementById('heroTagline');
+  const heroEmblem = document.getElementById('heroEmblem');
+
+  if (!heroTitle) return;
+
+  // Split heroTitle into kinetic character spans
+  if (!heroTitle.classList.contains('split-done')) {
+    const text = heroTitle.textContent.trim();
+    heroTitle.innerHTML = text
+      .split('')
+      .map((char, i) => `<span class="hero-char" data-index="${i}">${char}</span>`)
+      .join('');
+    heroTitle.classList.add('split-done');
+  }
+
+  const chars = heroTitle.querySelectorAll('.hero-char');
+
+  if (typeof gsap !== 'undefined') {
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    // 1. Emblem drops in with golden ambient flare
+    if (heroEmblem) {
+      tl.fromTo(
+        heroEmblem,
+        { opacity: 0, y: -30, scale: 0.75, filter: 'drop-shadow(0 0 0px rgba(184,134,45,0))' },
+        { opacity: 1, y: 0, scale: 1, filter: 'drop-shadow(0 4px 14px rgba(184,134,45,0.45))', duration: 0.95 },
+        0.05
+      );
+    }
+
+    // 2. Staggered 3D rising letters: rise from below, de-blur, settle into place
+    if (chars.length > 0) {
+      tl.fromTo(
+        chars,
+        {
+          opacity: 0,
+          y: 48,
+          scale: 1.15,
+          filter: 'blur(12px)',
+          rotationX: 45
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: 'blur(0px)',
+          rotationX: 0,
+          duration: 1.15,
+          stagger: 0.055,
+          ease: 'back.out(1.3)'
+        },
+        0.18
+      );
+    }
+
+    // 3. Tagline floats in with letter-spacing expansion
+    if (heroTagline) {
+      tl.fromTo(
+        heroTagline,
+        { opacity: 0, y: 22, filter: 'blur(6px)', letterSpacing: '0.12em' },
+        { opacity: 1, y: 0, filter: 'blur(0px)', letterSpacing: '0.28em', duration: 1.0, ease: 'power2.out' },
+        0.65
+      );
+    }
+
+    // 4. Subtle gold gleam sweep across the black letters as light catches them
+    tl.to(
+      chars,
+      {
+        color: '#b8862d',
+        textShadow: '0 0 16px rgba(184, 134, 45, 0.75), 0 1px 12px rgba(255, 255, 255, 0.9)',
+        duration: 0.28,
+        stagger: {
+          each: 0.035,
+          yoyo: true,
+          repeat: 1
+        },
+        ease: 'sine.inOut'
+      },
+      0.95
+    );
+  } else {
+    // Fallback if GSAP is unavailable
+    if (heroEmblem) heroEmblem.style.opacity = '1';
+    chars.forEach((c) => (c.style.opacity = '1'));
+    if (heroTagline) heroTagline.style.opacity = '1';
+  }
+}
+
+// ============================================================================
 // 9. INITIALIZATION
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -1841,6 +1943,12 @@ document.addEventListener('DOMContentLoaded', () => {
   currentProgress = targetProgress;
   updateParallax();
   updateNavState();
+
+  // If loader is not present or already hidden, trigger landing effect
+  const loaderEl = document.getElementById('siteLoader');
+  if (!loaderEl || loaderEl.style.display === 'none') {
+    setTimeout(animateHeroLanding, 200);
+  }
 
   // Ensure GSAP ScrollTrigger measures DOM correctly
   if (typeof ScrollTrigger !== 'undefined') {
