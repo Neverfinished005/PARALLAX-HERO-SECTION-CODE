@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixel Transition Active Info Preview</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background-color: #f7f6f2;
+      padding: 40px 20px 80px;
+      min-height: 100vh;
+    }
+    .test-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .test-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #0b0d11;
+      margin-bottom: 8px;
+    }
+    .test-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem;
+      color: #64748b;
+      letter-spacing: 0.05em;
+    }
+    /* Force active state for visual audit */
+    .preview-active .pixel-card__default {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    .preview-active .pixel-card__active {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="test-header">
+    <h1 class="test-title">ACTIVE INFORMATION LAYER // SPECIFICATIONS</h1>
+    <p class="test-sub">VISUAL SPECIFICATIONS REVEALED ON HOVER ACROSS FLAGSHIP PRODUCTS</p>
+  </div>
+
+  <section class="services-section" id="services" style="border: none; padding: 0; background: transparent;">
+    <div class="section-container">
+      <div class="pixel-transition-grid" id="pixelTransitionGrid">
+        
+        <!-- CARD 01: PRISM (ACTIVE INFO STATE) -->
+        <div class="pixel-card preview-active" id="cardPrism" data-grid-cols="10" data-grid-rows="7">
+          <div class="pixel-card__default">
+            <img src="assets/product_prism.jpg" alt="PRISM" class="pixel-card__img" />
+          </div>
+
+          <div class="pixel-card__active">
+            <div class="pixel-info-top">
+              <div class="pixel-info-badge-row">
+                <span class="pixel-info-tag">01 // AUTONOMOUS WORKFLOWS</span>
+                <span class="pixel-info-status"><span class="badge-dot pulse-cyan"></span>ONLINE</span>
+              </div>
+              <h3 class="pixel-info-title">PRISM</h3>
+              <p class="pixel-info-desc">One plain-language task goes in. Prism refracts it into aimed prompts and drives your own logged-in browser through the tools you choose.</p>
+            </div>
+
+            <div class="pixel-services-block">
+              <div class="pixel-services-header">
+                <span class="services-header-dot"></span>
+                <span>SERVICES &amp; CAPABILITIES</span>
+              </div>
+              <div class="pixel-chips-wrap">
+                <span class="pixel-chip">#AutonomousAgents</span>
+                <span class="pixel-chip">#BrowserAutomation</span>
+                <span class="pixel-chip">#PromptRefraction</span>
+                <span class="pixel-chip">#SessionManagement</span>
+                <span class="pixel-chip">#MultiToolOrchestration</span>
+              </div>
+            </div>
+
+            <div class="pixel-card-footer">
+              <a href="https://prism-ai-flow.vercel.app/" target="_blank" rel="noopener noreferrer" class="pixel-action-btn">
+                <span>Launch PRISM Engine</span>
+                <span class="btn-arrow">↗</span>
+              </a>
+              <span class="pixel-footer-sub">YOUR SPECTRUM · YOUR SESSIONS</span>
+            </div>
+          </div>
+
+          <div class="pixel-card__grid" aria-hidden="true"></div>
+        </div>
+
+        <!-- CARD 02: LAZYCOOK (ACTIVE INFO STATE) -->
+        <div class="pixel-card preview-active" id="cardLazycook" data-grid-cols="10" data-grid-rows="7">
+          <div class="pixel-card__default">
+            <img src="assets/product_lazycook.png" alt="LAZYCOOK" class="pixel-card__img" />
+          </div>
+
+          <div class="pixel-card__active">
+            <div class="pixel-info-top">
+              <div class="pixel-info-badge-row">
+                <span class="pixel-info-tag">02 // RESEARCH &amp; STUDY NOTES</span>
+                <span class="pixel-info-status"><span class="badge-dot pulse-emerald"></span>VERIFIED</span>
+              </div>
+              <h3 class="pixel-info-title">LAZYCOOK</h3>
+              <p class="pixel-info-desc">A team of agents that research, cross-check and compose — so you get sourced answers and clean study notes, not a confident guess.</p>
+            </div>
+
+            <div class="pixel-services-block">
+              <div class="pixel-services-header">
+                <span class="services-header-dot"></span>
+                <span>SERVICES &amp; CAPABILITIES</span>
+              </div>
+              <div class="pixel-chips-wrap">
+                <span class="pixel-chip">#MultiAgentResearch</span>
+                <span class="pixel-chip">#SourceVerification</span>
+                <span class="pixel-chip">#StudyNoteSynthesis</span>
+                <span class="pixel-chip">#Gemini2.5Flash</span>
+                <span class="pixel-chip">#TerminalSupervisor</span>
+              </div>
+            </div>
+
+            <div class="pixel-card-footer">
+              <a href="https://thelazycook.in/" target="_blank" rel="noopener noreferrer" class="pixel-action-btn">
+                <span>Launch Live Assistant</span>
+                <span class="btn-arrow">↗</span>
+              </a>
+              <span class="pixel-footer-sub">SOURCED ANSWERS · CLEAN STUDY NOTES</span>
+            </div>
+          </div>
+
+          <div class="pixel-card__grid" aria-hidden="true"></div>
+        </div>
+
+        <!-- CARD 03: DELTA (ACTIVE INFO STATE) -->
+        <div class="pixel-card preview-active" id="cardDelta" data-grid-cols="10" data-grid-rows="7">
+          <div class="pixel-card__default">
+            <img src="assets/product_delta.png" alt="DELTA" class="pixel-card__img" />
+          </div>
+
+          <div class="pixel-card__active">
+            <div class="pixel-info-top">
+              <div class="pixel-info-badge-row">
+                <span class="pixel-info-tag">03 // CAREER OPERATING SYSTEM</span>
+                <span class="pixel-info-status"><span class="badge-dot pulse-coral"></span>ACTIVE</span>
+              </div>
+              <h3 class="pixel-info-title">DELTA</h3>
+              <p class="pixel-info-desc">One intake conversation, one adaptive weekly planner, and one progress report page that keeps your roadmap honest for years.</p>
+            </div>
+
+            <div class="pixel-services-block">
+              <div class="pixel-services-header">
+                <span class="services-header-dot"></span>
+                <span>SERVICES &amp; CAPABILITIES</span>
+              </div>
+              <div class="pixel-chips-wrap">
+                <span class="pixel-chip">#IntakeConversations</span>
+                <span class="pixel-chip">#AdaptiveWeeklyPlanner</span>
+                <span class="pixel-chip">#HonestRoadmaps</span>
+                <span class="pixel-chip">#OutcomeTracking</span>
+                <span class="pixel-chip">#DistributedTelemetry</span>
+              </div>
+            </div>
+
+            <div class="pixel-card-footer">
+              <a href="https://delta-kappa-pink.vercel.app/" target="_blank" rel="noopener noreferrer" class="pixel-action-btn">
+                <span>Inspect DELTA Roadmap</span>
+                <span class="btn-arrow">↗</span>
+              </a>
+              <span class="pixel-footer-sub">INTAKE · PLANNER · PROGRESS</span>
+            </div>
+          </div>
+
+          <div class="pixel-card__grid" aria-hidden="true"></div>
+        </div>
+
+        <!-- CARD 04: REZUM (ACTIVE INFO STATE) -->
+        <div class="pixel-card preview-active" id="cardRezum" data-grid-cols="10" data-grid-rows="7">
+          <div class="pixel-card__default">
+            <img src="assets/product_rezum.png" alt="REZUM" class="pixel-card__img" />
+          </div>
+
+          <div class="pixel-card__active">
+            <div class="pixel-info-top">
+              <div class="pixel-info-badge-row">
+                <span class="pixel-info-tag">04 // DEVELOPER PORTFOLIO ENGINE</span>
+                <span class="pixel-info-status"><span class="badge-dot pulse-blue"></span>SYNCED</span>
+              </div>
+              <h3 class="pixel-info-title">REZUM</h3>
+              <p class="pixel-info-desc">The minimalist portfolio for modern developers. Upload your projects and achievements in one place and get a clean public profile with shareable structured data.</p>
+            </div>
+
+            <div class="pixel-services-block">
+              <div class="pixel-services-header">
+                <span class="services-header-dot"></span>
+                <span>SERVICES &amp; CAPABILITIES</span>
+              </div>
+              <div class="pixel-chips-wrap">
+                <span class="pixel-chip">#OneLinkSharing</span>
+                <span class="pixel-chip">#ModularExport</span>
+                <span class="pixel-chip">#CleanJSONFormat</span>
+                <span class="pixel-chip">#ATSOptimization</span>
+                <span class="pixel-chip">#ZeroFrictionUX</span>
+              </div>
+            </div>
+
+            <div class="pixel-card-footer">
+              <a href="https://rezum-alphakore.vercel.app/" target="_blank" rel="noopener noreferrer" class="pixel-action-btn">
+                <span>Generate Machine Resume</span>
+                <span class="btn-arrow">↗</span>
+              </a>
+              <span class="pixel-footer-sub">ONE-LINK SHARING · MODULAR EXPORT</span>
+            </div>
+          </div>
+
+          <div class="pixel-card__grid" aria-hidden="true"></div>
+        </div>
+
+        <!-- CARD 05: 3F1 (ACTIVE INFO STATE) -->
+        <div class="pixel-card card-showcase preview-active" id="card3f1" data-grid-cols="12" data-grid-rows="7">
+          <div class="pixel-card__default">
+            <img src="assets/product_3f1.png" alt="3F1" class="pixel-card__img" />
+          </div>
+
+          <div class="pixel-card__active">
+            <div class="pixel-info-top">
+              <div class="pixel-info-badge-row">
+                <span class="pixel-info-tag">05 // DEBATE SYNTHESIS ENGINE</span>
+                <span class="pixel-info-status"><span class="badge-dot pulse-amber"></span>CONSENSUS</span>
+              </div>
+              <h3 class="pixel-info-title">3F1 —</h3>
+              <p class="pixel-info-desc">3F1 leverages a three-agent debate protocol to pit divergent models against each other, distilling complex topics into objective, structured synthesis.</p>
+            </div>
+
+            <div class="pixel-services-block">
+              <div class="pixel-services-header">
+                <span class="services-header-dot"></span>
+                <span>SERVICES &amp; CAPABILITIES</span>
+              </div>
+              <div class="pixel-chips-wrap">
+                <span class="pixel-chip">#3AgentDebateProtocol</span>
+                <span class="pixel-chip">#MultiModelConsensus</span>
+                <span class="pixel-chip">#ObjectiveSynthesis</span>
+                <span class="pixel-chip">#StructuredDebate</span>
+                <span class="pixel-chip">#AdversarialValidation</span>
+              </div>
+            </div>
+
+            <div class="pixel-card-footer">
+              <a href="https://www.3f1.in/" target="_blank" rel="noopener noreferrer" class="pixel-action-btn">
+                <span>Trigger 3F1 Debate</span>
+                <span class="btn-arrow">↗</span>
+              </a>
+              <span class="pixel-footer-sub">3-AGENT PROTOCOL · OBJECTIVE SYNTHESIS</span>
+            </div>
+          </div>
+
+          <div class="pixel-card__grid" aria-hidden="true"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

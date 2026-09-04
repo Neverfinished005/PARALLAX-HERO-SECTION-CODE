@@ -1904,6 +1904,15 @@ function initSiteLoader() {
 
   if (!loader) return;
 
+  // Deep-link / direct section bypass: if URL hash or noloader flag is set, skip loader immediately
+  if (window.location.hash || window.location.search.includes('noloader=1')) {
+    loader.style.display = 'none';
+    document.body.classList.remove('loading-active');
+    document.body.style.overflow = '';
+    isLoaderDismissed = true;
+    return;
+  }
+
   // Lock scroll while loader is visible
   document.body.classList.add('loading-active');
   window.scrollTo(0, 0);
@@ -2000,154 +2009,170 @@ function initSiteLoader() {
 }
 
 // ============================================================================
-// 8.5 INTERACTIVE CAPABILITIES BENTO MATRIX
+// 8.5 INTERACTIVE PIXEL TRANSITION ENGINE (REACT BITS SPEC)
 // ============================================================================
-function initCapabilitiesBento() {
-  const bentoCards = document.querySelectorAll('.bento-card');
-  if (!bentoCards.length) return;
+function initPixelTransitions() {
+  const pixelCards = document.querySelectorAll('.pixel-card');
+  if (!pixelCards.length) return;
 
-  // 1. Dynamic Cursor Spotlight & 3D Magnetic Tilt
-  bentoCards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--mouse-x', `${x}px`);
-      card.style.setProperty('--mouse-y', `${y}px`);
+  pixelCards.forEach((card) => {
+    const gridContainer = card.querySelector('.pixel-card__grid');
+    const defaultLayer = card.querySelector('.pixel-card__default');
+    const activeLayer = card.querySelector('.pixel-card__active');
+    if (!gridContainer || !defaultLayer || !activeLayer) return;
 
-      // Damped 3D perspective tilt
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const rotateX = ((y - centerY) / centerY) * -5;
-      const rotateY = ((x - centerX) / centerX) * 5;
-      card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-6px)`;
-    });
+    // Read configured density & colors
+    const cols = parseInt(card.getAttribute('data-grid-cols') || '10', 10);
+    const rows = parseInt(card.getAttribute('data-grid-rows') || '7', 10);
+    const pixelColor = card.getAttribute('data-pixel-color') || '#0b0d11';
+    const totalTiles = cols * rows;
 
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
+    // Configure CSS Grid template dynamically
+    gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+    // Build the tiles
+    gridContainer.innerHTML = '';
+    const tiles = [];
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < totalTiles; i++) {
+      const tile = document.createElement('div');
+      tile.className = 'pixel-tile';
+      tile.style.setProperty('--tile-color', pixelColor);
+      fragment.appendChild(tile);
+      tiles.push(tile);
+    }
+    gridContainer.appendChild(fragment);
+
+    // Initial state setup
+    if (typeof gsap !== 'undefined') {
+      gsap.set(tiles, { opacity: 0, scale: 0.6 });
+      gsap.set(defaultLayer, { opacity: 1 });
+      gsap.set(activeLayer, { opacity: 0 });
+    }
+
+    let isFlipped = false;
+    let currentTl = null;
+
+    function flipToActive() {
+      if (isFlipped) return;
+      isFlipped = true;
+
+      if (typeof gsap === 'undefined') {
+        defaultLayer.style.opacity = '0';
+        activeLayer.style.opacity = '1';
+        activeLayer.style.pointerEvents = 'auto';
+        return;
+      }
+
+      if (currentTl) currentTl.kill();
+
+      currentTl = gsap.timeline({
+        defaults: { ease: 'power2.inOut' },
+        onComplete: () => {
+          gsap.set(tiles, { opacity: 0, scale: 0.6 });
+        }
+      });
+
+      // 1. Pixels sweep in randomly with randomized stagger
+      currentTl.to(tiles, {
+        opacity: 1,
+        scale: 1.02,
+        duration: 0.16,
+        stagger: {
+          from: 'random',
+          amount: 0.20
+        }
+      })
+      // 2. Layer swap at peak pixel opacity
+      .add(() => {
+        defaultLayer.style.opacity = '0';
+        defaultLayer.style.pointerEvents = 'none';
+        activeLayer.style.opacity = '1';
+        activeLayer.style.pointerEvents = 'auto';
+      })
+      // 3. Pixels sweep out randomly revealing the active information
+      .to(tiles, {
+        opacity: 0,
+        scale: 0.6,
+        duration: 0.16,
+        stagger: {
+          from: 'random',
+          amount: 0.20
+        }
+      });
+    }
+
+    function flipToDefault() {
+      if (!isFlipped) return;
+      isFlipped = false;
+
+      if (typeof gsap === 'undefined') {
+        activeLayer.style.opacity = '0';
+        activeLayer.style.pointerEvents = 'none';
+        defaultLayer.style.opacity = '1';
+        return;
+      }
+
+      if (currentTl) currentTl.kill();
+
+      currentTl = gsap.timeline({
+        defaults: { ease: 'power2.inOut' },
+        onComplete: () => {
+          gsap.set(tiles, { opacity: 0, scale: 0.6 });
+        }
+      });
+
+      // 1. Pixels sweep in randomly
+      currentTl.to(tiles, {
+        opacity: 1,
+        scale: 1.02,
+        duration: 0.16,
+        stagger: {
+          from: 'random',
+          amount: 0.20
+        }
+      })
+      // 2. Layer swap back to product image
+      .add(() => {
+        activeLayer.style.opacity = '0';
+        activeLayer.style.pointerEvents = 'none';
+        defaultLayer.style.opacity = '1';
+        defaultLayer.style.pointerEvents = 'auto';
+      })
+      // 3. Pixels sweep out randomly revealing the pristine image
+      .to(tiles, {
+        opacity: 0,
+        scale: 0.6,
+        duration: 0.16,
+        stagger: {
+          from: 'random',
+          amount: 0.20
+        }
+      });
+    }
+
+    // Mouse hover events (Desktop)
+    card.addEventListener('mouseenter', flipToActive);
+    card.addEventListener('mouseleave', flipToDefault);
+
+    // Keyboard accessibility (focus / blur)
+    card.setAttribute('tabindex', '0');
+    card.addEventListener('focus', flipToActive);
+    card.addEventListener('blur', flipToDefault);
+
+    // Mobile / Touch tap toggle
+    card.addEventListener('click', (e) => {
+      // Don't toggle card state if clicking directly on link CTA
+      if (e.target.closest('a')) return;
+      if (isFlipped) {
+        flipToDefault();
+      } else {
+        flipToActive();
+      }
     });
   });
-
-  // 2. Interactive AI Agent Simulation Trigger (Card 01)
-  const aiSimBtn = document.getElementById('aiSimTrigger');
-  const aiStatus = document.getElementById('aiPipelineStatus');
-  const aiStream = document.getElementById('aiStreamOutput');
-  const aiTrack = document.getElementById('aiPipelineTrack');
-
-  if (aiSimBtn && aiStatus && aiStream && aiTrack) {
-    let isSimulating = false;
-    const steps = aiTrack.querySelectorAll('.pipeline-step');
-
-    const sampleSimulations = [
-      {
-        task: 'Autonomous Database Query Optimization',
-        line1: 'Parsing SQL query execution graph for zero-index bottleneck...',
-        line2: 'Neural rewrote plan: Reduced cost from 4.2s to 18ms (99.6% speedup)'
-      },
-      {
-        task: 'Multi-Agent Code Synthesis & Security Audit',
-        line1: 'Synthesizing distributed cache layer with fault-tolerant circuit breaker...',
-        line2: 'Static analyzer verified 0 memory leaks, 100% test coverage passing'
-      },
-      {
-        task: 'Real-Time Telemetry Anomaly Mitigation',
-        line1: 'Ingesting 4.8M ops/sec stream... Spike detected in EU cluster.',
-        line2: 'Auto-scaled 12 edge worker pods. Cluster load balanced to 42% nominal.'
-      }
-    ];
-    let simIndex = 0;
-
-    aiSimBtn.addEventListener('click', () => {
-      if (isSimulating) return;
-      isSimulating = true;
-      aiSimBtn.style.opacity = '0.5';
-      aiSimBtn.style.pointerEvents = 'none';
-      aiStatus.textContent = 'EXECUTING GRAPH...';
-      aiStatus.style.color = '#38bdf8';
-
-      const currentSim = sampleSimulations[simIndex % sampleSimulations.length];
-      simIndex++;
-
-      // Step 1: Ingest
-      steps.forEach(s => s.className = 'pipeline-step');
-      steps[0].classList.add('step-active');
-      aiStream.innerHTML = `<div class="stream-line"><span class="stream-prefix">&gt;</span> <span class="stream-highlight">Task Ingest:</span> ${currentSim.task}...</div>`;
-
-      // Step 2: Route after 600ms
-      setTimeout(() => {
-        steps[0].className = 'pipeline-step step-done';
-        steps[1].className = 'pipeline-step step-active';
-        aiStream.innerHTML += `<div class="stream-line"><span class="stream-prefix">&gt;</span> ${currentSim.line1}</div>`;
-      }, 600);
-
-      // Step 3: Self-Correction after 1300ms
-      setTimeout(() => {
-        steps[1].className = 'pipeline-step step-done';
-        steps[2].className = 'pipeline-step step-active';
-      }, 1300);
-
-      // Step 4: Execution & Artifacts after 2000ms
-      setTimeout(() => {
-        steps[2].className = 'pipeline-step step-done';
-        steps[3].className = 'pipeline-step step-active step-done';
-        aiStream.innerHTML += `<div class="stream-line" style="color: #10b981;"><span class="stream-prefix">&gt;</span> ${currentSim.line2}</div>`;
-        aiStatus.textContent = 'EXECUTION COMPLETE // READY';
-        aiStatus.style.color = '#10b981';
-      }, 2000);
-
-      // Reset button after 3600ms
-      setTimeout(() => {
-        isSimulating = false;
-        aiSimBtn.style.opacity = '1';
-        aiSimBtn.style.pointerEvents = '';
-        aiStatus.textContent = 'PIPELINE IDLE // READY';
-        aiStatus.style.color = '#38bdf8';
-        steps[0].className = 'pipeline-step step-done';
-        steps[1].className = 'pipeline-step step-active';
-        steps[2].className = 'pipeline-step';
-        steps[3].className = 'pipeline-step';
-      }, 3600);
-    });
-  }
-
-  // 3. Live Fluctuating Cloud Latencies (Card 02)
-  const pingUs = document.getElementById('pingUs');
-  const pingEu = document.getElementById('pingEu');
-  const pingAp = document.getElementById('pingAp');
-
-  if (pingUs && pingEu && pingAp) {
-    setInterval(() => {
-      const usVal = Math.floor(10 + Math.random() * 5);
-      const euVal = Math.floor(16 + Math.random() * 6);
-      const apVal = Math.floor(22 + Math.random() * 7);
-
-      pingUs.textContent = `${usVal}ms`;
-      pingEu.textContent = `${euVal}ms`;
-      pingAp.textContent = `${apVal}ms`;
-    }, 2800);
-  }
-
-  // 4. Live Cryptographic Hash Cycling (Card 03)
-  const vaultHash = document.getElementById('vaultHash');
-  if (vaultHash) {
-    const hexChars = '0123456789ABCDEF';
-    setInterval(() => {
-      let randChunk1 = '';
-      let randChunk2 = '';
-      for (let i = 0; i < 4; i++) randChunk1 += hexChars[Math.floor(Math.random() * hexChars.length)];
-      for (let i = 0; i < 4; i++) randChunk2 += hexChars[Math.floor(Math.random() * hexChars.length)];
-      vaultHash.textContent = `SHA256: 0x${randChunk1}...${randChunk2} [VERIFIED]`;
-    }, 3400);
-  }
-
-  // 5. High-Velocity Event Counter (Card 04)
-  const statThroughput = document.getElementById('statThroughput');
-  if (statThroughput) {
-    setInterval(() => {
-      const val = (4.6 + Math.random() * 0.8).toFixed(1);
-      statThroughput.textContent = `${val}M`;
-    }, 2200);
-  }
 }
 
 // ============================================================================
@@ -2255,7 +2280,7 @@ function animateHeroLanding() {
 document.addEventListener('DOMContentLoaded', () => {
   initSiteLoader();
   initSkiper17CardStack();
-  initCapabilitiesBento();
+  initPixelTransitions();
   initSkiper39CrowdCanvas();
   initContactForm();
   initMetricCounters();
