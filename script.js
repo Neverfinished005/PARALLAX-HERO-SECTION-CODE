@@ -73,34 +73,29 @@ function updateParallax() {
 
   // --------------------------------------------------------------------------
   // FOREGROUND CARVED STONE PILLARS PARTING (Left & Right Outward Zoom)
-  // Scale from 1.0 to 1.70 between p=0.15 and p=0.65
-  // Left pillar moves -X, Right pillar moves +X
   // --------------------------------------------------------------------------
   let pillarScale = 1.0;
   let pillarTranslateY = 0;
   let pillarTranslateX = 0;
   let pillarOpacity = 1.0;
 
-  if (p >= 0.15 && p <= 0.65) {
-    const t = (p - 0.15) / 0.50;
+  if (p >= 0.12 && p <= 0.60) {
+    const t = (p - 0.12) / 0.48;
     pillarScale = 1.0 + t * 0.70; // 1.0 -> 1.70
     pillarTranslateX = t * 400; // 0 -> 400px outward parting
-  } else if (p > 0.65) {
+  } else if (p > 0.60) {
     pillarScale = 1.70;
     pillarTranslateX = 400;
   }
 
-  // Move up offscreen after p=0.65
-  if (p >= 0.65 && p <= 0.88) {
-    const t = (p - 0.65) / 0.23;
-    pillarTranslateY = -t * 380; // 0 -> -380px
-  } else if (p > 0.88) {
+  // Move up and fade out cleanly
+  if (p >= 0.60 && p <= 0.78) {
+    const t = (p - 0.60) / 0.18;
+    pillarTranslateY = -t * 380;
+    pillarOpacity = Math.max(0, 1.0 - t);
+  } else if (p > 0.78) {
     pillarTranslateY = -380;
-  }
-
-  // Fade out gently after p=0.74
-  if (p >= 0.74) {
-    pillarOpacity = Math.max(0, 1 - (p - 0.74) / 0.16);
+    pillarOpacity = 0.0;
   }
 
   if (elements.pillarLeft) {
@@ -119,34 +114,47 @@ function updateParallax() {
   }
 
   // --------------------------------------------------------------------------
-  // BACKGROUND OCEAN (bg-main)
-  // Subtle camera push forward (1.0 -> 1.25)
+  // BACKGROUND SCENE & TRAVELER (bg-main)
+  // 1. Subtle camera push forward (1.0 -> 1.25)
+  // 2. STOOD THERE (p=0.78 to 0.88): Pristine, unobstructed hero image
+  // 3. SMOOTHLY GOES AWAY (p=0.88 to 0.98): Gentle dissolve into warm ivory
   // --------------------------------------------------------------------------
   let oceanScale = 1.0;
-  if (p >= 0.15 && p <= 0.72) {
-    const t = (p - 0.15) / 0.57;
+  let oceanOpacity = 1.0;
+
+  if (p >= 0.15 && p <= 0.70) {
+    const t = (p - 0.15) / 0.55;
     oceanScale = 1.0 + t * 0.25; // 1.0 -> 1.25
-  } else if (p > 0.72) {
+  } else if (p > 0.70 && p <= 0.88) {
+    // Hero image stands firmly in full view
     oceanScale = 1.25;
+    oceanOpacity = 1.0;
+  } else if (p > 0.88 && p <= 0.98) {
+    // Smoothly it dissolves away into the warm ivory background
+    const t = (p - 0.88) / 0.10;
+    oceanScale = 1.25 + t * 0.06; // 1.25 -> 1.31
+    oceanOpacity = Math.max(0, 1.0 - t);
+  } else if (p > 0.98) {
+    oceanScale = 1.31;
+    oceanOpacity = 0.0;
   }
 
   if (elements.bgMain) {
     elements.bgMain.style.transform = `scale(${oceanScale})`;
+    elements.bgMain.style.opacity = oceanOpacity;
   }
 
   // --------------------------------------------------------------------------
-  // TITLE: The story of THE GOONIES (hero-parent)
-  // Screenshot 1: Full opacity at p <= 0.18
-  // Screenshot 2: Logo fades from 1.0 -> 0 between p=0.18 and p=0.38
+  // TITLE: ALPHAKORE HERO BRANDING (hero-parent)
   // --------------------------------------------------------------------------
   let titleOpacity = 1.0;
   let titleScale = 1.0;
 
-  if (p <= 0.18) {
+  if (p <= 0.16) {
     titleOpacity = 1.0;
     titleScale = 1.0;
-  } else if (p > 0.18 && p <= 0.38) {
-    const t = (p - 0.18) / 0.20;
+  } else if (p > 0.16 && p <= 0.34) {
+    const t = (p - 0.16) / 0.18;
     titleOpacity = Math.max(0, 1.0 - t);
     titleScale = 1.0 + t * 0.12;
   } else {
@@ -165,23 +173,24 @@ function updateParallax() {
   }
 
   // --------------------------------------------------------------------------
-  // SCREENSHOTS 3 & 4: PLOT HEADLINE & SYNOPSIS (intro-parent)
-  // Fades in at p=0.36, reaches 100% opacity at p=0.50, stays solid until p=0.72
+  // PLOT HEADLINE & SYNOPSIS (intro-parent)
+  // Fades in at p=0.32, solid until p=0.66, then fades out by p=0.78
+  // Leaving p=0.78 to 0.88 for the hero image to stand there completely clear!
   // --------------------------------------------------------------------------
   let plotOpacity = 0.0;
-  let plotTranslateY = 45;
+  let plotTranslateY = 35;
 
-  if (p >= 0.36 && p <= 0.50) {
-    const t = (p - 0.36) / 0.14;
+  if (p >= 0.32 && p <= 0.45) {
+    const t = (p - 0.32) / 0.13;
     plotOpacity = t;
-    plotTranslateY = 40 * (1 - t);
-  } else if (p > 0.50 && p <= 0.82) {
+    plotTranslateY = 35 * (1 - t);
+  } else if (p > 0.45 && p <= 0.66) {
     plotOpacity = 1.0;
     plotTranslateY = 0;
-  } else if (p > 0.82 && p <= 0.98) {
-    const t = (p - 0.82) / 0.16;
+  } else if (p > 0.66 && p <= 0.78) {
+    const t = (p - 0.66) / 0.12;
     plotOpacity = Math.max(0, 1.0 - t);
-    plotTranslateY = -t * 28;
+    plotTranslateY = -t * 25;
   } else {
     plotOpacity = 0.0;
   }
@@ -201,13 +210,13 @@ function updateParallax() {
 
   // Vertical line draw below Plot
   let lineY = -100;
-  if (p >= 0.56 && p <= 0.78) {
-    const t = (p - 0.56) / 0.22;
+  if (p >= 0.48 && p <= 0.64) {
+    const t = (p - 0.48) / 0.16;
     lineY = -100 + t * 100; // -100% -> 0% (drawing down!)
-  } else if (p > 0.78 && p <= 0.96) {
-    const t = (p - 0.78) / 0.18;
+  } else if (p > 0.66 && p <= 0.78) {
+    const t = (p - 0.66) / 0.12;
     lineY = t * 100; // 0% -> 100% (exits down)
-  } else if (p > 0.96) {
+  } else if (p > 0.78) {
     lineY = 100;
   }
 
