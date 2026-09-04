@@ -651,9 +651,9 @@ function initSkiper17CardStack() {
   // Set initial states exactly matching Skiper-17:
   // Card 0 at y: "0%", scale: 1, rotation: 0
   // Next cards down below at y: "100%"
-  gsap.set(cardElements[0], { y: '0%', scale: 1, rotation: 0, opacity: 1 });
+  gsap.set(cardElements[0], { y: '0%', x: '0%', scale: 1, rotation: 0, opacity: 1 });
   for (let i = 1; i < totalCards; i++) {
-    gsap.set(cardElements[i], { y: '100%', scale: 1, rotation: 0, opacity: 1 });
+    gsap.set(cardElements[i], { y: '100%', x: '0%', scale: 1, rotation: 0, opacity: 1 });
   }
 
   if (skiper17Timeline) {
@@ -693,7 +693,7 @@ function initSkiper17CardStack() {
   });
 
   // Skiper-17 Card Stack Animation Loop:
-  // Current card scales down (scale: 0.88), rotates (rotation: 4deg or -4deg), while next card slides up to y: 0%
+  // Current card scales down, tilts in zigzag (+-2.5deg) and shifts (+-1.5%), while next card slides up to y: 0%
   for (let i = 0; i < totalCards - 1; i++) {
     const currentCard = cardElements[i];
     const nextCard = cardElements[i + 1];
@@ -704,7 +704,8 @@ function initSkiper17CardStack() {
       currentCard,
       {
         scale: 0.92,
-        rotation: i % 2 === 0 ? 3 : -3,
+        rotation: i % 2 === 0 ? 2.5 : -2.5,
+        x: i % 2 === 0 ? '-1.5%' : '1.5%',
         duration: 1,
         ease: 'none',
       },
@@ -716,6 +717,7 @@ function initSkiper17CardStack() {
       nextCard,
       {
         y: '0%',
+        x: '0%',
         scale: 1,
         rotation: 0,
         duration: 1,

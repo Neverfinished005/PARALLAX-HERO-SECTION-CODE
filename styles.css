@@ -1019,6 +1019,22 @@ body.theme-goonies .goonies-only {
   overflow: hidden;
 }
 
+/* Card Layout Zigzag Pattern: Even cards flip left and right columns */
+.skiper17-card:nth-child(even) .skiper17-card-inner {
+  grid-template-columns: 0.86fr 1.14fr;
+}
+
+.skiper17-card:nth-child(even) .skiper17-card-col.left {
+  order: 2;
+  border-left: 1px solid rgba(22, 20, 18, 0.08);
+}
+
+.skiper17-card:nth-child(even) .skiper17-card-col.right {
+  order: 1;
+  border-left: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.14);
+}
+
 /* Left Column: Identity, Narrative & Actions */
 .skiper17-card-col.left {
   padding: clamp(24px, 3vw, 34px);
@@ -1511,6 +1527,15 @@ body.theme-goonies .goonies-only {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     height: auto;
     flex-shrink: 0;
+  }
+  .skiper17-card:nth-child(even) .skiper17-card-col.left {
+    order: 1;
+    border-left: none;
+  }
+  .skiper17-card:nth-child(even) .skiper17-card-col.right {
+    order: 2;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
   .skiper17-scroll-hint {
     display: none;
