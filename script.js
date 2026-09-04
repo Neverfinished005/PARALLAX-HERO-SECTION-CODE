@@ -41,6 +41,13 @@ const elements = {
     contact: document.getElementById('navContact'),
   },
   
+  // Section DOM elements for sticky snapping engine
+  impactSec: document.getElementById('impact'),
+  workSec: document.getElementById('work'),
+  servicesSec: document.getElementById('services'),
+  teamSec: document.getElementById('team'),
+  contactSec: document.getElementById('contact'),
+
   // Alphakore Modals & Interactive Elements
   projectModalBackdrop: document.getElementById('projectModalBackdrop'),
   projectModalContent: document.getElementById('projectModalContent'),
@@ -194,13 +201,31 @@ function updateParallax() {
   }
 }
 
+let isProgrammaticScroll = false;
+let programmaticScrollTimer = null;
+let lastScrollPosition = window.scrollY;
+let lastScrollDirection = 'down';
+let settleSnapTimer = null;
+
 function onScroll() {
+  const currentY = window.scrollY;
+  if (Math.abs(currentY - lastScrollPosition) > 2) {
+    lastScrollDirection = currentY >= lastScrollPosition ? 'down' : 'up';
+    lastScrollPosition = currentY;
+  }
+
   targetProgress = calculateProgress();
   if (!isTicking) {
     isTicking = true;
     requestAnimationFrame(updateParallax);
   }
   updateNavState();
+
+  // Debounced settle snapper: if scrolling stops inside an intermediate dead zone, snap cleanly to section
+  if (!isProgrammaticScroll) {
+    clearTimeout(settleSnapTimer);
+    settleSnapTimer = setTimeout(checkAndSettleSectionSnap, 130);
+  }
 }
 
 window.addEventListener('scroll', onScroll, { passive: true });
@@ -222,11 +247,11 @@ function updateNavState() {
     elements.navBar.classList.remove('scrolled');
   }
 
-  const impactSec = document.getElementById('impact');
-  const workSec = document.getElementById('work');
-  const servicesSec = document.getElementById('services');
-  const teamSec = document.getElementById('team');
-  const contactSec = document.getElementById('contact');
+  const impactSec = elements.impactSec || document.getElementById('impact');
+  const workSec = elements.workSec || document.getElementById('work');
+  const servicesSec = elements.servicesSec || document.getElementById('services');
+  const teamSec = elements.teamSec || document.getElementById('team');
+  const contactSec = elements.contactSec || document.getElementById('contact');
 
   let activeSection = 'plot';
   if (contactSec && scrollY >= contactSec.offsetTop - vh * 0.45) {
@@ -258,6 +283,242 @@ function updateNavState() {
       }
     }
   });
+}
+
+// ============================================================================
+// 3B. SECTION-WISE STICKY SCROLL & SNAP ENGINE
+// Eliminates awkward halfway cut-offs; locks each section full-screen on scroll
+// ============================================================================
+function getSectionOffsets() {
+  const vh = window.innerHeight;
+  const heroContainer = elements.scrollContainer;
+  const impactSec = elements.impactSec || document.getElementById('impact');
+  const workSec = elements.workSec || document.getElementById('work');
+  const servicesSec = elements.servicesSec || document.getElementById('services');
+  const teamSec = elements.teamSec || document.getElementById('team');
+  const contactSec = elements.contactSec || document.getElementById('contact');
+
+  const heroClimax = heroContainer ? Math.max(0, heroContainer.offsetHeight - vh) : 0;
+  const impactTop = impactSec ? impactSec.offsetTop : heroClimax + vh;
+  const workTop = workSec ? workSec.offsetTop : impactTop + vh;
+  const workEnd = workSec ? (workSec.offsetTop + Math.max(0, workSec.offsetHeight - vh)) : workTop;
+  const servicesTop = servicesSec ? servicesSec.offsetTop : workEnd + vh;
+  const teamTop = teamSec ? teamSec.offsetTop : servicesTop + vh;
+  const contactTop = contactSec ? contactSec.offsetTop : teamTop + vh;
+
+  return {
+    heroStart: 0,
+    heroClimax,
+    impactTop,
+    workTop,
+    workEnd,
+    servicesTop,
+    teamTop,
+    contactTop
+  };
+}
+
+function smoothScrollTo(targetY, duration = 650) {
+  if (Math.abs(window.scrollY - targetY) < 5) return;
+
+  isProgrammaticScroll = true;
+  clearTimeout(programmaticScrollTimer);
+
+  window.scrollTo({
+    top: targetY,
+    behavior: 'smooth'
+  });
+
+  programmaticScrollTimer = setTimeout(() => {
+    isProgrammaticScroll = false;
+    targetProgress = calculateProgress();
+    updateParallax();
+    updateNavState();
+  }, duration);
+}
+
+function checkAndSettleSectionSnap() {
+  if (isProgrammaticScroll) return;
+
+  const currentY = window.scrollY;
+  const offsets = getSectionOffsets();
+
+  // Zone 1: Trapped between Hero Climax and Impact (the primary reported issue)
+  if (currentY > offsets.heroClimax + 30 && currentY < offsets.impactTop - 30) {
+    if (lastScrollDirection === 'down') {
+      smoothScrollTo(offsets.impactTop);
+    } else {
+      smoothScrollTo(offsets.heroClimax);
+    }
+    return;
+  }
+
+  // Zone 2: Trapped between Impact and Work start
+  if (currentY > offsets.impactTop + 30 && currentY < offsets.workTop - 30) {
+    if (lastScrollDirection === 'down') {
+      smoothScrollTo(offsets.workTop);
+    } else {
+      smoothScrollTo(offsets.impactTop);
+    }
+    return;
+  }
+
+  // Zone 3: Trapped between Work end and Services
+  if (currentY > offsets.workEnd + 30 && currentY < offsets.servicesTop - 30) {
+    if (lastScrollDirection === 'down') {
+      smoothScrollTo(offsets.servicesTop);
+    } else {
+      smoothScrollTo(offsets.workEnd);
+    }
+    return;
+  }
+}
+
+function initSectionScrollManager() {
+  // Wheel-based section sticking and snapping
+  window.addEventListener('wheel', (e) => {
+    if (isProgrammaticScroll) {
+      e.preventDefault();
+      return;
+    }
+
+    const offsets = getSectionOffsets();
+    const currentY = window.scrollY;
+    const delta = e.deltaY;
+    const threshold = 40; // pixel tolerance for section boundary
+
+    // 1. At or near Hero Climax (Plot Frame)
+    if (Math.abs(currentY - offsets.heroClimax) <= threshold || 
+        (currentY >= offsets.heroClimax - 10 && currentY < offsets.impactTop - 40)) {
+      if (delta > 20) {
+        e.preventDefault();
+        smoothScrollTo(offsets.impactTop, 700);
+        return;
+      }
+    }
+
+    // 2. At or near Vision (#impact) - exactly 100vh stage
+    if (Math.abs(currentY - offsets.impactTop) <= threshold) {
+      if (delta > 20) {
+        e.preventDefault();
+        smoothScrollTo(offsets.workTop, 700);
+        return;
+      } else if (delta < -20) {
+        e.preventDefault();
+        smoothScrollTo(offsets.heroClimax, 700);
+        return;
+      }
+    }
+
+    // 3. At start of Work (#work)
+    if (Math.abs(currentY - offsets.workTop) <= threshold) {
+      if (delta < -20) {
+        e.preventDefault();
+        smoothScrollTo(offsets.impactTop, 700);
+        return;
+      }
+    }
+
+    // 4. At end of Work (after Card 05 is reached)
+    if (Math.abs(currentY - offsets.workEnd) <= threshold || 
+        (currentY >= offsets.workEnd - 10 && currentY < offsets.servicesTop - 40)) {
+      if (delta > 20) {
+        e.preventDefault();
+        smoothScrollTo(offsets.servicesTop, 700);
+        return;
+      }
+    }
+
+    // 5. At top of Services (#services)
+    if (Math.abs(currentY - offsets.servicesTop) <= threshold) {
+      if (delta < -20) {
+        e.preventDefault();
+        smoothScrollTo(offsets.workEnd, 700);
+        return;
+      }
+    }
+  }, { passive: false });
+
+  // Keyboard navigation for section hopping
+  window.addEventListener('keydown', (e) => {
+    if (['ArrowDown', 'PageDown'].includes(e.key) || (e.key === ' ' && !e.shiftKey)) {
+      const offsets = getSectionOffsets();
+      const currentY = window.scrollY;
+      const threshold = 45;
+
+      if (Math.abs(currentY - offsets.heroClimax) <= threshold) {
+        e.preventDefault();
+        smoothScrollTo(offsets.impactTop);
+      } else if (Math.abs(currentY - offsets.impactTop) <= threshold) {
+        e.preventDefault();
+        smoothScrollTo(offsets.workTop);
+      } else if (Math.abs(currentY - offsets.workEnd) <= threshold) {
+        e.preventDefault();
+        smoothScrollTo(offsets.servicesTop);
+      }
+    } else if (['ArrowUp', 'PageUp'].includes(e.key) || (e.key === ' ' && e.shiftKey)) {
+      const offsets = getSectionOffsets();
+      const currentY = window.scrollY;
+      const threshold = 45;
+
+      if (Math.abs(currentY - offsets.impactTop) <= threshold) {
+        e.preventDefault();
+        smoothScrollTo(offsets.heroClimax);
+      } else if (Math.abs(currentY - offsets.workTop) <= threshold) {
+        e.preventDefault();
+        smoothScrollTo(offsets.impactTop);
+      } else if (Math.abs(currentY - offsets.servicesTop) <= threshold) {
+        e.preventDefault();
+        smoothScrollTo(offsets.workEnd);
+      }
+    }
+  });
+}
+
+function initNavClickSmoothScroll() {
+  const navMap = {
+    navPlot: () => 0,
+    navImpact: () => getSectionOffsets().impactTop,
+    navWork: () => getSectionOffsets().workTop,
+    navServices: () => getSectionOffsets().servicesTop,
+    navTeam: () => getSectionOffsets().teamTop,
+    navContact: () => getSectionOffsets().contactTop
+  };
+
+  Object.keys(navMap).forEach(navId => {
+    const el = document.getElementById(navId);
+    if (el) {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetY = navMap[navId]();
+        smoothScrollTo(targetY, 750);
+      });
+    }
+  });
+
+  // Hero scroll mouse icon click handler
+  const scrollImg = document.getElementById('scrollImg');
+  if (scrollImg) {
+    scrollImg.style.cursor = 'pointer';
+    scrollImg.addEventListener('click', (e) => {
+      e.preventDefault();
+      const offsets = getSectionOffsets();
+      if (window.scrollY < offsets.heroClimax * 0.5) {
+        smoothScrollTo(offsets.heroClimax, 650);
+      } else {
+        smoothScrollTo(offsets.impactTop, 750);
+      }
+    });
+  }
+
+  // Vision circular explore button
+  const impactCircleBtn = document.querySelector('.impact-circle-btn');
+  if (impactCircleBtn) {
+    impactCircleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      smoothScrollTo(getSectionOffsets().workTop, 750);
+    });
+  }
 }
 // ============================================================================
 // 4. ALPHAKORE PROJECT DOSSIER DATA & MODAL SYSTEM
@@ -406,6 +667,12 @@ function initSkiper17CardStack() {
       start: 'top top',
       end: 'bottom bottom',
       scrub: 0.6,
+      snap: {
+        snapTo: 1 / (totalCards - 1),
+        duration: { min: 0.2, max: 0.45 },
+        delay: 0.08,
+        ease: 'power1.inOut'
+      },
       onUpdate: (self) => {
         const activeIdx = Math.min(
           totalCards - 1,
@@ -1900,6 +2167,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initSkiper39CrowdCanvas();
   initContactForm();
   initMetricCounters();
+  initSectionScrollManager();
+  initNavClickSmoothScroll();
   
   targetProgress = calculateProgress();
   currentProgress = targetProgress;
