@@ -72,76 +72,45 @@ function updateParallax() {
   const p = currentProgress;
 
   // --------------------------------------------------------------------------
-  // FOREGROUND CARVED STONE PILLARS PARTING (Left & Right Outward Zoom)
+  // FOREGROUND CARVED STONE PILLARS (Grounded Architectural Frame)
+  // Gently widens to aperture frame from p=0.10 to 0.55 and holds in place
   // --------------------------------------------------------------------------
   let pillarScale = 1.0;
-  let pillarTranslateY = 0;
-  let pillarTranslateX = 0;
-  let pillarOpacity = 1.0;
-
-  if (p >= 0.12 && p <= 0.60) {
-    const t = (p - 0.12) / 0.48;
-    pillarScale = 1.0 + t * 0.70; // 1.0 -> 1.70
-    pillarTranslateX = t * 400; // 0 -> 400px outward parting
-  } else if (p > 0.60) {
-    pillarScale = 1.70;
-    pillarTranslateX = 400;
+  if (p >= 0.10 && p <= 0.55) {
+    const t = (p - 0.10) / 0.45;
+    pillarScale = 1.0 + t * 0.28; // 1.0 -> 1.28
+  } else if (p > 0.55) {
+    pillarScale = 1.28;
   }
 
-  // Move up and fade out cleanly
-  if (p >= 0.60 && p <= 0.78) {
-    const t = (p - 0.60) / 0.18;
-    pillarTranslateY = -t * 380;
-    pillarOpacity = Math.max(0, 1.0 - t);
-  } else if (p > 0.78) {
-    pillarTranslateY = -380;
-    pillarOpacity = 0.0;
+  if (elements.bgScroll) {
+    elements.bgScroll.style.transform = `scale(${pillarScale})`;
+    elements.bgScroll.style.opacity = '1';
   }
-
   if (elements.pillarLeft) {
-    elements.pillarLeft.style.transform = `translate3d(${-pillarTranslateX}px, ${pillarTranslateY}px, 0) scale(${pillarScale})`;
-    elements.pillarLeft.style.opacity = pillarOpacity;
+    elements.pillarLeft.style.transform = `scale(${pillarScale})`;
+    elements.pillarLeft.style.opacity = '1';
   }
-
   if (elements.pillarRight) {
-    elements.pillarRight.style.transform = `translate3d(${pillarTranslateX}px, ${pillarTranslateY}px, 0) scale(${pillarScale})`;
-    elements.pillarRight.style.opacity = pillarOpacity;
-  }
-
-  if (elements.bgScroll && !elements.pillarLeft) {
-    elements.bgScroll.style.transform = `translate3d(0, ${pillarTranslateY}px, 0) scale(${pillarScale})`;
-    elements.bgScroll.style.opacity = pillarOpacity;
+    elements.pillarRight.style.transform = `scale(${pillarScale})`;
+    elements.pillarRight.style.opacity = '1';
   }
 
   // --------------------------------------------------------------------------
   // BACKGROUND SCENE & TRAVELER (bg-main)
-  // 1. Subtle camera push forward (1.0 -> 1.25)
-  // 2. STOOD THERE (p=0.78 to 0.88): Pristine, unobstructed hero image
-  // 3. SMOOTHLY GOES AWAY (p=0.88 to 0.98): Gentle dissolve into warm ivory
+  // Camera gently pushes in, holds firmly in place with full opacity
   // --------------------------------------------------------------------------
   let oceanScale = 1.0;
-  let oceanOpacity = 1.0;
-
-  if (p >= 0.15 && p <= 0.70) {
-    const t = (p - 0.15) / 0.55;
-    oceanScale = 1.0 + t * 0.25; // 1.0 -> 1.25
-  } else if (p > 0.70 && p <= 0.88) {
-    // Hero image stands firmly in full view
-    oceanScale = 1.25;
-    oceanOpacity = 1.0;
-  } else if (p > 0.88 && p <= 0.98) {
-    // Smoothly it dissolves away into the warm ivory background
-    const t = (p - 0.88) / 0.10;
-    oceanScale = 1.25 + t * 0.06; // 1.25 -> 1.31
-    oceanOpacity = Math.max(0, 1.0 - t);
-  } else if (p > 0.98) {
-    oceanScale = 1.31;
-    oceanOpacity = 0.0;
+  if (p >= 0.10 && p <= 0.55) {
+    const t = (p - 0.10) / 0.45;
+    oceanScale = 1.0 + t * 0.18; // 1.0 -> 1.18
+  } else if (p > 0.55) {
+    oceanScale = 1.18;
   }
 
   if (elements.bgMain) {
     elements.bgMain.style.transform = `scale(${oceanScale})`;
-    elements.bgMain.style.opacity = oceanOpacity;
+    elements.bgMain.style.opacity = '1';
   }
 
   // --------------------------------------------------------------------------
@@ -150,13 +119,13 @@ function updateParallax() {
   let titleOpacity = 1.0;
   let titleScale = 1.0;
 
-  if (p <= 0.16) {
+  if (p <= 0.14) {
     titleOpacity = 1.0;
     titleScale = 1.0;
-  } else if (p > 0.16 && p <= 0.34) {
-    const t = (p - 0.16) / 0.18;
+  } else if (p > 0.14 && p <= 0.32) {
+    const t = (p - 0.14) / 0.18;
     titleOpacity = Math.max(0, 1.0 - t);
-    titleScale = 1.0 + t * 0.12;
+    titleScale = 1.0 + t * 0.10;
   } else {
     titleOpacity = 0.0;
   }
@@ -168,29 +137,25 @@ function updateParallax() {
 
   // Scroll mouse indicator fades out early
   if (elements.scrollImg) {
-    const scrollIconOp = p < 0.14 ? 1.0 - (p / 0.14) : 0;
+    const scrollIconOp = p < 0.12 ? 1.0 - (p / 0.12) : 0;
     elements.scrollImg.style.opacity = scrollIconOp;
   }
 
   // --------------------------------------------------------------------------
   // PLOT HEADLINE & SYNOPSIS (intro-parent)
-  // Fades in at p=0.32, solid until p=0.66, then fades out by p=0.78
-  // Leaving p=0.78 to 0.88 for the hero image to stand there completely clear!
+  // Fades in and slides up by p=0.55, then stays 100% solid & visible
+  // The hero section finishes in this exact state, ready for Section 2
   // --------------------------------------------------------------------------
   let plotOpacity = 0.0;
   let plotTranslateY = 35;
 
-  if (p >= 0.32 && p <= 0.45) {
-    const t = (p - 0.32) / 0.13;
+  if (p >= 0.24 && p <= 0.55) {
+    const t = (p - 0.24) / 0.31;
     plotOpacity = t;
     plotTranslateY = 35 * (1 - t);
-  } else if (p > 0.45 && p <= 0.66) {
+  } else if (p > 0.55) {
     plotOpacity = 1.0;
     plotTranslateY = 0;
-  } else if (p > 0.66 && p <= 0.78) {
-    const t = (p - 0.66) / 0.12;
-    plotOpacity = Math.max(0, 1.0 - t);
-    plotTranslateY = -t * 25;
   } else {
     plotOpacity = 0.0;
   }
@@ -210,14 +175,11 @@ function updateParallax() {
 
   // Vertical line draw below Plot
   let lineY = -100;
-  if (p >= 0.48 && p <= 0.64) {
-    const t = (p - 0.48) / 0.16;
-    lineY = -100 + t * 100; // -100% -> 0% (drawing down!)
-  } else if (p > 0.66 && p <= 0.78) {
-    const t = (p - 0.66) / 0.12;
-    lineY = t * 100; // 0% -> 100% (exits down)
-  } else if (p > 0.78) {
-    lineY = 100;
+  if (p >= 0.36 && p <= 0.58) {
+    const t = (p - 0.36) / 0.22;
+    lineY = -100 + t * 100; // -100% -> 0%
+  } else if (p > 0.58) {
+    lineY = 0; // Stays fully drawn down
   }
 
   if (elements.drawLineInner) {
