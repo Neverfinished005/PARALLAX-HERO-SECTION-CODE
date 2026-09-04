@@ -1593,34 +1593,126 @@ function showToast(message) {
   }, 3200);
 }
 
+function playRubberStampSlam() {
+  try {
+    const actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    const now = actx.currentTime;
+
+    // 1. Heavy low-frequency wooden desk thud
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(140, now);
+    osc.frequency.exponentialRampToValueAtTime(32, now + 0.16);
+
+    gain.gain.setValueAtTime(0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+    osc.connect(gain);
+    gain.connect(actx.destination);
+    osc.start(now);
+    osc.stop(now + 0.25);
+
+    // 2. Paper strike friction snap (short burst of filtered noise)
+    const bufferSize = Math.floor(actx.sampleRate * 0.08);
+    const noiseBuffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (actx.sampleRate * 0.015));
+    }
+
+    const noise = actx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    const filter = actx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1100, now);
+    filter.Q.setValueAtTime(2.0, now);
+
+    const noiseGain = actx.createGain();
+    noiseGain.gain.setValueAtTime(0.22, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    noise.connect(filter);
+    filter.connect(noiseGain);
+    noiseGain.connect(actx.destination);
+    noise.start(now);
+  } catch (e) {
+    // Audio unavailable fallback
+  }
+}
+
+function playStampWiggleSound(vol = 0.06) {
+  try {
+    const actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(580, actx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(280, actx.currentTime + 0.08);
+    gain.gain.setValueAtTime(vol, actx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.09);
+    osc.connect(gain);
+    gain.connect(actx.destination);
+    osc.start();
+  } catch(e) {}
+}
+
+window.toggleDeliveredStamp = function() {
+  const stamp = document.getElementById('deliveredStamp');
+  const label = document.getElementById('stampToggleLabel');
+  if (!stamp) return;
+
+  const isStamped = stamp.classList.toggle('stamped');
+  if (isStamped) {
+    playRubberStampSlam();
+    if (label) label.textContent = 'Hide DELIVERED Stamp';
+    showToast('🏷️ DELIVERED Rubber Ink Stamp Applied!');
+  } else {
+    if (label) label.textContent = 'Show DELIVERED Stamp';
+    showToast('DELIVERED Stamp Hidden.');
+  }
+};
+
 function initContactForm() {
-  const copyBtn = document.getElementById('copyEmailBtn');
-  if (copyBtn) {
-    copyBtn.addEventListener('click', () => {
-      const email = 'alpha.kore25@gmail.com';
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(email).then(() => {
-          showToast('Copied to clipboard: ' + email);
-          playCelebrationChime();
-        }).catch(() => {
-          showToast('Email: ' + email);
-        });
-      } else {
-        showToast('Email: ' + email);
-      }
+  const stampBox = document.querySelector('.postcard-stamp-box');
+  if (stampBox) {
+    stampBox.addEventListener('click', () => {
+      stampBox.classList.add('stamp-wiggle');
+      setTimeout(() => stampBox.classList.remove('stamp-wiggle'), 600);
+      showToast('✉️ Ceylon 10¢ Commemorative Stamp — Authenticated & Affixed');
+      playStampWiggleSound(0.06);
     });
   }
 
   const contactForm = document.getElementById('contactForm');
+  const deliveredStamp = document.getElementById('deliveredStamp');
+  const stampToggleLabel = document.getElementById('stampToggleLabel');
+
   if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const nameInput = document.getElementById('contactName');
-      const name = nameInput ? nameInput.value : 'Partner';
+      
+      const firstName = document.getElementById('contactFirstName')?.value.trim() || 'Sender';
+      const lastName = document.getElementById('contactLastName')?.value.trim() || '';
 
-      showToast(`Inquiry transmitted. Thank you, ${name}. Alpha.Kore Studio will respond within 24h.`);
-      playCelebrationChime();
-      contactForm.reset();
+      // Play authentic rubber stamp slam sound and celebration chime
+      playRubberStampSlam();
+      setTimeout(playCelebrationChime, 240);
+
+      // Slam the DELIVERED stamp onto the card
+      if (deliveredStamp) {
+        deliveredStamp.classList.remove('stamped');
+        void deliveredStamp.offsetWidth; // trigger reflow
+        deliveredStamp.classList.add('stamped');
+      }
+
+      if (stampToggleLabel) {
+        stampToggleLabel.textContent = 'Hide DELIVERED Stamp';
+      }
+
+      showToast(`📭 Postcard Dispatched! Marked DELIVERED for ${firstName} ${lastName}.`);
     });
   }
 }

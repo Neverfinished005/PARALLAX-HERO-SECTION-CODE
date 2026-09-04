@@ -12,9 +12,9 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@1,500;1,600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@1,500;1,600&family=Roboto:wght@300;400&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="styles.css?v=20260904_sticky_section_snap_v1">
+  <link rel="stylesheet" href="styles.css?v=20260904_postcard_v1">
 </head>
 <body class="loading-active">
 
@@ -889,100 +889,169 @@
        ========================================================================= -->
   <section id="contact" class="contact-section">
     <div class="section-container">
-      <div class="contact-card">
-        <!-- Vintage India Telegram / Official Form Background Watermark Layer -->
-        <div class="contact-card-watermark" aria-hidden="true"></div>
-        
-        <!-- Archival Dispatch Docket Header -->
-        <div class="contact-card-docket">
-          <span class="docket-ref">TRANSMISSION DOCKET // OFFICIAL INQUIRY REGISTER</span>
-          <span class="docket-seal">STAMP &bull; REGISTERED</span>
-        </div>
+      
+      <!-- Section Header -->
+      <div class="section-header text-center contact-header-wrap">
+        <span class="eyebrow">POSTAL DISPATCH // DIRECT TRANSMISSION</span>
+        <h2 class="section-title">Drop us a line.</h2>
+        <p class="section-subtitle center">Fill out this official inquiry postcard to transmit your brief directly to the ALPHAKORE studio desk.</p>
+      </div>
 
-        <div class="contact-card-grid">
-          <!-- Left Column: Studio Inquiries & Direct Channel -->
-          <div class="contact-info-col">
-            <span class="eyebrow">INITIATE DIALOGUE</span>
-            <h2 class="contact-title">Let’s build what matters.</h2>
-            <p class="contact-subtitle">Whether you require autonomous agent pipelines, resilient cloud architecture, or bespoke digital products — we stand ready to engineer your future.</p>
-
-            <div class="contact-direct-box">
-              <div class="direct-label">DIRECT INQUIRY</div>
-              <div class="direct-email-row">
-                <a href="mailto:alpha.kore25@gmail.com" class="direct-email-link" id="emailLink">alpha.kore25@gmail.com</a>
-                <button class="copy-email-btn" id="copyEmailBtn" title="Copy email address" aria-label="Copy email address">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                  </svg>
-                  <span class="copy-text">Copy</span>
-                </button>
+      <!-- Vintage Postcard Card Stage -->
+      <div class="postcard-stage-wrap" id="postcardStageWrap">
+        <div class="vintage-postcard" id="vintagePostcard">
+          
+          <!-- Authentic Postage Stamp with Perforated Edges (Top Right) -->
+          <div class="postcard-stamp-box" title="Ceylon 10 Cents Official Postage Stamp">
+            <img src="assets/vintage_postage_stamp.png" alt="Vintage Postage Stamp" class="postcard-stamp-img">
+            <div class="postcard-postmark" aria-hidden="true">
+              <div class="postmark-circle">
+                <span class="pm-city">NEW DELHI</span>
+                <span class="pm-date">SEP 04 2026</span>
+                <span class="pm-sub">REGISTERED</span>
               </div>
-            </div>
-
-            <div class="contact-metadata-grid">
-              <div class="meta-block">
-                <span class="meta-title">STUDIO LOCATION</span>
-                <span class="meta-val">Remote Global • India Base</span>
-              </div>
-              <div class="meta-block">
-                <span class="meta-title">TYPICAL RESPONSE</span>
-                <span class="meta-val">Within 24 Business Hours</span>
-              </div>
-              <div class="meta-block">
-                <span class="meta-title">ENGAGEMENT MODEL</span>
-                <span class="meta-val">Bespoke Projects &amp; Retainers</span>
-              </div>
-              <div class="meta-block">
-                <span class="meta-title">STUDIO STATUS</span>
-                <span class="meta-val highlight-green">● Accepting New Briefs</span>
+              <div class="postmark-waves">
+                <span></span><span></span><span></span>
               </div>
             </div>
           </div>
 
-          <!-- Right Column: Interactive Inquiry Form -->
-          <div class="contact-form-col">
-            <form id="contactForm" class="inquiry-form">
-              <div class="form-row-2">
-                <div class="form-group">
-                  <label for="contactName">YOUR NAME *</label>
-                  <input type="text" id="contactName" name="name" required placeholder="e.g. Elena Rostova">
+          <!-- Top Center Title: POST CARD -->
+          <div class="postcard-top-header">
+            <h3 class="postcard-title">POST CARD</h3>
+            <span class="postcard-title-sub">— THIS SPACE FOR ADDRESS ONLY —</span>
+          </div>
+
+          <!-- Postcard Two-Column Body -->
+          <div class="postcard-body">
+            
+            <!-- Left Column: The Interactive Form (FROM:) -->
+            <div class="postcard-left-col">
+              <div class="postcard-from-label">FROM:</div>
+              <form id="contactForm" class="postcard-form">
+                
+                <div class="postcard-field-row">
+                  <label for="contactFirstName" class="field-label">FIRST</label>
+                  <input type="text" id="contactFirstName" name="firstName" required class="postcard-input" placeholder="Matt" autocomplete="given-name">
                 </div>
-                <div class="form-group">
-                  <label for="contactEmail">EMAIL ADDRESS *</label>
-                  <input type="email" id="contactEmail" name="email" required placeholder="e.g. elena@venture.io">
+
+                <div class="postcard-field-row">
+                  <label for="contactLastName" class="field-label">LAST</label>
+                  <input type="text" id="contactLastName" name="lastName" required class="postcard-input" placeholder="Maldre" autocomplete="family-name">
+                </div>
+
+                <div class="postcard-field-row">
+                  <label for="contactCompany" class="field-label">COMPANY</label>
+                  <input type="text" id="contactCompany" name="company" class="postcard-input" placeholder="Spudart Productions" autocomplete="organization">
+                </div>
+
+                <div class="postcard-field-row">
+                  <label for="contactAddress" class="field-label">ADDRESS</label>
+                  <input type="text" id="contactAddress" name="address" class="postcard-input" placeholder="4809 N. Bell Ave, #1E" autocomplete="street-address">
+                </div>
+
+                <div class="postcard-field-grid-3">
+                  <div class="field-mini">
+                    <label for="contactCity" class="field-label">CITY</label>
+                    <input type="text" id="contactCity" name="city" class="postcard-input" placeholder="Chicago" autocomplete="address-level2">
+                  </div>
+                  <div class="field-mini state-mini">
+                    <label for="contactState" class="field-label">STATE</label>
+                    <input type="text" id="contactState" name="state" class="postcard-input" placeholder="IL" autocomplete="address-level1">
+                  </div>
+                  <div class="field-mini zip-mini">
+                    <label for="contactZip" class="field-label">ZIP</label>
+                    <input type="text" id="contactZip" name="zip" class="postcard-input" placeholder="60625" autocomplete="postal-code">
+                  </div>
+                </div>
+
+                <div class="postcard-field-row">
+                  <label for="contactEmail" class="field-label">E-MAIL</label>
+                  <input type="email" id="contactEmail" name="email" required class="postcard-input" placeholder="matt@spudart.org" autocomplete="email">
+                </div>
+
+                <div class="postcard-field-row notes-field-row">
+                  <label for="contactMessage" class="field-label">NOTES</label>
+                  <div class="postcard-notes-area">
+                    <textarea id="contactMessage" name="message" rows="3" required class="postcard-textarea" placeholder="This is the most fun contact form ever!"></textarea>
+                  </div>
+                </div>
+
+                <!-- Retro Checkboxes -->
+                <div class="postcard-checkbox-group">
+                  <label class="postcard-checkbox-label">
+                    <input type="checkbox" id="contactEmailOpt" name="emailOpt" checked>
+                    <span class="custom-chk">✔</span>
+                    <span>KEEP ME UPDATED BY E-MAIL</span>
+                  </label>
+                  <label class="postcard-checkbox-label">
+                    <input type="checkbox" id="contactPriorityOpt" name="priorityOpt" checked>
+                    <span class="custom-chk">✔</span>
+                    <span>SURE, I'LL LET YOU POST MY COMMENTS</span>
+                  </label>
+                </div>
+
+                <!-- Masking Tape Submit Button Attached to Bottom Edge -->
+                <div class="postcard-tape-anchor">
+                  <button type="submit" class="postcard-tape-btn" id="submitPostcardBtn" aria-label="Submit Postcard">
+                    <span class="tape-text">SUBMIT</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Vertical Divider Line -->
+            <div class="postcard-divider-line" aria-hidden="true"></div>
+
+            <!-- Right Column: Recipient & Studio Dispatch Details -->
+            <div class="postcard-right-col">
+              
+              <!-- Recipient Address (Classic Typewriter Inscription) -->
+              <div class="postcard-recipient-block">
+                <div class="recipient-to">To:</div>
+                <div class="recipient-line recipient-title">Askinosie Chocolate</div>
+                <div class="recipient-line">ALPHAKORE &bull; 514 E. Commercial</div>
+                <div class="recipient-line">Springfield, MO 65803</div>
+                <div class="recipient-line recipient-country">U.S.A. &amp; INDIA</div>
+              </div>
+
+              <!-- Studio Office Information -->
+              <div class="postcard-info-block">
+                <div class="info-row">
+                  <span class="info-lbl">Hours:</span>
+                  <span class="info-val">Mon–Thurs 10–5:30,</span>
+                </div>
+                <div class="info-row indent">
+                  <span class="info-val">Fri 11–5 &amp; Sat 11–3</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-lbl">Phone:</span>
+                  <span class="info-val">+1 417 862-9900</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-lbl">Email:</span>
+                  <span class="info-val"><a href="mailto:alpha.kore25@gmail.com" class="postcard-link">alpha.kore25@gmail.com</a></span>
                 </div>
               </div>
 
-              <div class="form-row-2">
-                <div class="form-group">
-                  <label for="contactOrg">ORGANIZATION / VENTURE</label>
-                  <input type="text" id="contactOrg" name="organization" placeholder="e.g. Autonomous AI Labs">
-                </div>
-                <div class="form-group">
-                  <label for="contactService">PRIMARY REQUIREMENT</label>
-                  <select id="contactService" name="service">
-                    <option value="AI-Powered Automation">AI-Powered Automation</option>
-                    <option value="Seamless Cloud Integration">Seamless Cloud Integration</option>
-                    <option value="Security-First Engineering">Security-First Engineering</option>
-                    <option value="Advanced Analytics">Advanced Analytics</option>
-                    <option value="Comprehensive Partnership">Comprehensive Partnership</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="contactMessage">PROJECT BRIEF / VISION *</label>
-                <textarea id="contactMessage" name="message" rows="4" required placeholder="Describe what you want to automate, build, or deploy..."></textarea>
-              </div>
-
-              <div class="form-actions">
-                <button type="submit" class="submit-inquiry-btn" id="submitInquiryBtn">
-                  <span class="btn-text">Transmit Inquiry →</span>
+              <!-- Interactive Stamp Demo Button -->
+              <div class="postcard-demo-actions">
+                <button type="button" class="postcard-toggle-stamp-btn" id="toggleStampBtn" onclick="toggleDeliveredStamp()">
+                  <span class="btn-icon">✎</span>
+                  <span id="stampToggleLabel">Hide DELIVERED Stamp</span>
                 </button>
               </div>
-            </form>
+            </div>
+
           </div>
+
+          <!-- Iconic Giant Angled DELIVERED Rubber Stamp Layer -->
+          <div class="delivered-rubber-stamp stamped" id="deliveredStamp" aria-hidden="true">
+            <div class="rubber-stamp-inner">
+              <span class="rubber-stamp-text">DELIVERED</span>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -1027,6 +1096,6 @@
   <!-- GSAP & ScrollTrigger Animation Libraries -->
   <script src="gsap.min.js"></script>
   <script src="ScrollTrigger.min.js"></script>
-  <script src="script.js?v=20260904_sticky_section_snap_v1"></script>
+  <script src="script.js?v=20260904_postcard_v1"></script>
 </body>
 </html>

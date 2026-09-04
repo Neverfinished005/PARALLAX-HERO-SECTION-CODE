@@ -2531,292 +2531,610 @@ body.theme-goonies .goonies-only {
    ========================================================================== */
 .contact-section {
   position: relative;
-  background-color: #ece9e2;
-  padding: 7rem 6vw 4rem;
+  background-color: #ece7de;
+  background-image: 
+    radial-gradient(rgba(45, 38, 30, 0.04) 1px, transparent 0),
+    linear-gradient(180deg, #f4f0e6 0%, #ece7de 100%);
+  background-size: 24px 24px, 100% 100%;
+  padding: 6.5rem 4vw 4rem;
   border-top: 1px solid rgba(22, 20, 18, 0.08);
   z-index: 10;
   scroll-snap-align: start;
   scroll-snap-stop: normal;
+  overflow: visible;
 }
 
-.contact-card {
+.contact-header-wrap {
+  margin-bottom: 2.8rem;
+}
+
+/* Postcard 3D Stage Wrapper */
+.postcard-stage-wrap {
   position: relative;
-  background-color: #faf8f2;
-  border: 1px solid rgba(139, 94, 60, 0.26);
-  border-radius: 16px;
-  padding: clamp(34px, 5vw, 56px);
-  box-shadow: 
-    0 22px 54px -10px rgba(22, 20, 18, 0.12),
-    0 0 0 1px rgba(255, 255, 255, 0.85) inset;
-  margin-bottom: 5rem;
-  overflow: hidden;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto 5.5rem;
+  perspective: 1200px;
 }
 
-/* Vintage India Form Background Watermark Layer */
-.contact-card-watermark {
-  position: absolute;
-  inset: 0;
-  background-image: url('assets/vintage_india_form_bg.jpg');
-  background-size: cover;
-  background-position: center top;
+/* Authentic Vintage Postcard Cardstock Container */
+.vintage-postcard {
+  position: relative;
+  width: 100%;
+  background-color: transparent;
+  background-image: url('assets/vintage_postcard_card.png');
+  background-size: 100% 100%;
   background-repeat: no-repeat;
-  opacity: 0.22;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  z-index: 1;
+  border-radius: 0;
+  padding: clamp(34px, 4.2vw, 46px) clamp(36px, 4.5vw, 52px) clamp(44px, 5.2vw, 58px);
+  filter: drop-shadow(0 22px 50px rgba(26, 22, 18, 0.40)) drop-shadow(0 4px 14px rgba(26, 22, 18, 0.22));
+  transform: rotate(-0.5deg);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
+  box-sizing: border-box;
 }
 
-/* Soft protective overlay to ensure 100% crisp text readability */
-.contact-card-watermark::after {
-  content: '';
+.vintage-postcard:hover {
+  transform: rotate(0deg) translateY(-2px);
+  filter: drop-shadow(0 30px 65px rgba(26, 22, 18, 0.46)) drop-shadow(0 8px 22px rgba(26, 22, 18, 0.28));
+}
+
+/* Authentic Vintage Postage Stamp with Perforated Edges */
+.postcard-stamp-box {
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 65% 50%, rgba(250, 248, 242, 0.52) 0%, rgba(250, 248, 242, 0.12) 100%);
-  pointer-events: none;
+  top: clamp(26px, 3.4vw, 38px);
+  right: clamp(32px, 4.2vw, 48px);
+  width: clamp(80px, 9.8vw, 104px);
+  height: clamp(80px, 9.8vw, 104px);
+  z-index: 5;
+  transform: rotate(1.5deg);
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.26));
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.25s ease;
 }
 
-/* Archival Dispatch Docket Header */
-.contact-card-docket {
-  position: relative;
-  z-index: 2;
+.postcard-stamp-box:hover {
+  transform: rotate(0deg) scale(1.06);
+}
+
+@keyframes stampWiggle {
+  0% { transform: rotate(1.5deg) scale(1); }
+  25% { transform: rotate(-5deg) scale(1.09); }
+  50% { transform: rotate(6deg) scale(1.09); }
+  75% { transform: rotate(-2deg) scale(1.04); }
+  100% { transform: rotate(1.5deg) scale(1); }
+}
+
+.postcard-stamp-box.stamp-wiggle {
+  animation: stampWiggle 0.5s ease-in-out forwards;
+}
+
+.postcard-stamp-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Vintage Postmark Cancellation Stamp Overlay */
+.postcard-postmark {
+  position: absolute;
+  top: 8px;
+  right: 32px;
+  width: 130px;
+  height: 90px;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0.90;
+  mix-blend-mode: multiply;
+}
+
+.postmark-circle {
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 66px;
+  height: 66px;
+  border: 1.5px solid #23201d;
+  border-radius: 50%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-bottom: 16px;
-  margin-bottom: 28px;
-  border-bottom: 1px dashed rgba(139, 94, 60, 0.28);
-  font-family: 'Space Mono', monospace;
-  font-size: 0.65rem;
+  justify-content: center;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.48rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #23201d;
+  transform: rotate(-14deg);
+  padding: 2px;
+  line-height: 1.15;
+}
+
+.pm-date {
+  font-size: 0.42rem;
+  border-top: 1px dashed #23201d;
+  border-bottom: 1px dashed #23201d;
+  padding: 1px 0;
+  margin: 1px 0;
+}
+
+.postmark-waves {
+  position: absolute;
+  left: 58px;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 76px;
+}
+
+.postmark-waves span {
+  display: block;
+  width: 100%;
+  height: 1.5px;
+  background: #23201d;
+  border-radius: 1px;
+}
+
+/* Postcard Top Header: POST CARD */
+.postcard-top-header {
+  text-align: center;
+  margin-bottom: 12px;
+  padding-right: 0;
+}
+
+.postcard-title {
+  font-family: 'Special Elite', 'Courier Prime', monospace;
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: #2d261e;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  text-shadow: 0.5px 0.5px 0 rgba(0, 0, 0, 0.15);
+}
+
+.postcard-title-sub {
+  display: block;
+  font-family: 'Courier Prime', monospace;
+  font-size: clamp(0.58rem, 0.9vw, 0.68rem);
+  letter-spacing: 0.22em;
+  color: #5c5243;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Postcard Two-Column Body */
+.postcard-body {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: clamp(16px, 2.4vw, 28px);
+  align-items: stretch;
+}
+
+.postcard-divider-line {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(70, 60, 48, 0.55),
+    rgba(70, 60, 48, 0.55) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  width: 1.5px;
+  height: 100%;
+}
+
+/* Left Column: Postcard Form Fields */
+.postcard-left-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.postcard-from-label {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.92rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #6b665f;
-}
-
-.docket-seal {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #c84826;
-  border: 1px solid rgba(200, 72, 38, 0.35);
-  padding: 3px 10px;
-  border-radius: 4px;
-  background: rgba(200, 72, 38, 0.06);
-  font-weight: 800;
-}
-
-.contact-card-grid {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-}
-
-@media (max-width: 960px) {
-  .contact-card-grid {
-    grid-template-columns: 1fr;
-    gap: 36px;
-  }
-}
-
-.contact-title {
-  font-family: 'Outfit', -apple-system, sans-serif;
-  font-size: clamp(2.2rem, 3.6vw, 3rem);
-  font-weight: 800;
-  color: #0f172a;
-  line-height: 1.15;
-  margin-bottom: 1.1rem;
-  letter-spacing: -0.025em;
-}
-
-.contact-subtitle {
-  font-size: 0.98rem;
-  color: #334155;
-  line-height: 1.65;
-  margin-bottom: 2rem;
-  font-weight: 450;
-}
-
-.contact-direct-box {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(22, 20, 18, 0.12);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-}
-
-.direct-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
-  color: #64748b;
-  text-transform: uppercase;
+  color: #262019;
   margin-bottom: 8px;
-  font-weight: 700;
 }
 
-.direct-email-row {
+.postcard-form {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 7px;
 }
 
-.direct-email-link {
-  font-family: 'Space Mono', monospace;
-  font-size: clamp(0.95rem, 1.4vw, 1.2rem);
-  color: #0f172a;
-  text-decoration: none;
+.postcard-field-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  width: 100%;
+}
+
+.postcard-field-row .field-label,
+.postcard-field-grid-3 .field-label {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.74rem;
   font-weight: 700;
-  transition: color 0.2s ease;
+  letter-spacing: 0.08em;
+  color: #383025;
+  white-space: nowrap;
+  min-width: 56px;
 }
 
-.direct-email-link:hover {
-  color: #c84826;
+.postcard-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px dashed rgba(60, 50, 38, 0.65);
+  font-family: 'Special Elite', 'Courier Prime', monospace;
+  font-size: 0.88rem;
+  color: #171410;
+  padding: 1px 4px;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  border-radius: 0;
 }
 
-.copy-email-btn {
+.postcard-input::placeholder {
+  color: rgba(90, 80, 68, 0.45);
+  font-style: italic;
+  font-family: 'Courier Prime', monospace;
+}
+
+.postcard-input:focus {
+  border-bottom: 2px solid #1c5286;
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+/* City / State / Zip Row */
+.postcard-field-grid-3 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
+}
+
+.field-mini {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex: 1.4;
+}
+
+.field-mini.state-mini {
+  flex: 0.8;
+}
+
+.field-mini.zip-mini {
+  flex: 1.0;
+}
+
+.field-mini .field-label {
+  min-width: auto;
+}
+
+/* Notes / Ruled Typewriter Textarea */
+.notes-field-row {
+  align-items: flex-start;
+  margin-top: 2px;
+}
+
+.notes-field-row .field-label {
+  padding-top: 3px;
+}
+
+.postcard-notes-area {
+  flex: 1;
+}
+
+.postcard-textarea {
+  width: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 20px,
+    rgba(60, 50, 38, 0.45) 21px,
+    rgba(60, 50, 38, 0.45) 22px
+  );
+  line-height: 22px;
+  border: none;
+  font-family: 'Special Elite', 'Courier Prime', monospace;
+  font-size: 0.88rem;
+  color: #171410;
+  resize: vertical;
+  min-height: 66px;
+  outline: none;
+  padding: 1px 4px 0;
+  box-sizing: border-box;
+}
+
+.postcard-textarea::placeholder {
+  color: rgba(90, 80, 68, 0.45);
+  font-style: italic;
+}
+
+.postcard-textarea:focus {
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+/* Retro Checkboxes */
+.postcard-checkbox-group {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.postcard-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: #3b3226;
+  cursor: pointer;
+  user-select: none;
+}
+
+.postcard-checkbox-label input[type="checkbox"] {
+  display: none;
+}
+
+.custom-chk {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid #3b3226;
+  background: transparent;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: transparent;
+  transition: all 0.2s ease;
+}
+
+.postcard-checkbox-label input[type="checkbox"]:checked + .custom-chk {
+  background: #2b2319;
+  color: #f7eedb;
+}
+
+/* Masking Tape Submit Button */
+.postcard-tape-anchor {
+  margin-top: 14px;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  margin-bottom: -24px;
+}
+
+.postcard-tape-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: url('assets/vintage_masking_tape.png') center/100% 100% no-repeat;
+  border: none;
+  padding: 13px 64px 15px;
+  cursor: pointer;
+  font-family: 'Special Elite', monospace;
+  font-size: 1.28rem;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  color: #241d15;
+  text-transform: uppercase;
+  transform: rotate(-1.5deg);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.26));
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
+}
+
+.postcard-tape-btn:hover {
+  transform: rotate(0.5deg) scale(1.05);
+  filter: drop-shadow(0 7px 16px rgba(0, 0, 0, 0.36));
+}
+
+.postcard-tape-btn:active {
+  transform: scale(0.97);
+}
+
+/* Right Column: Recipient & Studio Address */
+.postcard-right-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: clamp(20px, 3.2vw, 36px);
+  padding-right: clamp(16px, 2.8vw, 34px);
+}
+
+.postcard-recipient-block {
+  margin-bottom: 16px;
+  line-height: 1.5;
+  font-family: 'Special Elite', 'Courier Prime', monospace;
+}
+
+.recipient-to {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #40362b;
+  margin-bottom: 3px;
+}
+
+.recipient-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #201a14;
+  letter-spacing: 0.03em;
+  margin-bottom: 3px;
+}
+
+.recipient-line {
+  font-size: 0.82rem;
+  color: #342d23;
+  line-height: 1.4;
+}
+
+.recipient-country {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+}
+
+.postcard-info-block {
+  font-family: 'Special Elite', 'Courier Prime', monospace;
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: #43392d;
+  margin-bottom: 10px;
+}
+
+.info-row {
+  display: flex;
+  gap: 5px;
+}
+
+.info-row.indent {
+  padding-left: 48px;
+}
+
+.info-lbl {
+  font-weight: 700;
+  min-width: 44px;
+}
+
+.postcard-link {
+  color: #1c5286;
+  text-decoration: none;
+  border-bottom: 1px dashed #1c5286;
+  transition: color 0.2s;
+}
+
+.postcard-link:hover {
+  color: #b84020;
+}
+
+.highlight-status {
+  color: #1e7040;
+  font-weight: 700;
+}
+
+/* Demo Stamp Toggle Button */
+.postcard-demo-actions {
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.postcard-toggle-stamp-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #0f172a;
-  color: #ffffff;
-  border: none;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 8px 16px;
-  border-radius: 6px;
+  background: rgba(35, 30, 24, 0.08);
+  border: 1px dashed rgba(60, 50, 40, 0.4);
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  color: #3a3126;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.copy-email-btn:hover {
-  background: #c84826;
+.postcard-toggle-stamp-btn:hover {
+  background: rgba(28, 82, 134, 0.12);
+  border-color: #1c5286;
+  color: #1c5286;
 }
 
-.contact-metadata-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+/* The Iconic Giant Angled DELIVERED Rubber Stamp Layer */
+.delivered-rubber-stamp {
+  position: absolute;
+  top: 48%;
+  left: 47%;
+  transform: translate(-50%, -50%) rotate(-15deg) scale(1.3);
+  pointer-events: none;
+  z-index: 25;
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.3);
 }
 
-.meta-block {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.delivered-rubber-stamp.stamped {
+  opacity: 0.94;
+  transform: translate(-50%, -50%) rotate(-15deg) scale(1);
 }
 
-.meta-title {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.12em;
-  color: #64748b;
+.rubber-stamp-inner {
+  border: 6px solid #134e8c;
+  outline: 2.5px dashed #134e8c;
+  outline-offset: 5px;
+  padding: 8px 52px;
+  border-radius: 4px;
+  background: rgba(19, 78, 140, 0.04);
+  box-shadow: 
+    inset 0 0 10px rgba(19, 78, 140, 0.16),
+    0 0 0 1px rgba(19, 78, 140, 0.28);
+}
+
+.rubber-stamp-text {
+  font-family: 'Special Elite', 'Arial Black', sans-serif;
+  font-size: clamp(3rem, 6.2vw, 5.8rem);
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: #134e8c;
   text-transform: uppercase;
-  font-weight: 700;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 1px 2px rgba(19, 78, 140, 0.5));
+  user-select: none;
 }
 
-.meta-val {
-  font-size: 0.9rem;
-  color: #0f172a;
-  font-weight: 700;
-}
-
-.meta-val.highlight-green {
-  color: #059669;
-}
-
-/* Contact Form */
-.inquiry-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.form-row-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-@media (max-width: 600px) {
-  .form-row-2 {
-    grid-template-columns: 1fr;
+/* Responsive Postcard Layout for Mobile & Tablets */
+@media (max-width: 768px) {
+  .vintage-postcard {
+    padding: 28px 20px 36px;
+    transform: rotate(0deg);
   }
-}
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+  .postcard-stamp-box {
+    top: 18px;
+    right: 18px;
+    width: 70px;
+    height: 70px;
+  }
 
-.form-group label {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  color: #1e293b;
-  text-transform: uppercase;
-  font-weight: 700;
-}
+  .postcard-postmark {
+    display: none;
+  }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1.5px solid rgba(22, 20, 18, 0.16);
-  border-radius: 8px;
-  padding: 12px 14px;
-  color: #0f172a;
-  font-family: inherit;
-  font-size: 0.92rem;
-  font-weight: 500;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-}
+  .postcard-top-header {
+    padding-right: 70px;
+    margin-bottom: 20px;
+  }
 
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-  color: #94a3b8;
-}
+  .postcard-body {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  background: #ffffff;
-  border-color: #0f172a;
-  box-shadow: 0 0 0 3px rgba(200, 72, 38, 0.15);
-}
+  .postcard-divider-line {
+    display: none;
+  }
 
-.submit-inquiry-btn {
-  width: 100%;
-  background: #0f172a;
-  border: none;
-  color: #ffffff;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  margin-top: 6px;
-}
+  .postcard-right-col {
+    padding-top: 16px;
+    border-top: 1px dashed rgba(70, 60, 48, 0.4);
+  }
 
-.submit-inquiry-btn:hover {
-  background: #c84826;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(200, 72, 38, 0.25);
+  .delivered-rubber-stamp {
+    transform: translate(-50%, -50%) rotate(-17deg) scale(0.85);
+  }
+
+  .delivered-rubber-stamp.stamped {
+    transform: translate(-50%, -50%) rotate(-17deg) scale(0.8);
+  }
 }
 
 /* Studio Footer */
