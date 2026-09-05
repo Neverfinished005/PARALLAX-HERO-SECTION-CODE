@@ -2010,8 +2010,9 @@ body.theme-goonies .goonies-only {
 .team-filter-bar {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
-  margin-bottom: 3rem;
+  margin-bottom: 2.2rem;
 }
 
 .team-filter-btn {
@@ -2045,7 +2046,7 @@ body.theme-goonies .goonies-only {
    ========================================================================== */
 .team-section {
   padding-bottom: 0;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .crowd-canvas-wrapper {
@@ -2058,7 +2059,7 @@ body.theme-goonies .goonies-only {
   border-left: none;
   border-right: none;
   border-radius: 0;
-  overflow: visible;
+  overflow: hidden;
   box-shadow: none;
   margin-top: 2rem;
 }
@@ -2085,117 +2086,21 @@ body.theme-goonies .goonies-only {
   background: linear-gradient(-90deg, #f4f3ef 20%, transparent 100%);
 }
 
-/* Editorial Manifesto Header (Placed cleanly ABOVE the crowd screen) */
-.team-manifesto-header {
+/* Team Section Header (Clean 3-word title above the crowd stage) */
+.team-section-header {
   text-align: center;
+  margin-bottom: 1.8rem;
   width: 100%;
-  max-width: 100%;
-  margin: 0 auto 1.4rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-.crowd-quote-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 16px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(22, 20, 18, 0.1);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-  font-family: 'Space Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #334155;
-  margin-bottom: 6px; /* Tight, minimal gap between line/pill and marquee text */
-}
-
-.crowd-quote-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #c84826;
-  box-shadow: 0 0 10px rgba(200, 72, 38, 0.6);
-  animation: pulsar 2s infinite ease-in-out;
-}
-
-/* ReactBits Text Loop / Marquee Component */
-.reactbits-text-loop {
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  padding: 8px 0;
-  background: transparent;
-  user-select: none;
-  /* Smooth edge fade matching site theme */
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 4%, rgba(0, 0, 0, 1) 96%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 4%, rgba(0, 0, 0, 1) 96%, transparent 100%);
-}
-
-.reactbits-text-loop__track {
-  display: flex;
-  width: max-content;
-  flex-shrink: 0;
-  align-items: center;
-  will-change: transform;
-  animation: reactbitsLoopScroll 24s linear infinite;
-}
-
-.reactbits-text-loop:hover .reactbits-text-loop__track {
-  animation-play-state: paused;
-}
-
-.reactbits-text-loop__group {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-.reactbits-text-loop__item {
+.team-section-header .section-title {
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: clamp(1.85rem, 3.2vw, 2.75rem);
+  font-size: clamp(1.85rem, 4.5vw, 3.2rem);
   font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.03em;
   color: #0f172a;
-  white-space: nowrap;
-  display: inline-block;
-  padding: 0 4px;
-}
-
-.reactbits-text-loop__item .accent-quote {
-  background: linear-gradient(135deg, #c84826 0%, #d97706 45%, #7c3aed 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline;
-}
-
-.reactbits-text-loop__separator {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 32px;
-  font-size: 1.25rem;
-  color: #c84826;
-  opacity: 0.82;
-  transform: translateY(-2px);
-}
-
-@keyframes reactbitsLoopScroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  margin: 0;
+  text-align: center;
 }
 
 .crowd-canvas {
@@ -3482,3 +3387,21 @@ body.theme-goonies .goonies-only {
     align-items: flex-start;
   }
 }
+
+@media (max-width: 540px) {
+  .team-section {
+    padding: 3.5rem 4vw 1rem;
+  }
+  .team-section-header .section-title {
+    font-size: 1.95rem;
+  }
+  .team-filter-bar {
+    gap: 6px;
+    margin-bottom: 1.6rem;
+  }
+  .team-filter-btn {
+    font-size: 0.74rem;
+    padding: 6px 12px;
+  }
+}
+
