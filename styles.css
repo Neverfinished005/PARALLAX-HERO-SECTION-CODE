@@ -2218,8 +2218,9 @@ body.theme-goonies .goonies-only {
 /* Editorial Manifesto Header (Placed cleanly ABOVE the crowd screen) */
 .team-manifesto-header {
   text-align: center;
-  max-width: 900px;
-  margin: 0 auto 2.4rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto 1.4rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2229,17 +2230,18 @@ body.theme-goonies .goonies-only {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 18px;
+  padding: 5px 16px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(22, 20, 18, 0.1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  font-family: 'Space Mono', monospace;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #334155;
-  margin-bottom: 16px;
+  margin-bottom: 6px; /* Tight, minimal gap between line/pill and marquee text */
 }
 
 .crowd-quote-dot {
@@ -2251,30 +2253,79 @@ body.theme-goonies .goonies-only {
   animation: pulsar 2s infinite ease-in-out;
 }
 
-.team-manifesto-title {
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: clamp(1.8rem, 3.4vw, 2.75rem);
-  font-weight: 800;
-  line-height: 1.18;
-  letter-spacing: -0.035em;
-  color: #0f172a;
-  margin: 0 0 12px 0;
+/* ReactBits Text Loop / Marquee Component */
+.reactbits-text-loop {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  background: transparent;
+  user-select: none;
+  /* Smooth edge fade matching site theme */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 4%, rgba(0, 0, 0, 1) 96%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 4%, rgba(0, 0, 0, 1) 96%, transparent 100%);
 }
 
-.team-manifesto-title .accent-quote {
+.reactbits-text-loop__track {
+  display: flex;
+  width: max-content;
+  flex-shrink: 0;
+  align-items: center;
+  will-change: transform;
+  animation: reactbitsLoopScroll 24s linear infinite;
+}
+
+.reactbits-text-loop:hover .reactbits-text-loop__track {
+  animation-play-state: paused;
+}
+
+.reactbits-text-loop__group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.reactbits-text-loop__item {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(1.85rem, 3.2vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  color: #0f172a;
+  white-space: nowrap;
+  display: inline-block;
+  padding: 0 4px;
+}
+
+.reactbits-text-loop__item .accent-quote {
   background: linear-gradient(135deg, #c84826 0%, #d97706 45%, #7c3aed 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline;
 }
 
-.team-manifesto-subtext {
-  font-size: clamp(0.92rem, 1.35vw, 1.08rem);
-  font-weight: 450;
-  color: #475569;
-  max-width: 680px;
-  margin: 0 auto;
-  line-height: 1.6;
+.reactbits-text-loop__separator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+  font-size: 1.25rem;
+  color: #c84826;
+  opacity: 0.82;
+  transform: translateY(-2px);
+}
+
+@keyframes reactbitsLoopScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .crowd-canvas {
