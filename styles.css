@@ -909,7 +909,7 @@ body.theme-goonies .goonies-only {
 }
 
 .skiper-deck-section .section-header {
-  margin-bottom: clamp(10px, 1.6vh, 18px);
+  margin-bottom: clamp(28px, 4.2vh, 42px);
   text-align: center;
 }
 
@@ -938,6 +938,35 @@ body.theme-goonies .goonies-only {
   width: min(94vw, 980px);
   height: clamp(440px, 60vh, 490px);
   perspective: 1200px;
+}
+
+/* Skiper17 Perimeter Animated Kinetic Text Ribbon */
+.skiper17-perimeter-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.perimeter-guide-track {
+  fill: none;
+  stroke: rgba(22, 20, 18, 0.12);
+  stroke-width: 1px;
+  stroke-dasharray: 4 6;
+}
+
+.perimeter-text-ribbon {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  fill: #151413;
+  user-select: none;
 }
 
 .skiper17-card {
@@ -1382,7 +1411,11 @@ body.theme-goonies .goonies-only {
 @media (max-width: 540px) {
   .skiper17-deck-viewport {
     height: clamp(620px, 86vh, 700px);
-    width: 96vw;
+    width: min(88vw, 980px);
+  }
+  .perimeter-text-ribbon {
+    font-size: 8.5px;
+    letter-spacing: 0.12em;
   }
   .skiper17-registry-bar {
     flex-wrap: wrap;

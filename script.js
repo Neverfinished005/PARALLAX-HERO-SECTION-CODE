@@ -747,6 +747,119 @@ function initSkiper17CardStack() {
 }
 
 // ============================================================================
+// 5B. SKIPER-17 PERIMETER KINETIC TEXT RIBBON ANIMATION (INVERTED-U LOOP)
+// ============================================================================
+let cardRibbonAnimId = null;
+
+function initCardPerimeterRibbon() {
+  const viewport = document.getElementById('skiperDeckViewport');
+  const path = document.getElementById('cardPerimeterPath');
+  const guide = document.getElementById('cardPerimeterGuide');
+  const textPath = document.getElementById('cardPerimeterTextPath');
+  const workSection = document.getElementById('work');
+
+  if (!viewport || !path || !textPath) return;
+
+  // Single editorial phrase as requested from Section 3 header
+  const singlePhrase = "✦ BUILT WITH PASSION & PRECISION ✦ A SMALL STUDIO BUILDING THE LAYER BETWEEN BOLD IDEAS AND WORKING SYSTEMS ✦ SOFTWARE, AUTOMATION & DIGITAL PRODUCTS ✦ SELECTED WORK ";
+  const copies = 6;
+  textPath.textContent = singlePhrase.repeat(copies);
+
+  function updatePath() {
+    const W = viewport.offsetWidth;
+    const H = viewport.offsetHeight;
+    const isMobile = window.innerWidth <= 768;
+    const D = isMobile ? 18 : 28;
+    const R = isMobile ? 26 : 36;
+    const extraBottom = isMobile ? 24 : 36;
+
+    // Inverted-U path starting from bottom-left, climbing up, across top, down to bottom-right:
+    const d = `M ${-D} ${H + extraBottom} ` +
+              `L ${-D} ${-D + R} ` +
+              `A ${R} ${R} 0 0 1 ${-D + R} ${-D} ` +
+              `L ${W + D - R} ${-D} ` +
+              `A ${R} ${R} 0 0 1 ${W + D} ${-D + R} ` +
+              `L ${W + D} ${H + extraBottom}`;
+
+    path.setAttribute('d', d);
+    if (guide) guide.setAttribute('d', d);
+  }
+
+  updatePath();
+  window.addEventListener('resize', updatePath);
+
+  // Kinetic Animation state
+  let isWorkVisible = false;
+  let hasStarted = false;
+  let currentOffset = 0;
+  let unitLen = 1400;
+  let speed = 0.95; // px per frame (steady elegant reading pace)
+
+  function measureAndInit() {
+    try {
+      const totalLen = textPath.getComputedTextLength();
+      if (totalLen > 0) {
+        unitLen = totalLen / copies;
+        // Start leading character right at distance 0 (bottom-left entrance)
+        currentOffset = -(copies - 1) * unitLen;
+        textPath.setAttribute('startOffset', currentOffset);
+      }
+    } catch (e) {
+      console.warn('Text measurement error', e);
+    }
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(measureAndInit);
+  } else {
+    setTimeout(measureAndInit, 150);
+  }
+
+  // Interactive hover: smoothly ease speed when hovering the cards or ribbon
+  viewport.addEventListener('mouseenter', () => { speed = 0.35; });
+  viewport.addEventListener('mouseleave', () => { speed = 0.95; });
+
+  function tick() {
+    if (isWorkVisible && hasStarted) {
+      const loopThreshold = -unitLen * 2;
+      currentOffset += speed;
+      if (currentOffset > loopThreshold) {
+        currentOffset = ((currentOffset - loopThreshold) % unitLen) + loopThreshold;
+      }
+      textPath.setAttribute('startOffset', currentOffset);
+    }
+    cardRibbonAnimId = requestAnimationFrame(tick);
+  }
+
+  if (cardRibbonAnimId) cancelAnimationFrame(cardRibbonAnimId);
+  cardRibbonAnimId = requestAnimationFrame(tick);
+
+  // Trigger as soon as the user lands on #work section
+  if (typeof IntersectionObserver !== 'undefined' && workSection) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            isWorkVisible = true;
+            if (!hasStarted) {
+              hasStarted = true;
+              measureAndInit();
+            }
+          } else {
+            isWorkVisible = false;
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    observer.observe(workSection);
+  } else {
+    isWorkVisible = true;
+    hasStarted = true;
+  }
+}
+
+// ============================================================================
 // 5. SKIPER39 INTERACTIVE CROWD CANVAS SYSTEM
 // ============================================================================
 function initSkiper39CrowdCanvas() {
@@ -2282,6 +2395,7 @@ function animateHeroLanding() {
 document.addEventListener('DOMContentLoaded', () => {
   initSiteLoader();
   initSkiper17CardStack();
+  initCardPerimeterRibbon();
   initPixelTransitions();
   initSkiper39CrowdCanvas();
   initContactForm();
