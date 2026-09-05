@@ -1498,7 +1498,7 @@ body.theme-goonies .goonies-only {
 /* Individual Pixel Card */
 .pixel-card {
   position: relative;
-  height: 425px;
+  height: 440px;
   border-radius: 22px;
   overflow: hidden;
   background: #0b0d11;
@@ -1675,7 +1675,9 @@ body.theme-goonies .goonies-only {
 }
 
 /* ==========================================================================
-   ACTIVE LAYER: Structured Information & Capabilities Presentation
+   ACTIVE LAYER: High-Contrast Minimal Architecture & Point Specifications
+   Inverted Themes: White for Black Cover Images, Black for White Cover Images
+   No glassmorphic bars, clean left alignment, minimal points, links only.
    ========================================================================== */
 .pixel-card__active {
   position: absolute;
@@ -1686,174 +1688,214 @@ body.theme-goonies .goonies-only {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 26px 26px 22px;
-  background: #0c0e14;
-  background-image: 
-    radial-gradient(circle at 88% 12%, rgba(200, 72, 38, 0.16) 0%, transparent 58%),
-    radial-gradient(circle at 12% 88%, rgba(56, 189, 248, 0.08) 0%, transparent 62%),
-    linear-gradient(180deg, #121620 0%, #090b0f 100%);
+  padding: 34px 32px 28px;
   border-radius: 22px;
   opacity: 0;
   pointer-events: none;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  text-align: left;
+  transition: opacity 0.2s ease;
 }
 
-.pixel-info-top {
-  margin-bottom: 8px;
+/* --------------------------------------------------------------------------
+   THEME 1: WHITE ACTIVE (For Black/Dark Cover Images: Prism, Delta, Rezum, 3F1)
+   -------------------------------------------------------------------------- */
+.pixel-card.theme-white-active .pixel-card__active {
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 
+    0 24px 48px -12px rgba(0, 0, 0, 0.16),
+    0 0 0 1px rgba(255, 255, 255, 0.9) inset;
 }
 
-.pixel-info-badge-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.pixel-info-tag {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.68rem;
-  font-weight: 700;
+.pixel-card.theme-white-active .pixel-info-kicker {
   color: #c84826;
-  letter-spacing: 0.1em;
 }
 
-.pixel-info-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.6rem;
+.pixel-card.theme-white-active .pixel-info-title {
+  color: #0b0d11;
+}
+
+.pixel-card.theme-white-active .pixel-points-list li {
+  color: #334155;
+}
+
+.pixel-card.theme-white-active .pixel-points-list li strong {
+  color: #0b0d11;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 3px 9px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pixel-card.theme-white-active .pixel-points-list li::before {
+  background: #c84826;
+}
+
+.pixel-card.theme-white-active .pixel-action-btn {
+  background: #0b0d11;
+  color: #ffffff;
+  border: 1px solid #0b0d11;
+}
+
+.pixel-card.theme-white-active .pixel-action-btn:hover {
+  background: #c84826;
+  border-color: #c84826;
+  color: #ffffff;
+  box-shadow: 0 8px 22px rgba(200, 72, 38, 0.32);
+}
+
+.pixel-card.theme-white-active .pixel-tile {
+  border: 0.5px solid rgba(0, 0, 0, 0.05);
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   THEME 2: BLACK ACTIVE (For White/Light Cover Images: Lazycook)
+   -------------------------------------------------------------------------- */
+.pixel-card.theme-black-active .pixel-card__active {
+  background-color: #090a0f;
+  background-image: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 
+    0 24px 50px -10px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.pixel-card.theme-black-active .pixel-info-kicker {
+  color: #f97316;
+}
+
+.pixel-card.theme-black-active .pixel-info-title {
+  color: #ffffff;
+}
+
+.pixel-card.theme-black-active .pixel-points-list li {
+  color: #cbd5e1;
+}
+
+.pixel-card.theme-black-active .pixel-points-list li strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.pixel-card.theme-black-active .pixel-points-list li::before {
+  background: #f97316;
+}
+
+.pixel-card.theme-black-active .pixel-action-btn {
+  background: #ffffff;
+  color: #090a0f;
+  border: 1px solid #ffffff;
+}
+
+.pixel-card.theme-black-active .pixel-action-btn:hover {
+  background: #f97316;
+  border-color: #f97316;
+  color: #ffffff;
+  box-shadow: 0 8px 22px rgba(249, 115, 22, 0.4);
+}
+
+.pixel-card.theme-black-active .pixel-tile {
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Typography & Point Hierarchy */
+.pixel-info-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+}
+
+.pixel-info-kicker {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.70rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
 }
 
 .pixel-info-title {
   font-family: 'Outfit', -apple-system, sans-serif;
-  font-size: 1.65rem;
+  font-size: 1.85rem;
   font-weight: 800;
-  color: #ffffff;
-  margin: 0 0 8px;
-  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
-.pixel-info-desc {
-  font-size: 0.88rem;
-  color: #cbd5e1;
-  line-height: 1.58;
-  margin: 0 0 10px;
-  font-weight: 420;
-}
-
-/* Services & Capabilities Container */
-.pixel-services-block {
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 13px;
-  padding: 12px 14px;
-  margin-bottom: 12px;
-}
-
-.pixel-services-header {
+.pixel-points-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: #94a3b8;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+  width: 100%;
 }
 
-.services-header-dot {
-  width: 5px;
-  height: 5px;
+.pixel-points-list li {
+  position: relative;
+  padding-left: 18px;
+  font-family: 'Montserrat', -apple-system, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.60;
+  font-weight: 450;
+  letter-spacing: -0.005em;
+}
+
+.pixel-points-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #c84826;
-  box-shadow: 0 0 6px rgba(200, 72, 38, 0.8);
 }
 
-.pixel-chips-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.pixel-chip {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.66rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #e2e8f0;
-  padding: 4px 9px;
-  border-radius: 6px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.pixel-chip:hover {
-  background: rgba(200, 72, 38, 0.25);
-  border-color: rgba(200, 72, 38, 0.6);
-  color: #ffffff;
-  transform: translateY(-1px);
-}
-
-/* Footer CTA Actions */
+/* Footer Link Only */
 .pixel-card-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  justify-content: flex-start;
+  width: 100%;
+  padding-top: 14px;
+  border-top: none;
+  margin-top: auto;
 }
 
 .pixel-action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 10px;
+  width: auto;
+  align-self: flex-start;
+  padding: 10px 22px;
+  border-radius: 999px;
   font-family: 'Space Mono', monospace;
   font-size: 0.74rem;
   font-weight: 700;
-  color: #38bdf8;
+  letter-spacing: 0.08em;
   text-decoration: none;
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  padding: 7px 15px;
-  border-radius: 8px;
+  text-transform: uppercase;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
   position: relative;
   z-index: 5;
 }
 
 .pixel-action-btn .btn-arrow {
-  font-size: 0.8rem;
+  font-size: 0.92rem;
   transition: transform 0.2s ease;
 }
 
-.pixel-action-btn:hover {
-  background: #38bdf8;
-  color: #0b0d11;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(56, 189, 248, 0.38);
-}
-
 .pixel-action-btn:hover .btn-arrow {
-  transform: translate(2px, -2px);
-}
-
-.pixel-footer-sub {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.58rem;
-  color: #64748b;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  transform: translate(3px, -3px);
 }
 
 /* ==========================================================================
@@ -1899,25 +1941,31 @@ body.theme-goonies .goonies-only {
 
 @media (max-width: 480px) {
   .pixel-card {
-    height: 430px;
+    height: 440px;
   }
   
   .pixel-card__default-overlay,
   .pixel-card__active {
-    padding: 20px 18px;
+    padding: 24px 20px 20px;
   }
   
-  .pixel-chips-wrap {
-    gap: 4px;
+  .pixel-info-title {
+    font-size: 1.55rem;
+    margin-bottom: 12px;
   }
   
-  .pixel-chip {
-    font-size: 0.62rem;
-    padding: 3px 7px;
+  .pixel-points-list {
+    gap: 9px;
   }
   
-  .pixel-footer-sub {
-    display: none;
+  .pixel-points-list li {
+    font-size: 0.82rem;
+    line-height: 1.48;
+  }
+  
+  .pixel-action-btn {
+    padding: 11px 16px;
+    font-size: 0.72rem;
   }
 }
 
