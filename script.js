@@ -2390,6 +2390,34 @@ function animateHeroLanding() {
 }
 
 // ============================================================================
+// 8.7. SERVICES SECTION SINGLE-SENTENCE FADE-IN FROM LEFT OBSERVER
+// ============================================================================
+function initServicesHeadlineFade() {
+  const headline = document.getElementById('servicesHeadline');
+  const servicesSec = document.getElementById('services');
+  if (!headline) return;
+
+  if (typeof IntersectionObserver !== 'undefined' && servicesSec) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          headline.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      rootMargin: '0px 0px -10% 0px',
+      threshold: 0.08
+    });
+
+    observer.observe(servicesSec);
+  } else {
+    // Immediate fallback
+    headline.classList.add('in-view');
+  }
+}
+
+// ============================================================================
 // 9. INITIALIZATION
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -2397,6 +2425,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSkiper17CardStack();
   initCardPerimeterRibbon();
   initPixelTransitions();
+  initServicesHeadlineFade();
   initSkiper39CrowdCanvas();
   initContactForm();
   initMetricCounters();
