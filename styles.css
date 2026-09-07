@@ -402,7 +402,7 @@ body.loading-active {
   width: 100%;
   height: 180vh;
   position: relative;
-  background-color: #f4eee6;
+  background-color: #e8d9be;
   scroll-snap-align: start;
   scroll-snap-stop: normal;
 }
@@ -416,7 +416,7 @@ body.loading-active {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f4eee6;
+  background-color: transparent;
 }
 
 /* Background Scene: Original Alphakore Artwork (Ghats, River, Standing Traveler) */
@@ -445,17 +445,18 @@ body.theme-goonies .bg-main {
   background-size: cover;
 }
 
-/* Foreground Carved Stone Pillars: Grounded Architectural Black Frame Over Hero */
+/* Foreground Carved Stone Pillars: Transparent Gate Frame Over Hero */
 .bg-scroll {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100vh;
-  background-image: url('assets/pillars_foreground.png');
+  background-image: url('assets/pillars_foreground_fixed.png');
   background-position: 50% 50%;
   background-size: cover;
   background-repeat: no-repeat;
+  background-color: transparent;
   z-index: 2;
   transform-origin: 50% 50%;
   will-change: transform;

@@ -2450,3 +2450,70 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
   }
 });
+
+// ============================================================================
+// BATMAN REVERT TRIGGER
+// Type "batman" anywhere on the page to toggle the hero section
+// back to original black-framed pillars (or re-apply the fixed version)
+// ============================================================================
+(function initBatmanTrigger() {
+  const BATMAN_WORD = 'batman';
+  let typedBuffer = '';
+  let batmanActive = false; // false = fixed (transparent) pillars, true = original black pillars
+
+  const ORIGINAL_PILLARS = 'assets/pillars_foreground.png';
+  const FIXED_PILLARS    = 'assets/pillars_foreground_fixed.png';
+
+  document.addEventListener('keyup', (e) => {
+    if (e.key.length !== 1) { typedBuffer = ''; return; }
+    typedBuffer += e.key.toLowerCase();
+    if (typedBuffer.length > BATMAN_WORD.length) {
+      typedBuffer = typedBuffer.slice(-BATMAN_WORD.length);
+    }
+
+    if (typedBuffer === BATMAN_WORD) {
+      typedBuffer = '';
+      batmanActive = !batmanActive;
+
+      const bgScroll = document.getElementById('bgScroll');
+      const stickyCont = document.querySelector('.sticky-container');
+
+      if (batmanActive) {
+        // REVERT to original black-framed pillars
+        if (bgScroll) bgScroll.style.backgroundImage = `url('${ORIGINAL_PILLARS}')`;
+        if (stickyCont) stickyCont.style.backgroundColor = '#f4eee6';
+        showBatmanToast('🦇 BATMAN MODE — Original hero restored');
+      } else {
+        // RE-APPLY the transparent fixed pillars
+        if (bgScroll) bgScroll.style.backgroundImage = `url('${FIXED_PILLARS}')`;
+        if (stickyCont) stickyCont.style.backgroundColor = 'transparent';
+        showBatmanToast('✨ FIXED MODE — Seamless hero active');
+      }
+    }
+  });
+
+  function showBatmanToast(msg) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    Object.assign(toast.style, {
+      position: 'fixed',
+      bottom: '2rem',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      background: 'rgba(10,10,10,0.88)',
+      color: '#f0e6cc',
+      padding: '0.75rem 1.6rem',
+      borderRadius: '2rem',
+      fontFamily: 'Montserrat, sans-serif',
+      fontSize: '0.82rem',
+      letterSpacing: '0.08em',
+      zIndex: '99999',
+      pointerEvents: 'none',
+      opacity: '1',
+      transition: 'opacity 0.4s ease'
+    });
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; }, 2200);
+    setTimeout(() => { toast.remove(); }, 2700);
+  }
+})();
