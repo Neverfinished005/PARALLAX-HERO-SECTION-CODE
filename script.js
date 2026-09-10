@@ -1028,6 +1028,23 @@ function initSkiper39CrowdCanvas() {
       links: [
         { label: 'in', url: 'http://www.linkedin.com/in/manav-patel-4930132a6' }
       ]
+    },
+    {
+      id: 'rudra',
+      name: 'Rudra Vable',
+      badge: 'Rudra Vable · Developer & Builder',
+      role: 'Developer & Automation Engineer',
+      category: 'engineer',
+      color: '#16a34a', // Forest Green
+      spriteIndex: HOODIE_SPRITE_INDEX,
+      initials: 'RV',
+      bio: 'Builder obsessed with turning ideas into working systems — writing code, automating workflows, and pushing commits that actually ship.',
+      tags: ['Automation', 'Full Stack', 'GitHub', 'Systems Thinking'],
+      links: [
+        { label: 'in', url: 'https://www.linkedin.com/in/rudra-vable' },
+        { label: 'gh', url: 'https://github.com/Neverfinished005' },
+        { label: 'ig', url: 'https://www.instagram.com/rudr_a.25' }
+      ]
     }
   ];
 
