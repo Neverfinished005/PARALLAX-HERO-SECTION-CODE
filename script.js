@@ -1033,13 +1033,13 @@ function initSkiper39CrowdCanvas() {
       id: 'rudra',
       name: 'Rudra Vable',
       badge: 'Rudra Vable · Developer & Builder',
-      role: 'Developer & Automation Engineer',
+      role: 'ML Engineer & Creative Developer',
       category: 'engineer',
       color: '#16a34a', // Forest Green
       spriteIndex: HOODIE_SPRITE_INDEX,
       initials: 'RV',
-      bio: 'Builder obsessed with turning ideas into working systems — writing code, automating workflows, and pushing commits that actually ship.',
-      tags: ['Automation', 'Full Stack', 'GitHub', 'Systems Thinking'],
+      bio: 'Training models that see, building interfaces that breathe — where computer vision meets pixel-perfect frontend craft and data tells its own story.',
+      tags: ['Computer Vision', 'ML Engineering', 'Data Science', 'UI/UX'],
       links: [
         { label: 'in', url: 'https://www.linkedin.com/in/rudra-vable' },
         { label: 'gh', url: 'https://github.com/Neverfinished005' },
