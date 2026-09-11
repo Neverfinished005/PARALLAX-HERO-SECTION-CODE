@@ -3231,6 +3231,172 @@ body.theme-goonies .goonies-only {
   color: #ffffff;
 }
 
+/* =========================================================================
+   EXPANDED FOOTER — 4-column layout
+   ========================================================================= */
+.studio-footer--expanded {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 40px;
+  border-top: 1px solid rgba(22, 20, 18, 0.1);
+}
+
+.footer-main-row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1.4fr 1.4fr;
+  gap: 40px;
+  padding-bottom: 36px;
+}
+
+/* Column base */
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.footer-col-heading {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: #151413;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 2px;
+}
+
+/* Brand column extras */
+.footer-col--brand .footer-motto {
+  font-size: 0.83rem;
+  color: #6b665f;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.footer-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.footer-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: #5c5852;
+  background: rgba(22, 20, 18, 0.05);
+  border: 1px solid rgba(22, 20, 18, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* Nav link columns */
+.footer-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+/* Contact column */
+.footer-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.footer-contact-icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.footer-contact-text {
+  font-size: 0.8rem;
+  color: #6b665f;
+}
+
+/* Social row */
+.footer-social-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.footer-social-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: #151413;
+  text-decoration: none;
+  border: 1px solid rgba(22, 20, 18, 0.18);
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.22s ease;
+}
+
+.footer-social-btn:hover {
+  background: #151413;
+  color: #ffffff;
+  border-color: #151413;
+}
+
+/* Bottom bar */
+.footer-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid rgba(22, 20, 18, 0.08);
+  padding-top: 20px;
+  padding-bottom: 4px;
+}
+
+.footer-bottom-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.footer-built-with {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+  color: #aaa49d;
+}
+
+/* Responsive — footer columns */
+@media (max-width: 960px) {
+  .footer-main-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-main-row {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .footer-bottom-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+
+
 /* Modal Backdrop & Container */
 .modal-backdrop {
   position: fixed;
