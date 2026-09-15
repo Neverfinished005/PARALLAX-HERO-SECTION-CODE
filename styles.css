@@ -54,7 +54,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
-  scroll-snap-type: y proximity;
+  /* scroll-snap is DESKTOP-ONLY — see @media (min-width:769px) below */
 }
 
 body {
@@ -3376,6 +3376,165 @@ body.theme-goonies .goonies-only {
   color: #aaa49d;
 }
 
+/* Live status pill in footer */
+.footer-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 5px 12px;
+  border-radius: 20px;
+  width: fit-content;
+  margin-top: 4px;
+}
+
+.footer-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  animation: pulseGreen 1.8s infinite;
+}
+
+.footer-status-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #065f46;
+  letter-spacing: 0.05em;
+}
+
+.footer-link-static {
+  font-size: 0.82rem;
+  color: #5c5852;
+  line-height: 1.5;
+}
+
+.back-to-top {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: #c84826;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 4px;
+  background: rgba(200, 72, 38, 0.08);
+  transition: all 0.2s ease;
+}
+
+.back-to-top:hover {
+  background: #c84826;
+  color: #ffffff;
+}
+
+/* Base Team Mobile Fallback Grid (hidden on wide desktop, active on tablet & mobile) */
+.team-mobile-fallback {
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.team-card {
+  background: #ffffff;
+  border: 1px solid rgba(22, 20, 18, 0.09);
+  border-radius: 12px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.team-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.team-card-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(22, 20, 18, 0.04);
+  border: 2px solid var(--member-color, #c84826);
+  color: var(--member-color, #c84826);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: 'Space Mono', monospace;
+  flex-shrink: 0;
+}
+
+.team-card-name {
+  font-family: var(--font-sharp), sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #151413;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.team-card-role {
+  font-size: 0.78rem;
+  color: #78716c;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.team-card-bio {
+  font-size: 0.83rem;
+  line-height: 1.55;
+  color: #44403c;
+  margin: 0;
+}
+
+.team-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.team-card-tag {
+  font-size: 0.68rem;
+  font-family: 'Space Mono', monospace;
+  padding: 3px 8px;
+  background: rgba(22, 20, 18, 0.05);
+  border-radius: 4px;
+  color: #57534e;
+}
+
+.team-card-links {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(22, 20, 18, 0.06);
+}
+
+.team-card-link {
+  font-size: 0.76rem;
+  font-family: 'Space Mono', monospace;
+  color: #c84826;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.team-card-link:hover {
+  text-decoration: underline;
+}
+
 /* Responsive — footer columns */
 @media (max-width: 960px) {
   .footer-main-row {
@@ -3577,93 +3736,141 @@ body.theme-goonies .goonies-only {
    Breakpoints: 1280 / 1024 / 860 / 768 / 540 / 420
    ========================================================================== */
 
-/* ── 1280px — Large Tablets / Small Laptops ─────────────────────────────── */
-@media (max-width: 1280px) {
+/* ==========================================================================
+   COMPREHENSIVE RESPONSIVE SYSTEM — Mobile, Tablet, Desktop
+   ========================================================================== */
+
+/* ── 1024px — Tablets Landscape & Below (Performance Gate) ────────────────── */
+@media (max-width: 1024px) {
+  /* Performance: Disable GPU-draining blurs and heavy will-change */
+  *,
+  *::before,
+  *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  .bg-main,
+  .bg-scroll,
+  .hero-parent,
+  .intro-parent,
+  .skiper17-card,
+  .pixel-card__grid {
+    will-change: auto !important;
+  }
+
+  .nav-bar.scrolled {
+    background: rgba(244, 243, 238, 0.98);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
   .section-container {
     max-width: 100%;
     padding: 0 4vw;
   }
+
+  /* ---- WORK SECTION: Native Vertical Flow (Zero Sticky Trap) ---- */
+  .skiper-deck-section {
+    height: auto !important;
+    min-height: auto !important;
+    padding: 5rem 4vw 4rem !important;
+  }
   .skiper17-sticky-stage {
-    padding: 2.5rem 4vw;
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    background: transparent !important;
   }
-  .services-section {
-    padding: 5rem 4vw 6rem;
+  .skiper17-deck-outer {
+    width: 100% !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
   }
-  .team-section {
-    padding: 5.5rem 4vw;
+  .skiper17-deck-viewport {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 32px !important;
   }
-}
+  .skiper17-card {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    box-shadow: 0 10px 30px rgba(22, 20, 18, 0.08) !important;
+    margin-bottom: 0 !important;
+  }
+  .skiper17-card-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .skiper17-card-col.left,
+  .skiper17-card-col.right {
+    padding: 28px 24px !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .skiper17-card-col.right {
+    border-left: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  .skiper17-perimeter-svg,
+  .skiper17-deck-counter,
+  .skiper17-dot-nav,
+  .skiper17-scroll-hint {
+    display: none !important;
+  }
 
-/* ── 1024px — Tablets Landscape ─────────────────────────────────────────── */
-@media (max-width: 1024px) {
-  /* Nav: tighten gap */
-  .nav-list {
-    gap: 2.8rem;
+  /* ---- TEAM SECTION: Native Grid (Zero Canvas Lag) ---- */
+  .crowd-canvas-wrapper {
+    display: none !important;
+  }
+  .team-mobile-fallback {
+    display: grid !important;
   }
 
-  /* Work grid */
-  .work-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  }
-
-  /* Pixel cards: 1-column earlier */
+  /* ---- SERVICES SECTION ---- */
   .pixel-transition-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-  .pixel-card.card-showcase {
-    grid-column: 1;
-    max-width: 100%;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
   }
   .pixel-card {
-    height: 420px;
+    height: auto !important;
+    min-height: 440px !important;
   }
 
-  /* Footer columns: 2-col */
+  /* ---- METRICS ---- */
+  .metrics-grid {
+    gap: 24px;
+    justify-content: center;
+  }
+  .metric-divider-v {
+    display: none;
+  }
+
+  /* ---- FOOTER ---- */
   .footer-main-row {
     grid-template-columns: 1fr 1fr;
     gap: 32px;
   }
 }
 
-/* ── 860px — Tablets Portrait / Large Phones Landscape ──────────────────── */
-@media (max-width: 860px) {
-  /* Nav: smaller gaps, smaller font */
-  .nav-bar {
-    padding: 20px 0 16px;
-  }
-  .nav-list {
-    gap: 1.8rem;
-    padding: 0 16px;
-  }
-  .nav-link {
-    font-size: 13px;
-  }
-
-  /* Work section */
-  .work-section,
-  .services-section,
-  .team-section,
-  .contact-section {
-    padding: 4.5rem 5vw;
-  }
-
-  /* Metrics: 2 per row */
-  .metrics-grid {
-    gap: 24px;
-  }
-  .metric-item {
-    min-width: 140px;
-  }
-  .metric-divider-v {
-    display: none;
-  }
-}
-
-/* ── 768px — Tablets Portrait / Large Phones ─────────────────────────────── */
+/* ── 768px — Mobile Devices ───────────────────────────────────────────────── */
 @media (max-width: 768px) {
-
-  /* ---- NAV ---- */
+  /* ---- NAVIGATION ---- */
   .nav-bar {
     padding: 14px 0 12px;
   }
@@ -3673,76 +3880,116 @@ body.theme-goonies .goonies-only {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 0 12px;
+    padding: 0 16px;
     justify-content: flex-start;
     width: 100%;
+    box-sizing: border-box;
   }
   .nav-list::-webkit-scrollbar {
     display: none;
   }
   .nav-link {
-    font-size: 12.5px;
+    font-size: 13px;
     white-space: nowrap;
   }
 
-  /* ---- HERO ---- */
+  /* ---- HERO SECTION ---- */
   .scroll-container {
-    height: 130vh;
+    height: 100vh;
+    min-height: 560px;
+  }
+  .sticky-container {
+    position: relative;
+    height: 100vh;
+    min-height: 560px;
+    overflow: hidden;
+  }
+  .bg-main {
+    transform: none !important;
+  }
+  .bg-scroll {
+    /* Soft ambient pillar frame that does not obscure center text */
+    transform: none !important;
+    opacity: 0.22 !important;
+  }
+  /* Eliminate the overlapping Plot collision */
+  .intro-parent {
+    display: none !important;
+  }
+  .hero-parent {
+    opacity: 1 !important;
+    transform: none !important;
+    padding-top: 0 !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+  .alphakore-emblem-wrap {
+    margin-bottom: 12px;
   }
   .alphakore-title {
-    font-size: clamp(2.4rem, 8vw, 4rem);
+    font-size: clamp(2.2rem, 9vw, 3.6rem);
+    letter-spacing: 0.16em;
+    margin: 0 0 0.5rem 0;
+    text-align: center;
+    line-height: 1.15;
   }
   .alphakore-tagline {
-    font-size: clamp(0.72rem, 2.8vw, 1rem);
-    letter-spacing: 0.18em;
+    font-size: clamp(0.72rem, 2.9vw, 0.95rem);
+    letter-spacing: 0.14em;
+    margin: 0;
+    text-align: center;
   }
   .scroll-img {
-    width: 38px;
+    width: 36px;
+    bottom: 24px;
   }
 
-  /* ---- IMPACT ---- */
+  /* ---- IMPACT / VISION ---- */
   .impact-section {
-    padding: 2.5rem 5vw;
-    min-height: 85vh;
+    padding: 4rem 5vw;
+    min-height: auto;
   }
   .impact-main-heading {
-    font-size: clamp(28px, 6.5vw, 42px);
+    font-size: clamp(26px, 7vw, 38px);
+    line-height: 1.25;
+  }
+  .impact-circle-btn {
+    width: 54px;
+    height: 54px;
   }
 
-  /* ---- WORK SECTION ---- */
+  /* ---- WORK / SERVICES / TEAM / CONTACT PADDING ---- */
   .work-section,
+  .services-section,
+  .team-section,
   .contact-section {
-    padding: 4rem 5vw;
-  }
-  .services-section {
-    padding: 4rem 5vw 5rem;
-  }
-  .team-section {
-    padding: 4rem 5vw;
+    padding: 4rem 4vw;
   }
 
-  .work-grid {
-    grid-template-columns: 1fr;
+  /* ---- WORK CARDS ---- */
+  .skiper17-card-title {
+    font-size: 1.85rem;
   }
-  .services-grid {
-    grid-template-columns: 1fr;
+  .skiper17-card-actions {
+    flex-wrap: wrap;
+    gap: 10px;
   }
-  .team-grid {
-    grid-template-columns: 1fr;
+  .work-btn-primary,
+  .work-btn-ghost {
+    padding: 10px 18px;
+    font-size: 0.8rem;
   }
 
-  /* ---- PIXEL CARDS (touch: show active on tap) ---- */
-  .pixel-transition-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
+  /* ---- SERVICES PIXEL CARDS ---- */
   .pixel-card {
-    height: 460px;
-    /* Allow tap-to-reveal on touch devices */
+    min-height: 460px !important;
     touch-action: manipulation;
   }
   .pixel-card__active {
-    padding: 24px 20px 20px;
+    padding: 22px 18px 20px !important;
   }
   .pixel-info-title {
     font-size: 1.55rem;
@@ -3753,321 +4000,167 @@ body.theme-goonies .goonies-only {
     gap: 10px;
   }
   .pixel-card__hint {
-    display: none; /* Hide "HOVER TO REVEAL" on mobile */
-  }
-
-  /* ---- SKIPER DECK ---- */
-  .skiper17-sticky-stage {
-    padding: clamp(1rem, 2vh, 1.5rem) 3vw;
-  }
-  .skiper17-deck-viewport {
-    height: clamp(580px, 80vh, 660px);
-  }
-  .skiper17-card-inner {
-    grid-template-columns: 1fr;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-  .skiper17-card-col.left {
-    padding: 22px 18px;
-    height: auto;
-    flex-shrink: 0;
-  }
-  .skiper17-card-col.right {
-    padding: 22px 18px;
-    border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    height: auto;
-    flex-shrink: 0;
-  }
-  .skiper17-scroll-hint {
     display: none;
-  }
-
-  /* ---- TEAM ---- */
-  .team-filter-bar {
-    gap: 7px;
-    margin-bottom: 1.8rem;
-  }
-  .team-filter-btn {
-    font-size: 0.78rem;
-    padding: 7px 14px;
   }
 
   /* ---- METRICS ---- */
   .metrics-banner {
-    padding: 3.5rem 5vw;
+    padding: 3.5rem 4vw;
   }
   .metrics-grid {
-    justify-content: flex-start;
-    gap: 24px 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 16px;
   }
   .metric-item {
-    flex: 0 1 calc(50% - 16px);
-    min-width: 120px;
+    text-align: center;
+    min-width: 0;
+  }
+  .metric-val {
+    font-size: 2.4rem;
   }
 
-  /* ---- POSTCARD (contact) ---- */
+  /* ---- TEAM CARDS ---- */
+  .team-filter-bar {
+    gap: 8px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .team-filter-btn {
+    font-size: 0.76rem;
+    padding: 7px 14px;
+  }
+  .team-mobile-fallback {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* ---- CONTACT POSTCARD ---- */
+  .postcard-stage-wrap {
+    perspective: none !important;
+    margin-bottom: 3rem !important;
+  }
   .vintage-postcard {
-    padding: 28px 18px 38px;
-    transform: none;
-    border-radius: 4px;
-    min-height: auto;
+    padding: 24px 18px 30px !important;
+    transform: none !important;
+    background-image: none !important;
+    background-color: #f8f5ee !important;
+    border: 1px solid rgba(68, 55, 41, 0.25) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(32, 25, 18, 0.1) !important;
+    filter: none !important;
+    min-height: auto !important;
+  }
+  .vintage-postcard:hover {
+    transform: none !important;
+    filter: none !important;
   }
   .postcard-body-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    min-height: auto;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    min-height: auto !important;
   }
   .postcard-divider-line {
-    display: none;
+    display: none !important;
   }
   .postcard-right-col {
-    order: -1;
-    border-bottom: 1.5px dashed rgba(68, 55, 41, 0.4);
-    padding-bottom: 14px;
-    padding-left: 0;
-    padding-right: 0;
+    order: -1 !important;
+    border-bottom: 1.5px dashed rgba(68, 55, 41, 0.3) !important;
+    padding-bottom: 16px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
   .postcard-left-col {
-    order: 1;
+    order: 1 !important;
   }
   .postcard-title {
     font-size: 1.5rem;
   }
   .postcard-stamp-box {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
+  }
+  .postcard-field-grid-3 {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  .field-mini {
+    flex: 1 1 100% !important;
   }
   .delivered-rubber-stamp {
-    transform: translate(-50%, -50%) rotate(-16deg) scale(0.6);
+    pointer-events: none !important;
+    transform: translate(-50%, -50%) rotate(-16deg) scale(0.55);
   }
   .delivered-rubber-stamp.stamped {
-    transform: translate(-50%, -50%) rotate(-16deg) scale(0.6);
+    pointer-events: none !important;
+    transform: translate(-50%, -50%) rotate(-16deg) scale(0.55);
   }
 
   /* ---- FOOTER ---- */
-  .studio-footer {
-    flex-direction: column;
-    align-items: flex-start;
+  .studio-footer--expanded {
+    margin-top: 3rem;
+    padding-top: 2.5rem;
   }
   .footer-main-row {
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
-  }
-  .footer-bottom-bar {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-}
-
-/* ── 540px — Phones ──────────────────────────────────────────────────────── */
-@media (max-width: 540px) {
-
-  /* ---- NAV ---- */
-  .nav-list {
-    gap: 1rem;
-  }
-  .nav-link {
-    font-size: 11.5px;
-  }
-
-  /* ---- HERO ---- */
-  .alphakore-title {
-    font-size: clamp(2rem, 9vw, 3rem);
-  }
-
-  /* ---- IMPACT ---- */
-  .impact-main-heading {
-    font-size: clamp(24px, 7vw, 34px);
-  }
-
-  /* ---- WORK / SERVICES / CONTACT ---- */
-  .work-section,
-  .services-section,
-  .team-section,
-  .contact-section {
-    padding: 3.2rem 4vw;
-  }
-
-  /* ---- PIXEL CARDS ---- */
-  .pixel-card {
-    height: 480px;
-  }
-  .pixel-points-list {
-    gap: 8px;
-  }
-  .pixel-points-list li {
-    font-size: 0.82rem;
-    line-height: 1.48;
-  }
-  .pixel-action-btn {
-    padding: 11px 16px;
-    font-size: 0.72rem;
-  }
-
-  /* ---- SKIPER DECK ---- */
-  .skiper17-deck-viewport {
-    height: clamp(620px, 86vh, 700px);
-    width: min(90vw, 980px);
-  }
-  .perimeter-text-ribbon {
-    font-size: 8px;
-    letter-spacing: 0.1em;
-  }
-  .skiper17-registry-bar {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .skiper17-category-tag {
-    width: 100%;
-    margin-left: 0;
-  }
-  .skiper17-card-title {
-    font-size: 1.85rem;
-  }
-  .skiper17-card-actions {
-    flex-wrap: wrap;
-  }
-
-  /* ---- TEAM ---- */
-  .team-section {
-    padding: 3rem 4vw 1.5rem;
-  }
-  .team-section-header .section-title {
-    font-size: 1.85rem;
-  }
-  .team-filter-bar {
-    gap: 6px;
-    margin-bottom: 1.4rem;
-  }
-  .team-filter-btn {
-    font-size: 0.72rem;
-    padding: 6px 12px;
-  }
-
-  /* ---- METRICS: 1-col ---- */
-  .metric-item {
-    flex: 1 1 100%;
-  }
-
-  /* ---- POSTCARD ---- */
-  .vintage-postcard {
-    padding: 22px 14px 32px;
-  }
-  .postcard-field-grid-3 {
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  .field-mini {
-    flex: 1 1 100%;
-  }
-  .field-mini.state-mini,
-  .field-mini.zip-mini {
-    flex: 1 1 45%;
-  }
-  .postcard-tape-btn {
-    padding: 9px 36px 11px;
-    font-size: 1rem;
-  }
-  .postcard-info-block {
-    font-size: 0.72rem;
-    margin-bottom: 6px;
-  }
-  .delivered-rubber-stamp {
-    transform: translate(-50%, -50%) rotate(-16deg) scale(0.5);
-  }
-  .delivered-rubber-stamp.stamped {
-    transform: translate(-50%, -50%) rotate(-16deg) scale(0.5);
-  }
-
-  /* ---- FOOTER: Full single column ---- */
-  .footer-main-row {
-    grid-template-columns: 1fr;
-    gap: 22px;
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+    padding-bottom: 24px;
   }
   .footer-bottom-bar {
     flex-direction: column;
     align-items: flex-start;
-  }
-  .footer-social-row {
-    flex-wrap: wrap;
-  }
-  .footer-col-heading {
-    font-size: 0.66rem;
+    gap: 14px;
   }
 }
 
-/* ── 420px — Very Small Phones ───────────────────────────────────────────── */
-@media (max-width: 420px) {
-  /* Nav: even tighter */
+/* ── 480px — Compact Mobile Phones ────────────────────────────────────────── */
+@media (max-width: 480px) {
   .nav-list {
-    gap: 0.7rem;
+    gap: 0.85rem;
+    padding: 0 12px;
   }
   .nav-link {
-    font-size: 10.5px;
-    letter-spacing: 0.02em;
+    font-size: 11px;
   }
-
-  /* Hero */
   .alphakore-title {
-    font-size: clamp(1.75rem, 10vw, 2.5rem);
+    font-size: clamp(1.85rem, 8.5vw, 2.6rem);
+    letter-spacing: 0.14em;
   }
   .alphakore-tagline {
-    font-size: clamp(0.6rem, 3vw, 0.8rem);
+    font-size: clamp(0.62rem, 3vw, 0.8rem);
+    letter-spacing: 0.1em;
   }
-
-  /* Skiper */
-  .skiper17-deck-viewport {
-    width: 95vw;
-    height: clamp(640px, 90vh, 720px);
-  }
-  .skiper17-card-title {
-    font-size: 1.65rem;
-  }
-
-  /* Pixel card */
-  .pixel-card {
-    height: 500px;
-  }
-
-  /* Section padding */
   .work-section,
   .services-section,
   .team-section,
   .contact-section {
-    padding: 2.5rem 3.5vw;
+    padding: 3rem 3.5vw;
   }
-
-  /* Footer */
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .metric-val {
+    font-size: 2.1rem;
+  }
+  .vintage-postcard {
+    padding: 18px 12px 24px !important;
+  }
+  .postcard-tape-btn {
+    padding: 10px 32px;
+    font-size: 0.95rem;
+  }
+  .footer-badges {
+    gap: 6px;
+  }
   .footer-badge {
     font-size: 0.62rem;
     padding: 3px 8px;
   }
   .footer-social-btn {
-    font-size: 0.66rem;
+    font-size: 0.68rem;
     padding: 5px 10px;
-  }
-}
-
-/* ── Performance: Kill heavy will-change on mobile ────────────────────────── */
-@media (max-width: 768px) {
-  .bg-main,
-  .bg-scroll,
-  .hero-parent,
-  .intro-parent,
-  .skiper17-card,
-  .pixel-card__grid {
-    will-change: auto;
-  }
-  /* Disable backdrop-filter on low-power screens */
-  .nav-bar.scrolled {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: rgba(244, 243, 238, 0.97);
   }
 }
 

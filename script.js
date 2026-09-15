@@ -55,6 +55,14 @@ const elements = {
 };
 
 // ============================================================================
+// MOBILE PERFORMANCE GATE
+// All heavy animations (parallax, crowd canvas, pixel tiles, wheel hijack)
+// are disabled on mobile viewports to guarantee smooth scrolling.
+// ============================================================================
+const isMobileDevice = () => window.innerWidth <= 768;
+const isTabletDevice = () => window.innerWidth <= 1024;
+
+// ============================================================================
 // 2. PARALLAX SCROLL CHOREOGRAPHY (CINEMATIC PILLARS PARTING)
 // ============================================================================
 let currentProgress = 0;
@@ -70,7 +78,27 @@ function calculateProgress() {
 }
 
 function updateParallax() {
-  // Smooth lerp for buttery 60fps movement
+  // ── MOBILE FAST-PATH ──────────────────────────────────────────────────────
+  // On mobile, skip smooth lerp and heavy per-frame transforms entirely.
+  // The hero section is shown as a static image; no rAF loop continues.
+  if (isMobileDevice()) {
+    // Ensure hero content is always visible statically
+    if (elements.heroParent) {
+      elements.heroParent.style.opacity = '1';
+      elements.heroParent.style.transform = 'none';
+    }
+    if (elements.introParent) {
+      elements.introParent.style.opacity = '1';
+      elements.introParent.style.transform = 'none';
+    }
+    if (elements.scrollImg) elements.scrollImg.style.opacity = '0';
+    if (elements.heroOverlay) elements.heroOverlay.style.display = 'none';
+    if (elements.drawLineInner) elements.drawLineInner.style.transform = 'translateY(0%)';
+    isTicking = false;
+    return;
+  }
+
+  // ── DESKTOP LERP PATH ─────────────────────────────────────────────────────
   currentProgress += (targetProgress - currentProgress) * 0.14;
   if (Math.abs(targetProgress - currentProgress) < 0.0005) {
     currentProgress = targetProgress;
@@ -80,12 +108,11 @@ function updateParallax() {
 
   // --------------------------------------------------------------------------
   // FOREGROUND CARVED STONE PILLARS (Grounded Architectural Frame)
-  // Gently widens to aperture frame from p=0.10 to 0.55 and holds in place
   // --------------------------------------------------------------------------
   let pillarScale = 1.0;
   if (p >= 0.10 && p <= 0.55) {
     const t = (p - 0.10) / 0.45;
-    pillarScale = 1.0 + t * 0.28; // 1.0 -> 1.28
+    pillarScale = 1.0 + t * 0.28;
   } else if (p > 0.55) {
     pillarScale = 1.28;
   }
@@ -105,12 +132,11 @@ function updateParallax() {
 
   // --------------------------------------------------------------------------
   // BACKGROUND SCENE & TRAVELER (bg-main)
-  // Camera gently pushes in, holds firmly in place with full opacity
   // --------------------------------------------------------------------------
   let oceanScale = 1.0;
   if (p >= 0.10 && p <= 0.55) {
     const t = (p - 0.10) / 0.45;
-    oceanScale = 1.0 + t * 0.18; // 1.0 -> 1.18
+    oceanScale = 1.0 + t * 0.18;
   } else if (p > 0.55) {
     oceanScale = 1.18;
   }
@@ -142,7 +168,6 @@ function updateParallax() {
     elements.heroParent.style.transform = `scale(${titleScale})`;
   }
 
-  // Scroll mouse indicator fades out early
   if (elements.scrollImg) {
     const scrollIconOp = p < 0.12 ? 1.0 - (p / 0.12) : 0;
     elements.scrollImg.style.opacity = scrollIconOp;
@@ -150,8 +175,6 @@ function updateParallax() {
 
   // --------------------------------------------------------------------------
   // PLOT HEADLINE & SYNOPSIS (intro-parent)
-  // Fades in and slides up by p=0.55, then stays 100% solid & visible
-  // The hero section finishes in this exact state, ready for Section 2
   // --------------------------------------------------------------------------
   let plotOpacity = 0.0;
   let plotTranslateY = 35;
@@ -172,28 +195,24 @@ function updateParallax() {
     elements.introParent.style.transform = `translate3d(0, ${plotTranslateY}px, 0)`;
   }
 
-  // --------------------------------------------------------------------------
-  // OVERLAY DISABLED & DESCENDING VERTICAL LINE
-  // --------------------------------------------------------------------------
   if (elements.heroOverlay) {
     elements.heroOverlay.style.opacity = '0';
     elements.heroOverlay.style.display = 'none';
   }
 
-  // Vertical line draw below Plot
   let lineY = -100;
   if (p >= 0.36 && p <= 0.58) {
     const t = (p - 0.36) / 0.22;
-    lineY = -100 + t * 100; // -100% -> 0%
+    lineY = -100 + t * 100;
   } else if (p > 0.58) {
-    lineY = 0; // Stays fully drawn down
+    lineY = 0;
   }
 
   if (elements.drawLineInner) {
     elements.drawLineInner.style.transform = `translateY(${lineY}%)`;
   }
 
-  // Request next frame if still interpolating
+  // Continue rAF loop only if still interpolating
   if (Math.abs(targetProgress - currentProgress) > 0.0005) {
     requestAnimationFrame(updateParallax);
   } else {
@@ -208,6 +227,12 @@ let lastScrollDirection = 'down';
 let settleSnapTimer = null;
 
 function onScroll() {
+  // Mobile & Tablet fast-path: zero reflows, zero ticking lerps, zero settle snappers
+  if (isMobileDevice() || isTabletDevice()) {
+    updateNavState();
+    return;
+  }
+
   const currentY = window.scrollY;
   if (Math.abs(currentY - lastScrollPosition) > 2) {
     lastScrollDirection = currentY >= lastScrollPosition ? 'down' : 'up';
@@ -221,7 +246,7 @@ function onScroll() {
   }
   updateNavState();
 
-  // Debounced settle snapper: if scrolling stops inside an intermediate dead zone, snap cleanly to section
+  // Debounced settle snapper: DESKTOP ONLY
   if (!isProgrammaticScroll) {
     clearTimeout(settleSnapTimer);
     settleSnapTimer = setTimeout(checkAndSettleSectionSnap, 130);
@@ -230,6 +255,7 @@ function onScroll() {
 
 window.addEventListener('scroll', onScroll, { passive: true });
 window.addEventListener('resize', () => {
+  if (isMobileDevice() || isTabletDevice()) return;
   targetProgress = calculateProgress();
   updateParallax();
 });
@@ -338,7 +364,7 @@ function smoothScrollTo(targetY, duration = 650) {
 }
 
 function checkAndSettleSectionSnap() {
-  if (isProgrammaticScroll) return;
+  if (isMobileDevice() || isTabletDevice() || isProgrammaticScroll) return;
 
   const currentY = window.scrollY;
   const offsets = getSectionOffsets();
@@ -375,7 +401,11 @@ function checkAndSettleSectionSnap() {
 }
 
 function initSectionScrollManager() {
-  // Wheel-based section sticking and snapping
+  // On mobile/tablet: do NOT install wheel hijacker — it blocks native touch scroll
+  // which is the #1 cause of "laggy" feel on phones. Native scroll is fastest.
+  if (isMobileDevice() || isTabletDevice()) return;
+
+  // Wheel-based section sticking and snapping (desktop only)
   window.addEventListener('wheel', (e) => {
     if (isProgrammaticScroll) {
       e.preventDefault();
@@ -646,6 +676,18 @@ function initSkiper17CardStack() {
 
   if (!section || !cardElements.length) return;
 
+  // On Mobile & Tablet: Do NOT pin or scrub cards — render natural vertical flow
+  if (isMobileDevice() || isTabletDevice()) {
+    if (skiper17Timeline) {
+      skiper17Timeline.kill();
+      skiper17Timeline = null;
+    }
+    cardElements.forEach(card => {
+      gsap.set(card, { clearProps: 'all' });
+    });
+    return;
+  }
+
   const totalCards = cardElements.length;
 
   // Set initial states exactly matching Skiper-17:
@@ -752,6 +794,9 @@ function initSkiper17CardStack() {
 let cardRibbonAnimId = null;
 
 function initCardPerimeterRibbon() {
+  // On mobile & tablet: skip the kinetic SVG ribbon (continuous rAF = frame drain)
+  if (isMobileDevice() || isTabletDevice()) return;
+
   const viewport = document.getElementById('skiperDeckViewport');
   const path = document.getElementById('cardPerimeterPath');
   const guide = document.getElementById('cardPerimeterGuide');
@@ -862,13 +907,48 @@ function initCardPerimeterRibbon() {
 // ============================================================================
 // 5. SKIPER39 INTERACTIVE CROWD CANVAS SYSTEM
 // ============================================================================
+function setupMobileTeamFilters() {
+  const teamBtns = document.querySelectorAll('.team-filter-btn');
+  const teamCards = document.querySelectorAll('.team-mobile-fallback .team-card');
+  if (!teamBtns.length || !teamCards.length) return;
+
+  teamBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      teamBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const role = btn.getAttribute('data-role') || 'all';
+
+      teamCards.forEach(card => {
+        const cat = card.getAttribute('data-category') || '';
+        if (role === 'all' || cat.includes(role)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+
 function initSkiper39CrowdCanvas() {
+  // On mobile & tablet: skip canvas entirely — 38 GSAP-animated sprites + per-frame
+  // canvas draw is a massive source of mobile scroll lag and battery drain.
+  // The CSS team-mobile-fallback grid provides beautiful content on small screens.
+  if (isMobileDevice() || isTabletDevice()) {
+    const wrapper = document.getElementById('crowdWrapper');
+    if (wrapper) wrapper.style.display = 'none';
+    const fallback = document.querySelector('.team-mobile-fallback');
+    if (fallback) fallback.style.display = 'grid';
+    setupMobileTeamFilters();
+    return;
+  }
+
   const canvas = document.getElementById('crowdCanvas');
   const wrapper = document.getElementById('crowdWrapper');
   const dossier = document.getElementById('crowdDossierCard');
   if (!canvas || !wrapper) return;
 
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) return;
 
   // Configuration for 15 rows x 7 cols Open Peeps sprite sheet (3600 x 2268)
@@ -1223,10 +1303,11 @@ function initSkiper39CrowdCanvas() {
       crowd.push(peep);
     });
 
-    // 2. Add 38 background crowd peeps from remaining non-hoodie sprites (lively, rich crowd)
+    // 2. Add background crowd peeps — fewer on tablet to save GPU/CPU
     const bgSprites = allSprites.filter((_, idx) => idx !== HOODIE_SPRITE_INDEX);
+    const bgCount = isTabletDevice() ? 12 : 38;
 
-    for (let i = 0; i < 38; i++) {
+    for (let i = 0; i < bgCount; i++) {
       const randomRect = bgSprites[randomIndex(bgSprites)];
       const peep = createPeep({
         isTeam: false,
@@ -1234,14 +1315,28 @@ function initSkiper39CrowdCanvas() {
         scale: 0.76
       });
       resetPeep(peep);
-      // Evenly distribute progress across the full width with slight random jitter
-      const progress = ((i / 38) + Math.random() * 0.05) % 1;
+      const progress = ((i / bgCount) + Math.random() * 0.05) % 1;
       peep.walk.progress(progress);
       crowd.push(peep);
     }
 
-    // Start GSAP Ticker for rendering
+    // Start GSAP Ticker — but pause when section is off-screen
+    let isVisible = false;
     gsap.ticker.add(render);
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      const visObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          isVisible = e.isIntersecting;
+          if (isVisible) {
+            gsap.ticker.add(render);
+          } else {
+            gsap.ticker.remove(render);
+          }
+        });
+      }, { threshold: 0.05 });
+      visObserver.observe(wrapper);
+    }
 
     // Setup Event Listeners
     setupInteractions();
@@ -2052,17 +2147,21 @@ function initSiteLoader() {
   // Progressive count from 0 to 100%
   let progress = 0;
   const progressInterval = setInterval(() => {
-    progress += Math.floor(Math.random() * 8) + 5;
+    progress += Math.floor(Math.random() * 8) + 8;
     if (progress >= 100) {
       progress = 100;
       clearInterval(progressInterval);
       if (enterBtn) {
         enterBtn.classList.add('ready');
       }
+      setTimeout(dismissLoader, 350);
     }
     if (percentEl) percentEl.textContent = `${progress}%`;
     if (progressBar) progressBar.style.width = `${progress}%`;
-  }, 35);
+  }, 30);
+
+  // Safety auto-dismiss fallback after 1.2s max so site never sits stuck
+  setTimeout(dismissLoader, 1200);
 
   function dismissLoader() {
     if (isLoaderDismissed) return;
@@ -2153,9 +2252,10 @@ function initPixelTransitions() {
     const activeLayer = card.querySelector('.pixel-card__active');
     if (!gridContainer || !defaultLayer || !activeLayer) return;
 
-    // Read configured density & colors
-    const cols = parseInt(card.getAttribute('data-grid-cols') || '10', 10);
-    const rows = parseInt(card.getAttribute('data-grid-rows') || '7', 10);
+    // On mobile: use a tiny grid and CSS-only flip (no GSAP)
+    const mobile = isMobileDevice();
+    const cols = mobile ? 5 : parseInt(card.getAttribute('data-grid-cols') || '10', 10);
+    const rows = mobile ? 3 : parseInt(card.getAttribute('data-grid-rows') || '7', 10);
     const pixelColor = card.getAttribute('data-pixel-color') || '#0b0d11';
     const totalTiles = cols * rows;
 
@@ -2322,7 +2422,15 @@ function animateHeroLanding() {
 
   if (!heroTitle) return;
 
-  // Split heroTitle into kinetic character spans
+  // On mobile: simple fade-in, no per-character blur split (too heavy)
+  if (isMobileDevice()) {
+    if (heroEmblem) heroEmblem.style.opacity = '1';
+    heroTitle.style.opacity = '1';
+    if (heroTagline) heroTagline.style.opacity = '1';
+    return;
+  }
+
+  // Split heroTitle into kinetic character spans (desktop only)
   if (!heroTitle.classList.contains('split-done')) {
     const text = heroTitle.textContent.trim();
     heroTitle.innerHTML = text
