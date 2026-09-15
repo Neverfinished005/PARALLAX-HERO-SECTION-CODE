@@ -900,7 +900,7 @@ function initSkiper39CrowdCanvas() {
   const fallback = document.querySelector('.team-mobile-fallback');
   if (fallback) fallback.style.display = 'none';
 
-  const ctx = canvas.getContext('2d', { alpha: false });
+  const ctx = canvas.getContext('2d', { alpha: true });
   if (!ctx) return;
 
   // Configuration for 15 rows x 7 cols Open Peeps sprite sheet (3600 x 2268)
@@ -1321,8 +1321,10 @@ function initSkiper39CrowdCanvas() {
   function render() {
     if (!stage.width || !stage.height) return;
 
-    // Clear canvas
+    // Clear canvas with the page background colour (warm beige)
     ctx.clearRect(0, 0, stage.width, stage.height);
+    ctx.fillStyle = '#f4f3ef';
+    ctx.fillRect(0, 0, stage.width, stage.height);
 
     // Render characters (sorted by depth once on init/resize)
     crowd.forEach(peep => {
