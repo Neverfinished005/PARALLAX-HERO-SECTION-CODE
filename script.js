@@ -71,35 +71,18 @@ let isTicking = false;
 
 function calculateProgress() {
   if (!elements.scrollContainer) return 0;
-  const rect = elements.scrollContainer.getBoundingClientRect();
+  const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+  const containerTop = elements.scrollContainer.offsetTop;
   const totalScroll = elements.scrollContainer.offsetHeight - window.innerHeight;
   if (totalScroll <= 0) return 0;
-  return Math.min(Math.max(-rect.top / totalScroll, 0), 1);
+  return Math.min(Math.max((scrollY - containerTop) / totalScroll, 0), 1);
 }
 
 function updateParallax() {
-  // ── MOBILE FAST-PATH ──────────────────────────────────────────────────────
-  // On mobile, skip smooth lerp and heavy per-frame transforms entirely.
-  // The hero section is shown as a static image; no rAF loop continues.
-  if (isMobileDevice()) {
-    // Ensure hero content is always visible statically
-    if (elements.heroParent) {
-      elements.heroParent.style.opacity = '1';
-      elements.heroParent.style.transform = 'none';
-    }
-    if (elements.introParent) {
-      elements.introParent.style.opacity = '1';
-      elements.introParent.style.transform = 'none';
-    }
-    if (elements.scrollImg) elements.scrollImg.style.opacity = '0';
-    if (elements.heroOverlay) elements.heroOverlay.style.display = 'none';
-    if (elements.drawLineInner) elements.drawLineInner.style.transform = 'translateY(0%)';
-    isTicking = false;
-    return;
-  }
-
-  // ── DESKTOP LERP PATH ─────────────────────────────────────────────────────
-  currentProgress += (targetProgress - currentProgress) * 0.14;
+  // Lerp progress smoothly on all devices
+  const isMobile = isMobileDevice();
+  const lerpFactor = isMobile ? 0.28 : 0.14;
+  currentProgress += (targetProgress - currentProgress) * lerpFactor;
   if (Math.abs(targetProgress - currentProgress) < 0.0005) {
     currentProgress = targetProgress;
   }
@@ -110,23 +93,23 @@ function updateParallax() {
   // FOREGROUND CARVED STONE PILLARS (Grounded Architectural Frame)
   // --------------------------------------------------------------------------
   let pillarScale = 1.0;
-  if (p >= 0.10 && p <= 0.55) {
-    const t = (p - 0.10) / 0.45;
-    pillarScale = 1.0 + t * 0.28;
-  } else if (p > 0.55) {
-    pillarScale = 1.28;
+  if (p >= 0.05 && p <= 0.60) {
+    const t = (p - 0.05) / 0.55;
+    pillarScale = 1.0 + t * 0.32;
+  } else if (p > 0.60) {
+    pillarScale = 1.32;
   }
 
   if (elements.bgScroll) {
-    elements.bgScroll.style.transform = `scale(${pillarScale})`;
+    elements.bgScroll.style.transform = `translate3d(0, 0, 0) scale(${pillarScale})`;
     elements.bgScroll.style.opacity = '1';
   }
   if (elements.pillarLeft) {
-    elements.pillarLeft.style.transform = `scale(${pillarScale})`;
+    elements.pillarLeft.style.transform = `translate3d(0, 0, 0) scale(${pillarScale})`;
     elements.pillarLeft.style.opacity = '1';
   }
   if (elements.pillarRight) {
-    elements.pillarRight.style.transform = `scale(${pillarScale})`;
+    elements.pillarRight.style.transform = `translate3d(0, 0, 0) scale(${pillarScale})`;
     elements.pillarRight.style.opacity = '1';
   }
 
@@ -134,15 +117,15 @@ function updateParallax() {
   // BACKGROUND SCENE & TRAVELER (bg-main)
   // --------------------------------------------------------------------------
   let oceanScale = 1.0;
-  if (p >= 0.10 && p <= 0.55) {
-    const t = (p - 0.10) / 0.45;
+  if (p >= 0.05 && p <= 0.60) {
+    const t = (p - 0.05) / 0.55;
     oceanScale = 1.0 + t * 0.18;
-  } else if (p > 0.55) {
+  } else if (p > 0.60) {
     oceanScale = 1.18;
   }
 
   if (elements.bgMain) {
-    elements.bgMain.style.transform = `scale(${oceanScale})`;
+    elements.bgMain.style.transform = `translate3d(0, 0, 0) scale(${oceanScale})`;
     elements.bgMain.style.opacity = '1';
   }
 
@@ -151,25 +134,30 @@ function updateParallax() {
   // --------------------------------------------------------------------------
   let titleOpacity = 1.0;
   let titleScale = 1.0;
+  let titleTranslateY = 0;
 
-  if (p <= 0.14) {
+  if (p <= 0.10) {
     titleOpacity = 1.0;
     titleScale = 1.0;
-  } else if (p > 0.14 && p <= 0.32) {
-    const t = (p - 0.14) / 0.18;
+    titleTranslateY = 0;
+  } else if (p > 0.10 && p <= 0.30) {
+    const t = (p - 0.10) / 0.20;
     titleOpacity = Math.max(0, 1.0 - t);
-    titleScale = 1.0 + t * 0.10;
+    titleScale = 1.0 + t * 0.08;
+    titleTranslateY = -t * 24;
   } else {
     titleOpacity = 0.0;
+    titleTranslateY = -24;
   }
 
   if (elements.heroParent) {
     elements.heroParent.style.opacity = titleOpacity;
-    elements.heroParent.style.transform = `scale(${titleScale})`;
+    elements.heroParent.style.transform = `translate3d(0, ${titleTranslateY}px, 0) scale(${titleScale})`;
+    elements.heroParent.style.pointerEvents = titleOpacity > 0.1 ? 'auto' : 'none';
   }
 
   if (elements.scrollImg) {
-    const scrollIconOp = p < 0.12 ? 1.0 - (p / 0.12) : 0;
+    const scrollIconOp = p < 0.10 ? 1.0 - (p / 0.10) : 0;
     elements.scrollImg.style.opacity = scrollIconOp;
   }
 
@@ -177,22 +165,24 @@ function updateParallax() {
   // PLOT HEADLINE & SYNOPSIS (intro-parent)
   // --------------------------------------------------------------------------
   let plotOpacity = 0.0;
-  let plotTranslateY = 35;
+  let plotTranslateY = 30;
 
-  if (p >= 0.24 && p <= 0.55) {
-    const t = (p - 0.24) / 0.31;
+  if (p >= 0.30 && p <= 0.62) {
+    const t = (p - 0.30) / 0.32;
     plotOpacity = t;
-    plotTranslateY = 35 * (1 - t);
-  } else if (p > 0.55) {
+    plotTranslateY = 30 * (1 - t);
+  } else if (p > 0.62) {
     plotOpacity = 1.0;
     plotTranslateY = 0;
   } else {
     plotOpacity = 0.0;
+    plotTranslateY = 30;
   }
 
   if (elements.introParent) {
     elements.introParent.style.opacity = plotOpacity;
     elements.introParent.style.transform = `translate3d(0, ${plotTranslateY}px, 0)`;
+    elements.introParent.style.pointerEvents = plotOpacity > 0.1 ? 'auto' : 'none';
   }
 
   if (elements.heroOverlay) {
@@ -201,10 +191,10 @@ function updateParallax() {
   }
 
   let lineY = -100;
-  if (p >= 0.36 && p <= 0.58) {
-    const t = (p - 0.36) / 0.22;
+  if (p >= 0.45 && p <= 0.72) {
+    const t = (p - 0.45) / 0.27;
     lineY = -100 + t * 100;
-  } else if (p > 0.58) {
+  } else if (p > 0.72) {
     lineY = 0;
   }
 
@@ -227,13 +217,7 @@ let lastScrollDirection = 'down';
 let settleSnapTimer = null;
 
 function onScroll() {
-  // Mobile & Tablet fast-path: zero reflows, zero ticking lerps, zero settle snappers
-  if (isMobileDevice() || isTabletDevice()) {
-    updateNavState();
-    return;
-  }
-
-  const currentY = window.scrollY;
+  const currentY = window.pageYOffset || window.scrollY || 0;
   if (Math.abs(currentY - lastScrollPosition) > 2) {
     lastScrollDirection = currentY >= lastScrollPosition ? 'down' : 'up';
     lastScrollPosition = currentY;
@@ -246,8 +230,8 @@ function onScroll() {
   }
   updateNavState();
 
-  // Debounced settle snapper: DESKTOP ONLY
-  if (!isProgrammaticScroll) {
+  // Debounced settle snapper: DESKTOP MOUSE-WHEEL ONLY
+  if (!isMobileDevice() && !isTabletDevice() && !isProgrammaticScroll) {
     clearTimeout(settleSnapTimer);
     settleSnapTimer = setTimeout(checkAndSettleSectionSnap, 130);
   }
@@ -255,7 +239,6 @@ function onScroll() {
 
 window.addEventListener('scroll', onScroll, { passive: true });
 window.addEventListener('resize', () => {
-  if (isMobileDevice() || isTabletDevice()) return;
   targetProgress = calculateProgress();
   updateParallax();
 });
@@ -907,46 +890,15 @@ function initCardPerimeterRibbon() {
 // ============================================================================
 // 5. SKIPER39 INTERACTIVE CROWD CANVAS SYSTEM
 // ============================================================================
-function setupMobileTeamFilters() {
-  const teamBtns = document.querySelectorAll('.team-filter-btn');
-  const teamCards = document.querySelectorAll('.team-mobile-fallback .team-card');
-  if (!teamBtns.length || !teamCards.length) return;
-
-  teamBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      teamBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const role = btn.getAttribute('data-role') || 'all';
-
-      teamCards.forEach(card => {
-        const cat = card.getAttribute('data-category') || '';
-        if (role === 'all' || cat.includes(role)) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
-  });
-}
-
 function initSkiper39CrowdCanvas() {
-  // On mobile & tablet: skip canvas entirely — 38 GSAP-animated sprites + per-frame
-  // canvas draw is a massive source of mobile scroll lag and battery drain.
-  // The CSS team-mobile-fallback grid provides beautiful content on small screens.
-  if (isMobileDevice() || isTabletDevice()) {
-    const wrapper = document.getElementById('crowdWrapper');
-    if (wrapper) wrapper.style.display = 'none';
-    const fallback = document.querySelector('.team-mobile-fallback');
-    if (fallback) fallback.style.display = 'grid';
-    setupMobileTeamFilters();
-    return;
-  }
-
   const canvas = document.getElementById('crowdCanvas');
   const wrapper = document.getElementById('crowdWrapper');
   const dossier = document.getElementById('crowdDossierCard');
   if (!canvas || !wrapper) return;
+
+  wrapper.style.display = 'block';
+  const fallback = document.querySelector('.team-mobile-fallback');
+  if (fallback) fallback.style.display = 'none';
 
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) return;
@@ -1226,11 +1178,15 @@ function initSkiper39CrowdCanvas() {
   }
 
   function resetPeep(peep) {
+    const isMobile = isMobileDevice();
+    const isTablet = isTabletDevice();
     const direction = Math.random() > 0.5 ? 1 : -1;
     // Walk paths span vertically across lower 50% of canvas with realistic perspective
     const depth = Math.random();
-    // Scale: 0.72 in background to 0.94 in foreground
-    peep.scale = 0.72 + depth * 0.22;
+    // Scale: responsive for screen size
+    const baseScale = isMobile ? (peep.isTeam ? 0.65 : 0.56) : (isTablet ? (peep.isTeam ? 0.74 : 0.66) : (peep.isTeam ? 0.82 : 0.72));
+    const scaleRange = isMobile ? 0.12 : 0.20;
+    peep.scale = baseScale + depth * scaleRange;
 
     const scaledWidth = peep.width * peep.scale;
 
@@ -1241,19 +1197,19 @@ function initSkiper39CrowdCanvas() {
 
     let startX, endX;
     if (direction === 1) {
-      startX = -scaledWidth - randomRange(40, 160);
-      endX = stage.width + scaledWidth + 60;
+      startX = -scaledWidth - randomRange(30, 100);
+      endX = stage.width + scaledWidth + 40;
       peep.scaleX = 1;
     } else {
-      startX = stage.width + scaledWidth + randomRange(40, 160);
-      endX = -scaledWidth - 60;
+      startX = stage.width + scaledWidth + randomRange(30, 100);
+      endX = -scaledWidth - 40;
       peep.scaleX = -1;
     }
 
     peep.x = startX;
 
-    // Walking speed: calmed down and slowed for smooth, deliberate gait across full screen
-    const walkDuration = peep.isTeam ? randomRange(34, 48) : randomRange(36, 54);
+    // Walking speed: smooth, natural gait
+    const walkDuration = isMobile ? (peep.isTeam ? randomRange(26, 38) : randomRange(28, 42)) : (peep.isTeam ? randomRange(34, 48) : randomRange(36, 54));
     const timeScale = randomRange(0.75, 0.92);
     peep.originalTimeScale = timeScale;
 
@@ -1276,7 +1232,7 @@ function initSkiper39CrowdCanvas() {
     const bobDuration = 0.32 / timeScale;
     peep.bob = gsap.to(peep, {
       duration: bobDuration,
-      y: startY - (6 * peep.scale),
+      y: startY - (5 * peep.scale),
       repeat: -1,
       yoyo: true,
       ease: 'power1.inOut'
@@ -1288,37 +1244,42 @@ function initSkiper39CrowdCanvas() {
   function initSimulation() {
     resizeCanvas();
 
-    // 1. Add all 9 team members to crowd, distributed evenly across the full width
+    // 1. Add all 10 team members to crowd, distributed evenly across the full width
     TEAM_MEMBERS.forEach((member, i) => {
+      const isMobile = isMobileDevice();
       const peep = createPeep({
         isTeam: true,
         teamData: member,
         rect: member.rect,
-        scale: 0.85
+        scale: isMobile ? 0.68 : 0.85
       });
       resetPeep(peep);
       // Stagger them cleanly across the full screen width
-      const initialProgress = 0.05 + (i / TEAM_MEMBERS.length) * 0.88;
+      const initialProgress = 0.04 + (i / TEAM_MEMBERS.length) * 0.90;
       peep.walk.progress(initialProgress);
       crowd.push(peep);
     });
 
-    // 2. Add background crowd peeps — fewer on tablet to save GPU/CPU
+    // 2. Add background crowd peeps: 4 on mobile, 8 on tablet, 22 on desktop
     const bgSprites = allSprites.filter((_, idx) => idx !== HOODIE_SPRITE_INDEX);
-    const bgCount = isTabletDevice() ? 12 : 38;
+    const bgCount = isMobileDevice() ? 4 : (isTabletDevice() ? 8 : 22);
 
     for (let i = 0; i < bgCount; i++) {
       const randomRect = bgSprites[randomIndex(bgSprites)];
+      const isMobile = isMobileDevice();
       const peep = createPeep({
         isTeam: false,
         rect: randomRect,
-        scale: 0.76
+        scale: isMobile ? 0.58 : 0.76
       });
       resetPeep(peep);
       const progress = ((i / bgCount) + Math.random() * 0.05) % 1;
       peep.walk.progress(progress);
       crowd.push(peep);
     }
+
+    // Sort crowd by depth once at startup
+    crowd.sort((a, b) => a.anchorY - b.anchorY);
 
     // Start GSAP Ticker — but pause when section is off-screen
     let isVisible = false;
@@ -1334,7 +1295,7 @@ function initSkiper39CrowdCanvas() {
             gsap.ticker.remove(render);
           }
         });
-      }, { threshold: 0.05 });
+      }, { threshold: 0.02 });
       visObserver.observe(wrapper);
     }
 
@@ -1344,13 +1305,17 @@ function initSkiper39CrowdCanvas() {
   }
 
   function resizeCanvas() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const isMobile = isMobileDevice();
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
     stage.width = wrapper.clientWidth;
     stage.height = wrapper.clientHeight;
 
-    canvas.width = stage.width * dpr;
-    canvas.height = stage.height * dpr;
+    canvas.width = Math.round(stage.width * dpr);
+    canvas.height = Math.round(stage.height * dpr);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
+    // Sort crowd once on resize
+    crowd.sort((a, b) => a.anchorY - b.anchorY);
   }
 
   function render() {
@@ -1359,10 +1324,7 @@ function initSkiper39CrowdCanvas() {
     // Clear canvas
     ctx.clearRect(0, 0, stage.width, stage.height);
 
-    // Sort crowd by anchorY (depth): background people drawn first, foreground in front
-    crowd.sort((a, b) => a.anchorY - b.anchorY);
-
-    // Render characters
+    // Render characters (sorted by depth once on init/resize)
     crowd.forEach(peep => {
       renderPeep(peep);
     });
@@ -1543,13 +1505,12 @@ function initSkiper39CrowdCanvas() {
   }
 
   function setupInteractions() {
-    // Mouse Move Hit Testing
-    canvas.addEventListener('mousemove', (e) => {
+    function findPeepAt(clientX, clientY) {
       const rect = canvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
+      const pointerX = clientX - rect.left;
+      const pointerY = clientY - rect.top;
 
-      let found = null;
+      const touchPadding = isMobileDevice() ? 32 : 0;
 
       // Check team members in reverse order (foreground first)
       for (let i = crowd.length - 1; i >= 0; i--) {
@@ -1563,20 +1524,27 @@ function initSkiper39CrowdCanvas() {
         const h = peep.height * peep.scale;
 
         // Body hit test
-        const bodyHit = mouseX >= peep.x - halfW && mouseX <= peep.x + halfW && mouseY >= peep.y - h && mouseY <= peep.y;
+        const bodyHit = pointerX >= peep.x - halfW - touchPadding && 
+                        pointerX <= peep.x + halfW + touchPadding && 
+                        pointerY >= peep.y - h - touchPadding && 
+                        pointerY <= peep.y + touchPadding;
 
-        // Head & Badge hit test (covering tiered badge heights up to 90px above head)
-        const badgeHit = mouseX >= peep.x - 90 && mouseX <= peep.x + 90 && mouseY >= peep.y - h - 85 && mouseY <= peep.y - h;
+        // Head & Badge hit test (covering tiered badge heights above head)
+        const badgeHit = pointerX >= peep.x - 110 && 
+                         pointerX <= peep.x + 110 && 
+                         pointerY >= peep.y - h - 100 && 
+                         pointerY <= peep.y - h + 10;
 
         if (bodyHit || badgeHit) {
-          found = peep;
-          break;
+          return peep;
         }
       }
+      return null;
+    }
 
+    function selectPeep(found) {
       if (found) {
         if (hoveredPeep !== found) {
-          // Restore previous if any
           if (hoveredPeep) {
             hoveredPeep.isHovered = false;
             gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
@@ -1592,34 +1560,67 @@ function initSkiper39CrowdCanvas() {
 
           showDossier(hoveredPeep);
         } else {
-          // Update position smoothly as person slowly steps
           updateDossierPosition(hoveredPeep);
         }
         canvas.style.cursor = 'pointer';
+      }
+    }
+
+    function deselectPeep() {
+      if (hoveredPeep && !isMouseInsideDossier) {
+        hoveredPeep.isHovered = false;
+        gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
+        gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
+        hoveredPeep = null;
+        hideDossier();
+      }
+      canvas.style.cursor = 'default';
+    }
+
+    // Mouse Move Hit Testing
+    canvas.addEventListener('mousemove', (e) => {
+      const found = findPeepAt(e.clientX, e.clientY);
+      if (found) {
+        selectPeep(found);
       } else {
-        if (hoveredPeep && !isMouseInsideDossier) {
-          hoveredPeep.isHovered = false;
-          gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
-          gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
-          hoveredPeep = null;
-          hideDossier();
-        }
-        canvas.style.cursor = 'default';
+        deselectPeep();
       }
     });
+
+    // Mobile Touch / Tap Support
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches.length > 0) {
+        const touch = e.touches[0];
+        const found = findPeepAt(touch.clientX, touch.clientY);
+        if (found) {
+          selectPeep(found);
+        }
+      }
+    }, { passive: true });
 
     // Leave canvas
     canvas.addEventListener('mouseleave', () => {
       setTimeout(() => {
         if (!isMouseInsideDossier && hoveredPeep) {
+          deselectPeep();
+        }
+      }, 100);
+    });
+
+    // Close button listener
+    const closeBtn = document.getElementById('dossierCloseBtn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (hoveredPeep) {
           hoveredPeep.isHovered = false;
           gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
           gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
           hoveredPeep = null;
-          hideDossier();
         }
-      }, 100);
-    });
+        hideDossier();
+      });
+    }
 
     // Dossier hover tracking so links remain clickable
     if (dossier) {
@@ -1629,12 +1630,8 @@ function initSkiper39CrowdCanvas() {
       dossier.addEventListener('mouseleave', () => {
         isMouseInsideDossier = false;
         if (hoveredPeep) {
-          hoveredPeep.isHovered = false;
-          gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
-          gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
-          hoveredPeep = null;
+          deselectPeep();
         }
-        hideDossier();
       });
     }
 
@@ -1748,6 +1745,20 @@ function initSkiper39CrowdCanvas() {
 
   function updateDossierPosition(peep) {
     if (!dossier) return;
+
+    if (isMobileDevice()) {
+      dossier.style.position = 'fixed';
+      dossier.style.top = 'auto';
+      dossier.style.bottom = '24px';
+      dossier.style.left = '50%';
+      dossier.style.transform = 'translateX(-50%)';
+      return;
+    }
+
+    dossier.style.position = 'absolute';
+    dossier.style.bottom = 'auto';
+    dossier.style.transform = '';
+
     const cardRect = dossier.getBoundingClientRect();
     const cardWidth = cardRect.width || 310;
     const cardHeight = cardRect.height || 260;
