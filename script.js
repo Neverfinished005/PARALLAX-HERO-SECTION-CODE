@@ -56,11 +56,9 @@ const elements = {
 
 // ============================================================================
 // MOBILE PERFORMANCE GATE
-// All heavy animations (parallax, crowd canvas, pixel tiles, wheel hijack)
-// are disabled on mobile viewports to guarantee smooth scrolling.
+// Parallax is disabled on mobile viewports only as requested
 // ============================================================================
 const isMobileDevice = () => window.innerWidth <= 768;
-const isTabletDevice = () => window.innerWidth <= 1024;
 
 // ============================================================================
 // 2. PARALLAX SCROLL CHOREOGRAPHY (CINEMATIC PILLARS PARTING)
@@ -70,19 +68,35 @@ let targetProgress = 0;
 let isTicking = false;
 
 function calculateProgress() {
+  if (isMobileDevice()) return 0;
   if (!elements.scrollContainer) return 0;
-  const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
-  const containerTop = elements.scrollContainer.offsetTop;
   const totalScroll = elements.scrollContainer.offsetHeight - window.innerHeight;
   if (totalScroll <= 0) return 0;
-  return Math.min(Math.max((scrollY - containerTop) / totalScroll, 0), 1);
+  return Math.min(Math.max(window.scrollY / totalScroll, 0), 1);
 }
 
 function updateParallax() {
-  // Lerp progress smoothly on all devices
-  const isMobile = isMobileDevice();
-  const lerpFactor = isMobile ? 0.28 : 0.14;
-  currentProgress += (targetProgress - currentProgress) * lerpFactor;
+  if (isMobileDevice()) {
+    // Parallax disabled on mobile only: static, clean, zero GPU overhead
+    if (elements.bgScroll) elements.bgScroll.style.transform = 'none';
+    if (elements.pillarLeft) elements.pillarLeft.style.transform = 'none';
+    if (elements.pillarRight) elements.pillarRight.style.transform = 'none';
+    if (elements.bgMain) elements.bgMain.style.transform = 'none';
+    if (elements.heroParent) {
+      elements.heroParent.style.opacity = '1';
+      elements.heroParent.style.transform = 'none';
+    }
+    if (elements.scrollImg) elements.scrollImg.style.opacity = '1';
+    if (elements.introParent) {
+      elements.introParent.style.opacity = '0';
+      elements.introParent.style.display = 'none';
+    }
+    isTicking = false;
+    return;
+  }
+
+  // Smooth lerp for buttery 60fps movement (Desktop)
+  currentProgress += (targetProgress - currentProgress) * 0.14;
   if (Math.abs(targetProgress - currentProgress) < 0.0005) {
     currentProgress = targetProgress;
   }
@@ -91,41 +105,43 @@ function updateParallax() {
 
   // --------------------------------------------------------------------------
   // FOREGROUND CARVED STONE PILLARS (Grounded Architectural Frame)
+  // Gently widens to aperture frame from p=0.10 to 0.55 and holds in place
   // --------------------------------------------------------------------------
   let pillarScale = 1.0;
-  if (p >= 0.05 && p <= 0.60) {
-    const t = (p - 0.05) / 0.55;
-    pillarScale = 1.0 + t * 0.32;
-  } else if (p > 0.60) {
-    pillarScale = 1.32;
+  if (p >= 0.10 && p <= 0.55) {
+    const t = (p - 0.10) / 0.45;
+    pillarScale = 1.0 + t * 0.28; // 1.0 -> 1.28
+  } else if (p > 0.55) {
+    pillarScale = 1.28;
   }
 
   if (elements.bgScroll) {
-    elements.bgScroll.style.transform = `translate3d(0, 0, 0) scale(${pillarScale})`;
+    elements.bgScroll.style.transform = `scale(${pillarScale})`;
     elements.bgScroll.style.opacity = '1';
   }
   if (elements.pillarLeft) {
-    elements.pillarLeft.style.transform = `translate3d(0, 0, 0) scale(${pillarScale})`;
+    elements.pillarLeft.style.transform = `scale(${pillarScale})`;
     elements.pillarLeft.style.opacity = '1';
   }
   if (elements.pillarRight) {
-    elements.pillarRight.style.transform = `translate3d(0, 0, 0) scale(${pillarScale})`;
+    elements.pillarRight.style.transform = `scale(${pillarScale})`;
     elements.pillarRight.style.opacity = '1';
   }
 
   // --------------------------------------------------------------------------
   // BACKGROUND SCENE & TRAVELER (bg-main)
+  // Camera gently pushes in, holds firmly in place with full opacity
   // --------------------------------------------------------------------------
   let oceanScale = 1.0;
-  if (p >= 0.05 && p <= 0.60) {
-    const t = (p - 0.05) / 0.55;
-    oceanScale = 1.0 + t * 0.18;
-  } else if (p > 0.60) {
+  if (p >= 0.10 && p <= 0.55) {
+    const t = (p - 0.10) / 0.45;
+    oceanScale = 1.0 + t * 0.18; // 1.0 -> 1.18
+  } else if (p > 0.55) {
     oceanScale = 1.18;
   }
 
   if (elements.bgMain) {
-    elements.bgMain.style.transform = `translate3d(0, 0, 0) scale(${oceanScale})`;
+    elements.bgMain.style.transform = `scale(${oceanScale})`;
     elements.bgMain.style.opacity = '1';
   }
 
@@ -134,75 +150,75 @@ function updateParallax() {
   // --------------------------------------------------------------------------
   let titleOpacity = 1.0;
   let titleScale = 1.0;
-  let titleTranslateY = 0;
 
-  if (p <= 0.10) {
+  if (p <= 0.14) {
     titleOpacity = 1.0;
     titleScale = 1.0;
-    titleTranslateY = 0;
-  } else if (p > 0.10 && p <= 0.30) {
-    const t = (p - 0.10) / 0.20;
+  } else if (p > 0.14 && p <= 0.32) {
+    const t = (p - 0.14) / 0.18;
     titleOpacity = Math.max(0, 1.0 - t);
-    titleScale = 1.0 + t * 0.08;
-    titleTranslateY = -t * 24;
+    titleScale = 1.0 + t * 0.10;
   } else {
     titleOpacity = 0.0;
-    titleTranslateY = -24;
   }
 
   if (elements.heroParent) {
     elements.heroParent.style.opacity = titleOpacity;
-    elements.heroParent.style.transform = `translate3d(0, ${titleTranslateY}px, 0) scale(${titleScale})`;
-    elements.heroParent.style.pointerEvents = titleOpacity > 0.1 ? 'auto' : 'none';
+    elements.heroParent.style.transform = `scale(${titleScale})`;
   }
 
+  // Scroll mouse indicator fades out early
   if (elements.scrollImg) {
-    const scrollIconOp = p < 0.10 ? 1.0 - (p / 0.10) : 0;
+    const scrollIconOp = p < 0.12 ? 1.0 - (p / 0.12) : 0;
     elements.scrollImg.style.opacity = scrollIconOp;
   }
 
   // --------------------------------------------------------------------------
   // PLOT HEADLINE & SYNOPSIS (intro-parent)
+  // Fades in and slides up by p=0.55, then stays 100% solid & visible
+  // The hero section finishes in this exact state, ready for Section 2
   // --------------------------------------------------------------------------
   let plotOpacity = 0.0;
-  let plotTranslateY = 30;
+  let plotTranslateY = 35;
 
-  if (p >= 0.30 && p <= 0.62) {
-    const t = (p - 0.30) / 0.32;
+  if (p >= 0.24 && p <= 0.55) {
+    const t = (p - 0.24) / 0.31;
     plotOpacity = t;
-    plotTranslateY = 30 * (1 - t);
-  } else if (p > 0.62) {
+    plotTranslateY = 35 * (1 - t);
+  } else if (p > 0.55) {
     plotOpacity = 1.0;
     plotTranslateY = 0;
   } else {
     plotOpacity = 0.0;
-    plotTranslateY = 30;
   }
 
   if (elements.introParent) {
     elements.introParent.style.opacity = plotOpacity;
     elements.introParent.style.transform = `translate3d(0, ${plotTranslateY}px, 0)`;
-    elements.introParent.style.pointerEvents = plotOpacity > 0.1 ? 'auto' : 'none';
   }
 
+  // --------------------------------------------------------------------------
+  // OVERLAY DISABLED & DESCENDING VERTICAL LINE
+  // --------------------------------------------------------------------------
   if (elements.heroOverlay) {
     elements.heroOverlay.style.opacity = '0';
     elements.heroOverlay.style.display = 'none';
   }
 
+  // Vertical line draw below Plot
   let lineY = -100;
-  if (p >= 0.45 && p <= 0.72) {
-    const t = (p - 0.45) / 0.27;
-    lineY = -100 + t * 100;
-  } else if (p > 0.72) {
-    lineY = 0;
+  if (p >= 0.36 && p <= 0.58) {
+    const t = (p - 0.36) / 0.22;
+    lineY = -100 + t * 100; // -100% -> 0%
+  } else if (p > 0.58) {
+    lineY = 0; // Stays fully drawn down
   }
 
   if (elements.drawLineInner) {
     elements.drawLineInner.style.transform = `translateY(${lineY}%)`;
   }
 
-  // Continue rAF loop only if still interpolating
+  // Request next frame if still interpolating
   if (Math.abs(targetProgress - currentProgress) > 0.0005) {
     requestAnimationFrame(updateParallax);
   } else {
@@ -214,46 +230,82 @@ let isProgrammaticScroll = false;
 let programmaticScrollTimer = null;
 let lastScrollPosition = window.scrollY;
 let lastScrollDirection = 'down';
-let settleSnapTimer = null;
+
+let cachedHeroLimit = 0;
 
 function onScroll() {
-  const currentY = window.pageYOffset || window.scrollY || 0;
+  if (isMobileDevice()) {
+    updateNavState();
+    return;
+  }
+
+  const currentY = window.scrollY;
   if (Math.abs(currentY - lastScrollPosition) > 2) {
     lastScrollDirection = currentY >= lastScrollPosition ? 'down' : 'up';
     lastScrollPosition = currentY;
   }
 
-  targetProgress = calculateProgress();
-  if (!isTicking) {
-    isTicking = true;
-    requestAnimationFrame(updateParallax);
+  if (!cachedHeroLimit && elements.scrollContainer) {
+    cachedHeroLimit = elements.scrollContainer.offsetHeight;
   }
-  updateNavState();
 
-  // Debounced settle snapper: DESKTOP MOUSE-WHEEL ONLY
-  if (!isMobileDevice() && !isTabletDevice() && !isProgrammaticScroll) {
-    clearTimeout(settleSnapTimer);
-    settleSnapTimer = setTimeout(checkAndSettleSectionSnap, 130);
+  // Only run hero parallax while the hero is within or entering viewport
+  if (currentY <= (cachedHeroLimit || 2000) + 120) {
+    targetProgress = calculateProgress();
+    if (!isTicking && Math.abs(targetProgress - currentProgress) > 0.0005) {
+      isTicking = true;
+      requestAnimationFrame(updateParallax);
+    }
+  } else if (currentProgress < 1) {
+    targetProgress = 1;
+    currentProgress = 1;
+    updateParallax();
   }
+
+  updateNavState();
 }
 
 window.addEventListener('scroll', onScroll, { passive: true });
+
+let wasMobile = isMobileDevice();
 window.addEventListener('resize', () => {
+  cachedHeroLimit = elements.scrollContainer ? elements.scrollContainer.offsetHeight : 0;
+  const isNowMobile = isMobileDevice();
+  if (isNowMobile !== wasMobile) {
+    wasMobile = isNowMobile;
+    initSkiper17CardStack();
+    if (isNowMobile && cardRibbonAnimId) {
+      cancelAnimationFrame(cardRibbonAnimId);
+      cardRibbonAnimId = null;
+    } else if (!isNowMobile) {
+      initCardPerimeterRibbon();
+    }
+  }
   targetProgress = calculateProgress();
   updateParallax();
+  if (typeof ScrollTrigger !== 'undefined') {
+    ScrollTrigger.refresh();
+  }
 });
 
 // ============================================================================
 // 3. NAVIGATION ACTIVE STATE TRACKING
 // ============================================================================
+let currentActiveSection = '';
+let isNavScrolled = false;
+
 function updateNavState() {
   const scrollY = window.scrollY;
   const vh = window.innerHeight;
   
-  if (scrollY > 50) {
-    elements.navBar.classList.add('scrolled');
-  } else {
-    elements.navBar.classList.remove('scrolled');
+  const shouldBeScrolled = scrollY > 50;
+  if (shouldBeScrolled !== isNavScrolled) {
+    isNavScrolled = shouldBeScrolled;
+    if (isNavScrolled) {
+      elements.navBar.classList.add('scrolled');
+    } else {
+      elements.navBar.classList.remove('scrolled');
+    }
   }
 
   const impactSec = elements.impactSec || document.getElementById('impact');
@@ -262,6 +314,8 @@ function updateNavState() {
   const teamSec = elements.teamSec || document.getElementById('team');
   const contactSec = elements.contactSec || document.getElementById('contact');
 
+  const isWorkVisible = workSec && workSec.offsetHeight > 0;
+
   let activeSection = 'plot';
   if (contactSec && scrollY >= contactSec.offsetTop - vh * 0.45) {
     activeSection = 'contact';
@@ -269,29 +323,32 @@ function updateNavState() {
     activeSection = 'team';
   } else if (servicesSec && scrollY >= servicesSec.offsetTop - vh * 0.45) {
     activeSection = 'services';
-  } else if (workSec && scrollY >= workSec.offsetTop - vh * 0.45) {
+  } else if (isWorkVisible && scrollY >= workSec.offsetTop - vh * 0.45) {
     activeSection = 'work';
   } else if (impactSec && scrollY >= impactSec.offsetTop - vh * 0.45) {
     activeSection = 'impact';
   }
 
-  Object.keys(elements.navLinks).forEach(sec => {
-    const link = elements.navLinks[sec];
-    const dot = elements.dots[sec];
-    if (sec === activeSection) {
-      if (link) link.classList.add('active');
-      if (dot) {
-        dot.className = 'pulse-dot-menu';
-        dot.style.opacity = '1';
+  if (activeSection !== currentActiveSection) {
+    currentActiveSection = activeSection;
+    Object.keys(elements.navLinks).forEach(sec => {
+      const link = elements.navLinks[sec];
+      const dot = elements.dots[sec];
+      if (sec === activeSection) {
+        if (link) link.classList.add('active');
+        if (dot) {
+          dot.className = 'pulse-dot-menu';
+          dot.style.opacity = '1';
+        }
+      } else {
+        if (link) link.classList.remove('active');
+        if (dot) {
+          dot.className = 'pulse-dot-0';
+          dot.style.opacity = '0';
+        }
       }
-    } else {
-      if (link) link.classList.remove('active');
-      if (dot) {
-        dot.className = 'pulse-dot-0';
-        dot.style.opacity = '0';
-      }
-    }
-  });
+    });
+  }
 }
 
 // ============================================================================
@@ -307,11 +364,13 @@ function getSectionOffsets() {
   const teamSec = elements.teamSec || document.getElementById('team');
   const contactSec = elements.contactSec || document.getElementById('contact');
 
+  const isWorkVisible = workSec && getComputedStyle(workSec).display !== 'none';
+
   const heroClimax = heroContainer ? Math.max(0, heroContainer.offsetHeight - vh) : 0;
   const impactTop = impactSec ? impactSec.offsetTop : heroClimax + vh;
-  const workTop = workSec ? workSec.offsetTop : impactTop + vh;
-  const workEnd = workSec ? (workSec.offsetTop + Math.max(0, workSec.offsetHeight - vh)) : workTop;
-  const servicesTop = servicesSec ? servicesSec.offsetTop : workEnd + vh;
+  const servicesTop = servicesSec ? servicesSec.offsetTop : (impactTop + vh);
+  const workTop = isWorkVisible ? workSec.offsetTop : servicesTop;
+  const workEnd = isWorkVisible ? (workSec.offsetTop + Math.max(0, workSec.offsetHeight - vh)) : servicesTop;
   const teamTop = teamSec ? teamSec.offsetTop : servicesTop + vh;
   const contactTop = contactSec ? contactSec.offsetTop : teamTop + vh;
 
@@ -346,146 +405,9 @@ function smoothScrollTo(targetY, duration = 650) {
   }, duration);
 }
 
-function checkAndSettleSectionSnap() {
-  if (isMobileDevice() || isTabletDevice() || isProgrammaticScroll) return;
-
-  const currentY = window.scrollY;
-  const offsets = getSectionOffsets();
-
-  // Zone 1: Trapped between Hero Climax and Impact (the primary reported issue)
-  if (currentY > offsets.heroClimax + 30 && currentY < offsets.impactTop - 30) {
-    if (lastScrollDirection === 'down') {
-      smoothScrollTo(offsets.impactTop);
-    } else {
-      smoothScrollTo(offsets.heroClimax);
-    }
-    return;
-  }
-
-  // Zone 2: Trapped between Impact and Work start
-  if (currentY > offsets.impactTop + 30 && currentY < offsets.workTop - 30) {
-    if (lastScrollDirection === 'down') {
-      smoothScrollTo(offsets.workTop);
-    } else {
-      smoothScrollTo(offsets.impactTop);
-    }
-    return;
-  }
-
-  // Zone 3: Trapped between Work end and Services
-  if (currentY > offsets.workEnd + 30 && currentY < offsets.servicesTop - 30) {
-    if (lastScrollDirection === 'down') {
-      smoothScrollTo(offsets.servicesTop);
-    } else {
-      smoothScrollTo(offsets.workEnd);
-    }
-    return;
-  }
-}
-
 function initSectionScrollManager() {
-  // On mobile/tablet: do NOT install wheel hijacker — it blocks native touch scroll
-  // which is the #1 cause of "laggy" feel on phones. Native scroll is fastest.
-  if (isMobileDevice() || isTabletDevice()) return;
-
-  // Wheel-based section sticking and snapping (desktop only)
-  window.addEventListener('wheel', (e) => {
-    if (isProgrammaticScroll) {
-      e.preventDefault();
-      return;
-    }
-
-    const offsets = getSectionOffsets();
-    const currentY = window.scrollY;
-    const delta = e.deltaY;
-    const threshold = 40; // pixel tolerance for section boundary
-
-    // 1. At or near Hero Climax (Plot Frame)
-    if (Math.abs(currentY - offsets.heroClimax) <= threshold || 
-        (currentY >= offsets.heroClimax - 10 && currentY < offsets.impactTop - 40)) {
-      if (delta > 20) {
-        e.preventDefault();
-        smoothScrollTo(offsets.impactTop, 700);
-        return;
-      }
-    }
-
-    // 2. At or near Vision (#impact) - exactly 100vh stage
-    if (Math.abs(currentY - offsets.impactTop) <= threshold) {
-      if (delta > 20) {
-        e.preventDefault();
-        smoothScrollTo(offsets.workTop, 700);
-        return;
-      } else if (delta < -20) {
-        e.preventDefault();
-        smoothScrollTo(offsets.heroClimax, 700);
-        return;
-      }
-    }
-
-    // 3. At start of Work (#work)
-    if (Math.abs(currentY - offsets.workTop) <= threshold) {
-      if (delta < -20) {
-        e.preventDefault();
-        smoothScrollTo(offsets.impactTop, 700);
-        return;
-      }
-    }
-
-    // 4. At end of Work (after Card 05 is reached)
-    if (Math.abs(currentY - offsets.workEnd) <= threshold || 
-        (currentY >= offsets.workEnd - 10 && currentY < offsets.servicesTop - 40)) {
-      if (delta > 20) {
-        e.preventDefault();
-        smoothScrollTo(offsets.servicesTop, 700);
-        return;
-      }
-    }
-
-    // 5. At top of Services (#services)
-    if (Math.abs(currentY - offsets.servicesTop) <= threshold) {
-      if (delta < -20) {
-        e.preventDefault();
-        smoothScrollTo(offsets.workEnd, 700);
-        return;
-      }
-    }
-  }, { passive: false });
-
-  // Keyboard navigation for section hopping
-  window.addEventListener('keydown', (e) => {
-    if (['ArrowDown', 'PageDown'].includes(e.key) || (e.key === ' ' && !e.shiftKey)) {
-      const offsets = getSectionOffsets();
-      const currentY = window.scrollY;
-      const threshold = 45;
-
-      if (Math.abs(currentY - offsets.heroClimax) <= threshold) {
-        e.preventDefault();
-        smoothScrollTo(offsets.impactTop);
-      } else if (Math.abs(currentY - offsets.impactTop) <= threshold) {
-        e.preventDefault();
-        smoothScrollTo(offsets.workTop);
-      } else if (Math.abs(currentY - offsets.workEnd) <= threshold) {
-        e.preventDefault();
-        smoothScrollTo(offsets.servicesTop);
-      }
-    } else if (['ArrowUp', 'PageUp'].includes(e.key) || (e.key === ' ' && e.shiftKey)) {
-      const offsets = getSectionOffsets();
-      const currentY = window.scrollY;
-      const threshold = 45;
-
-      if (Math.abs(currentY - offsets.impactTop) <= threshold) {
-        e.preventDefault();
-        smoothScrollTo(offsets.heroClimax);
-      } else if (Math.abs(currentY - offsets.workTop) <= threshold) {
-        e.preventDefault();
-        smoothScrollTo(offsets.impactTop);
-      } else if (Math.abs(currentY - offsets.servicesTop) <= threshold) {
-        e.preventDefault();
-        smoothScrollTo(offsets.workEnd);
-      }
-    }
-  });
+  // Pure native browser scrolling on all devices (mobile, tablet, laptop, desktop).
+  // Zero artificial sticky section-snapping animations.
 }
 
 function initNavClickSmoothScroll() {
@@ -659,8 +581,8 @@ function initSkiper17CardStack() {
 
   if (!section || !cardElements.length) return;
 
-  // On Mobile & Tablet: Do NOT pin or scrub cards — render natural vertical flow
-  if (isMobileDevice() || isTabletDevice()) {
+  // Mobile / hidden bypass: disable GSAP ScrollTrigger deck, clear props
+  if (isMobileDevice() || !section || getComputedStyle(section).display === 'none') {
     if (skiper17Timeline) {
       skiper17Timeline.kill();
       skiper17Timeline = null;
@@ -685,34 +607,34 @@ function initSkiper17CardStack() {
     skiper17Timeline.kill();
   }
 
+  let currentActiveCardIdx = -1;
+
   // Create scrubbed ScrollTrigger timeline synced to the native sticky stage
   skiper17Timeline = gsap.timeline({
     scrollTrigger: {
       trigger: section,
       start: 'top top',
       end: 'bottom bottom',
-      scrub: 0.6,
-      snap: {
-        snapTo: 1 / (totalCards - 1),
-        duration: { min: 0.2, max: 0.45 },
-        delay: 0.08,
-        ease: 'power1.inOut'
-      },
+      scrub: 0.15, // ultra-responsive 1:1 scrub, zero lag delay
+      // snap removed to eliminate scroll-snapping fighting and stutter
       onUpdate: (self) => {
         const activeIdx = Math.min(
           totalCards - 1,
           Math.floor(self.progress * (totalCards - 0.05))
         );
-        if (counterEl) {
-          counterEl.textContent = `0${activeIdx + 1} / 0${totalCards}`;
-        }
-        dots.forEach((dot, idx) => {
-          if (idx === activeIdx) {
-            dot.classList.add('active');
-          } else {
-            dot.classList.remove('active');
+        if (activeIdx !== currentActiveCardIdx) {
+          currentActiveCardIdx = activeIdx;
+          if (counterEl) {
+            counterEl.textContent = `0${activeIdx + 1} / 0${totalCards}`;
           }
-        });
+          dots.forEach((dot, idx) => {
+            if (idx === activeIdx) {
+              dot.classList.add('active');
+            } else {
+              dot.classList.remove('active');
+            }
+          });
+        }
       }
     }
   });
@@ -724,7 +646,7 @@ function initSkiper17CardStack() {
     const nextCard = cardElements[i + 1];
     const position = i;
 
-    // Current card scales down, tilts, and recedes cleanly into the stack without transparency bleed-through
+    // Current card scales down, tilts, and recedes cleanly into the stack with hardware GPU acceleration
     skiper17Timeline.to(
       currentCard,
       {
@@ -733,11 +655,12 @@ function initSkiper17CardStack() {
         x: i % 2 === 0 ? '-1.5%' : '1.5%',
         duration: 1,
         ease: 'none',
+        force3D: true,
       },
       position
     );
 
-    // Next card ascends smoothly from y: 100% to y: 0%
+    // Next card ascends smoothly from y: 100% to y: 0% with hardware GPU acceleration
     skiper17Timeline.to(
       nextCard,
       {
@@ -747,6 +670,7 @@ function initSkiper17CardStack() {
         rotation: 0,
         duration: 1,
         ease: 'none',
+        force3D: true,
       },
       position
     );
@@ -777,8 +701,7 @@ function initSkiper17CardStack() {
 let cardRibbonAnimId = null;
 
 function initCardPerimeterRibbon() {
-  // On mobile & tablet: skip the kinetic SVG ribbon (continuous rAF = frame drain)
-  if (isMobileDevice() || isTabletDevice()) return;
+  if (isMobileDevice()) return;
 
   const viewport = document.getElementById('skiperDeckViewport');
   const path = document.getElementById('cardPerimeterPath');
@@ -847,8 +770,23 @@ function initCardPerimeterRibbon() {
   viewport.addEventListener('mouseenter', () => { speed = 0.35; });
   viewport.addEventListener('mouseleave', () => { speed = 0.95; });
 
+  let isDeckScrolling = false;
+  let deckScrollTimer = null;
+  window.addEventListener('scroll', () => {
+    isDeckScrolling = true;
+    clearTimeout(deckScrollTimer);
+    deckScrollTimer = setTimeout(() => {
+      isDeckScrolling = false;
+    }, 120);
+  }, { passive: true });
+
   function tick() {
-    if (isWorkVisible && hasStarted) {
+    if (!isWorkVisible) {
+      cardRibbonAnimId = null;
+      return;
+    }
+    // Only mutate SVG textPath when not actively scrubbing cards to keep 60/120fps card transforms completely butter-smooth
+    if (hasStarted && !isDeckScrolling) {
       const loopThreshold = -unitLen * 2;
       currentOffset += speed;
       if (currentOffset > loopThreshold) {
@@ -858,9 +796,6 @@ function initCardPerimeterRibbon() {
     }
     cardRibbonAnimId = requestAnimationFrame(tick);
   }
-
-  if (cardRibbonAnimId) cancelAnimationFrame(cardRibbonAnimId);
-  cardRibbonAnimId = requestAnimationFrame(tick);
 
   // Trigger as soon as the user lands on #work section
   if (typeof IntersectionObserver !== 'undefined' && workSection) {
@@ -873,17 +808,25 @@ function initCardPerimeterRibbon() {
               hasStarted = true;
               measureAndInit();
             }
+            if (!cardRibbonAnimId) {
+              cardRibbonAnimId = requestAnimationFrame(tick);
+            }
           } else {
             isWorkVisible = false;
+            if (cardRibbonAnimId) {
+              cancelAnimationFrame(cardRibbonAnimId);
+              cardRibbonAnimId = null;
+            }
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.08 }
     );
     observer.observe(workSection);
   } else {
     isWorkVisible = true;
     hasStarted = true;
+    cardRibbonAnimId = requestAnimationFrame(tick);
   }
 }
 
@@ -896,11 +839,7 @@ function initSkiper39CrowdCanvas() {
   const dossier = document.getElementById('crowdDossierCard');
   if (!canvas || !wrapper) return;
 
-  wrapper.style.display = 'block';
-  const fallback = document.querySelector('.team-mobile-fallback');
-  if (fallback) fallback.style.display = 'none';
-
-  const ctx = canvas.getContext('2d', { alpha: true });
+  const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
   // Configuration for 15 rows x 7 cols Open Peeps sprite sheet (3600 x 2268)
@@ -1178,15 +1117,11 @@ function initSkiper39CrowdCanvas() {
   }
 
   function resetPeep(peep) {
-    const isMobile = isMobileDevice();
-    const isTablet = isTabletDevice();
     const direction = Math.random() > 0.5 ? 1 : -1;
     // Walk paths span vertically across lower 50% of canvas with realistic perspective
     const depth = Math.random();
-    // Scale: responsive for screen size
-    const baseScale = isMobile ? (peep.isTeam ? 0.65 : 0.56) : (isTablet ? (peep.isTeam ? 0.74 : 0.66) : (peep.isTeam ? 0.82 : 0.72));
-    const scaleRange = isMobile ? 0.12 : 0.20;
-    peep.scale = baseScale + depth * scaleRange;
+    // Scale: 0.72 in background to 0.94 in foreground
+    peep.scale = 0.72 + depth * 0.22;
 
     const scaledWidth = peep.width * peep.scale;
 
@@ -1197,19 +1132,19 @@ function initSkiper39CrowdCanvas() {
 
     let startX, endX;
     if (direction === 1) {
-      startX = -scaledWidth - randomRange(30, 100);
-      endX = stage.width + scaledWidth + 40;
+      startX = -scaledWidth - randomRange(40, 160);
+      endX = stage.width + scaledWidth + 60;
       peep.scaleX = 1;
     } else {
-      startX = stage.width + scaledWidth + randomRange(30, 100);
-      endX = -scaledWidth - 40;
+      startX = stage.width + scaledWidth + randomRange(40, 160);
+      endX = -scaledWidth - 60;
       peep.scaleX = -1;
     }
 
     peep.x = startX;
 
-    // Walking speed: smooth, natural gait
-    const walkDuration = isMobile ? (peep.isTeam ? randomRange(26, 38) : randomRange(28, 42)) : (peep.isTeam ? randomRange(34, 48) : randomRange(36, 54));
+    // Walking speed: calmed down and slowed for smooth, deliberate gait across full screen
+    const walkDuration = peep.isTeam ? randomRange(34, 48) : randomRange(36, 54);
     const timeScale = randomRange(0.75, 0.92);
     peep.originalTimeScale = timeScale;
 
@@ -1232,7 +1167,7 @@ function initSkiper39CrowdCanvas() {
     const bobDuration = 0.32 / timeScale;
     peep.bob = gsap.to(peep, {
       duration: bobDuration,
-      y: startY - (5 * peep.scale),
+      y: startY - (6 * peep.scale),
       repeat: -1,
       yoyo: true,
       ease: 'power1.inOut'
@@ -1244,59 +1179,67 @@ function initSkiper39CrowdCanvas() {
   function initSimulation() {
     resizeCanvas();
 
-    // 1. Add all 10 team members to crowd, distributed evenly across the full width
+    // 1. Add all 9 team members to crowd, distributed evenly across the full width
     TEAM_MEMBERS.forEach((member, i) => {
-      const isMobile = isMobileDevice();
       const peep = createPeep({
         isTeam: true,
         teamData: member,
         rect: member.rect,
-        scale: isMobile ? 0.68 : 0.85
+        scale: 0.85
       });
       resetPeep(peep);
       // Stagger them cleanly across the full screen width
-      const initialProgress = 0.04 + (i / TEAM_MEMBERS.length) * 0.90;
+      const initialProgress = 0.05 + (i / TEAM_MEMBERS.length) * 0.88;
       peep.walk.progress(initialProgress);
       crowd.push(peep);
     });
 
-    // 2. Add background crowd peeps: 4 on mobile, 8 on tablet, 22 on desktop
+    // 2. Add 38 background crowd peeps from remaining non-hoodie sprites (lively, rich crowd)
     const bgSprites = allSprites.filter((_, idx) => idx !== HOODIE_SPRITE_INDEX);
-    const bgCount = isMobileDevice() ? 4 : (isTabletDevice() ? 8 : 22);
 
-    for (let i = 0; i < bgCount; i++) {
+    for (let i = 0; i < 38; i++) {
       const randomRect = bgSprites[randomIndex(bgSprites)];
-      const isMobile = isMobileDevice();
       const peep = createPeep({
         isTeam: false,
         rect: randomRect,
-        scale: isMobile ? 0.58 : 0.76
+        scale: 0.76
       });
       resetPeep(peep);
-      const progress = ((i / bgCount) + Math.random() * 0.05) % 1;
+      // Evenly distribute progress across the full width with slight random jitter
+      const progress = ((i / 38) + Math.random() * 0.05) % 1;
       peep.walk.progress(progress);
       crowd.push(peep);
     }
 
-    // Sort crowd by depth once at startup
-    crowd.sort((a, b) => a.anchorY - b.anchorY);
+    // Start GSAP Ticker only when team section is visible (Zero CPU usage when off-screen)
+    let isTickerRunning = false;
+    function startTicker() {
+      if (!isTickerRunning) {
+        gsap.ticker.add(render);
+        isTickerRunning = true;
+      }
+    }
+    function stopTicker() {
+      if (isTickerRunning) {
+        gsap.ticker.remove(render);
+        isTickerRunning = false;
+      }
+    }
 
-    // Start GSAP Ticker — but pause when section is off-screen
-    let isVisible = false;
-    gsap.ticker.add(render);
-
-    if (typeof IntersectionObserver !== 'undefined') {
-      const visObserver = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          isVisible = e.isIntersecting;
-          if (isVisible) {
-            gsap.ticker.add(render);
+    if (typeof IntersectionObserver !== 'undefined' && wrapper) {
+      const crowdObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            startTicker();
+            render();
           } else {
-            gsap.ticker.remove(render);
+            stopTicker();
           }
         });
-      }, { threshold: 0.02 });
-      visObserver.observe(wrapper);
+      }, { threshold: 0.05 });
+      crowdObserver.observe(wrapper);
+    } else {
+      startTicker();
     }
 
     // Setup Event Listeners
@@ -1305,28 +1248,25 @@ function initSkiper39CrowdCanvas() {
   }
 
   function resizeCanvas() {
-    const isMobile = isMobileDevice();
-    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     stage.width = wrapper.clientWidth;
     stage.height = wrapper.clientHeight;
 
-    canvas.width = Math.round(stage.width * dpr);
-    canvas.height = Math.round(stage.height * dpr);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    canvas.width = stage.width * dpr;
+    canvas.height = stage.height * dpr;
     ctx.scale(dpr, dpr);
-    // Sort crowd once on resize
-    crowd.sort((a, b) => a.anchorY - b.anchorY);
   }
 
   function render() {
     if (!stage.width || !stage.height) return;
 
-    // Clear canvas with the page background colour (warm beige)
+    // Clear canvas
     ctx.clearRect(0, 0, stage.width, stage.height);
-    ctx.fillStyle = '#f4f3ef';
-    ctx.fillRect(0, 0, stage.width, stage.height);
 
-    // Render characters (sorted by depth once on init/resize)
+    // Sort crowd by anchorY (depth): background people drawn first, foreground in front
+    crowd.sort((a, b) => a.anchorY - b.anchorY);
+
+    // Render characters
     crowd.forEach(peep => {
       renderPeep(peep);
     });
@@ -1507,12 +1447,13 @@ function initSkiper39CrowdCanvas() {
   }
 
   function setupInteractions() {
-    function findPeepAt(clientX, clientY) {
+    // Mouse Move Hit Testing
+    canvas.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
-      const pointerX = clientX - rect.left;
-      const pointerY = clientY - rect.top;
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-      const touchPadding = isMobileDevice() ? 32 : 0;
+      let found = null;
 
       // Check team members in reverse order (foreground first)
       for (let i = crowd.length - 1; i >= 0; i--) {
@@ -1526,27 +1467,20 @@ function initSkiper39CrowdCanvas() {
         const h = peep.height * peep.scale;
 
         // Body hit test
-        const bodyHit = pointerX >= peep.x - halfW - touchPadding && 
-                        pointerX <= peep.x + halfW + touchPadding && 
-                        pointerY >= peep.y - h - touchPadding && 
-                        pointerY <= peep.y + touchPadding;
+        const bodyHit = mouseX >= peep.x - halfW && mouseX <= peep.x + halfW && mouseY >= peep.y - h && mouseY <= peep.y;
 
-        // Head & Badge hit test (covering tiered badge heights above head)
-        const badgeHit = pointerX >= peep.x - 110 && 
-                         pointerX <= peep.x + 110 && 
-                         pointerY >= peep.y - h - 100 && 
-                         pointerY <= peep.y - h + 10;
+        // Head & Badge hit test (covering tiered badge heights up to 90px above head)
+        const badgeHit = mouseX >= peep.x - 90 && mouseX <= peep.x + 90 && mouseY >= peep.y - h - 85 && mouseY <= peep.y - h;
 
         if (bodyHit || badgeHit) {
-          return peep;
+          found = peep;
+          break;
         }
       }
-      return null;
-    }
 
-    function selectPeep(found) {
       if (found) {
         if (hoveredPeep !== found) {
+          // Restore previous if any
           if (hoveredPeep) {
             hoveredPeep.isHovered = false;
             gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
@@ -1562,67 +1496,34 @@ function initSkiper39CrowdCanvas() {
 
           showDossier(hoveredPeep);
         } else {
+          // Update position smoothly as person slowly steps
           updateDossierPosition(hoveredPeep);
         }
         canvas.style.cursor = 'pointer';
-      }
-    }
-
-    function deselectPeep() {
-      if (hoveredPeep && !isMouseInsideDossier) {
-        hoveredPeep.isHovered = false;
-        gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
-        gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
-        hoveredPeep = null;
-        hideDossier();
-      }
-      canvas.style.cursor = 'default';
-    }
-
-    // Mouse Move Hit Testing
-    canvas.addEventListener('mousemove', (e) => {
-      const found = findPeepAt(e.clientX, e.clientY);
-      if (found) {
-        selectPeep(found);
       } else {
-        deselectPeep();
+        if (hoveredPeep && !isMouseInsideDossier) {
+          hoveredPeep.isHovered = false;
+          gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
+          gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
+          hoveredPeep = null;
+          hideDossier();
+        }
+        canvas.style.cursor = 'default';
       }
     });
-
-    // Mobile Touch / Tap Support
-    canvas.addEventListener('touchstart', (e) => {
-      if (e.touches && e.touches.length > 0) {
-        const touch = e.touches[0];
-        const found = findPeepAt(touch.clientX, touch.clientY);
-        if (found) {
-          selectPeep(found);
-        }
-      }
-    }, { passive: true });
 
     // Leave canvas
     canvas.addEventListener('mouseleave', () => {
       setTimeout(() => {
         if (!isMouseInsideDossier && hoveredPeep) {
-          deselectPeep();
-        }
-      }, 100);
-    });
-
-    // Close button listener
-    const closeBtn = document.getElementById('dossierCloseBtn');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (hoveredPeep) {
           hoveredPeep.isHovered = false;
           gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
           gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
           hoveredPeep = null;
+          hideDossier();
         }
-        hideDossier();
-      });
-    }
+      }, 100);
+    });
 
     // Dossier hover tracking so links remain clickable
     if (dossier) {
@@ -1632,8 +1533,12 @@ function initSkiper39CrowdCanvas() {
       dossier.addEventListener('mouseleave', () => {
         isMouseInsideDossier = false;
         if (hoveredPeep) {
-          deselectPeep();
+          hoveredPeep.isHovered = false;
+          gsap.to(hoveredPeep.walk, { timeScale: hoveredPeep.originalTimeScale, duration: 0.4, overwrite: 'auto' });
+          gsap.to(hoveredPeep.bob, { timeScale: 1.0, duration: 0.4, overwrite: 'auto' });
+          hoveredPeep = null;
         }
+        hideDossier();
       });
     }
 
@@ -1747,20 +1652,6 @@ function initSkiper39CrowdCanvas() {
 
   function updateDossierPosition(peep) {
     if (!dossier) return;
-
-    if (isMobileDevice()) {
-      dossier.style.position = 'fixed';
-      dossier.style.top = 'auto';
-      dossier.style.bottom = '24px';
-      dossier.style.left = '50%';
-      dossier.style.transform = 'translateX(-50%)';
-      return;
-    }
-
-    dossier.style.position = 'absolute';
-    dossier.style.bottom = 'auto';
-    dossier.style.transform = '';
-
     const cardRect = dossier.getBoundingClientRect();
     const cardWidth = cardRect.width || 310;
     const cardHeight = cardRect.height || 260;
@@ -2134,15 +2025,15 @@ if (elements.musicToggle) {
 // ============================================================================
 // 8.5. SITE INTRO LOADER: VENGENCE UI KINETIC TEXT LOADER
 // ============================================================================
-let isLoaderDismissed = false;
+let isLoaderDismissed = true;
 
 function initSiteLoader() {
   const loader = document.getElementById('siteLoader');
-  const percentEl = document.getElementById('loaderPercent');
-  const progressBar = document.getElementById('loaderProgressBar');
-  const enterBtn = document.getElementById('loaderEnterBtn');
-
-  if (!loader) return;
+  if (!loader) {
+    document.body.classList.remove('loading-active');
+    document.body.style.overflow = '';
+    return;
+  }
 
   // Deep-link / direct section bypass: if URL hash or noloader flag is set, skip loader immediately
   if (window.location.hash || window.location.search.includes('noloader=1')) {
@@ -2160,21 +2051,17 @@ function initSiteLoader() {
   // Progressive count from 0 to 100%
   let progress = 0;
   const progressInterval = setInterval(() => {
-    progress += Math.floor(Math.random() * 8) + 8;
+    progress += Math.floor(Math.random() * 8) + 5;
     if (progress >= 100) {
       progress = 100;
       clearInterval(progressInterval);
       if (enterBtn) {
         enterBtn.classList.add('ready');
       }
-      setTimeout(dismissLoader, 350);
     }
     if (percentEl) percentEl.textContent = `${progress}%`;
     if (progressBar) progressBar.style.width = `${progress}%`;
-  }, 30);
-
-  // Safety auto-dismiss fallback after 1.2s max so site never sits stuck
-  setTimeout(dismissLoader, 1200);
+  }, 35);
 
   function dismissLoader() {
     if (isLoaderDismissed) return;
@@ -2265,10 +2152,9 @@ function initPixelTransitions() {
     const activeLayer = card.querySelector('.pixel-card__active');
     if (!gridContainer || !defaultLayer || !activeLayer) return;
 
-    // On mobile: use a tiny grid and CSS-only flip (no GSAP)
-    const mobile = isMobileDevice();
-    const cols = mobile ? 5 : parseInt(card.getAttribute('data-grid-cols') || '10', 10);
-    const rows = mobile ? 3 : parseInt(card.getAttribute('data-grid-rows') || '7', 10);
+    // Read configured density & colors
+    const cols = parseInt(card.getAttribute('data-grid-cols') || '10', 10);
+    const rows = parseInt(card.getAttribute('data-grid-rows') || '7', 10);
     const pixelColor = card.getAttribute('data-pixel-color') || '#0b0d11';
     const totalTiles = cols * rows;
 
@@ -2435,15 +2321,7 @@ function animateHeroLanding() {
 
   if (!heroTitle) return;
 
-  // On mobile: simple fade-in, no per-character blur split (too heavy)
-  if (isMobileDevice()) {
-    if (heroEmblem) heroEmblem.style.opacity = '1';
-    heroTitle.style.opacity = '1';
-    if (heroTagline) heroTagline.style.opacity = '1';
-    return;
-  }
-
-  // Split heroTitle into kinetic character spans (desktop only)
+  // Split heroTitle into kinetic character spans
   if (!heroTitle.classList.contains('split-done')) {
     const text = heroTitle.textContent.trim();
     heroTitle.innerHTML = text
