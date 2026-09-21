@@ -451,7 +451,7 @@ function initNavClickSmoothScroll() {
   if (impactCircleBtn) {
     impactCircleBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      smoothScrollTo(getSectionOffsets().workTop, 750);
+      smoothScrollTo(getSectionOffsets().servicesTop, 750);
     });
   }
 }
@@ -1820,30 +1820,119 @@ function initContactForm() {
   const contactForm = document.getElementById('contactForm');
   const deliveredStamp = document.getElementById('deliveredStamp');
   const stampToggleLabel = document.getElementById('stampToggleLabel');
+  const submitBtn = document.getElementById('submitPostcardBtn');
+  const tapeText = submitBtn ? submitBtn.querySelector('.tape-text') : null;
 
   if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      const firstName = document.getElementById('contactFirstName')?.value.trim() || 'Sender';
+
+      const firstName = document.getElementById('contactFirstName')?.value.trim() || '';
       const lastName = document.getElementById('contactLastName')?.value.trim() || '';
+      const company = document.getElementById('contactCompany')?.value.trim() || '';
+      const address = document.getElementById('contactAddress')?.value.trim() || '';
+      const city = document.getElementById('contactCity')?.value.trim() || '';
+      const state = document.getElementById('contactState')?.value.trim() || '';
+      const zip = document.getElementById('contactZip')?.value.trim() || '';
+      const country = document.getElementById('contactCountry')?.value.trim() || '';
+      const email = document.getElementById('contactEmail')?.value.trim() || '';
+      const message = document.getElementById('contactMessage')?.value.trim() || '';
+      const emailOpt = document.getElementById('contactEmailOpt')?.checked ?? false;
+      const priorityOpt = document.getElementById('contactPriorityOpt')?.checked ?? false;
 
-      // Play authentic rubber stamp slam sound and celebration chime
-      playRubberStampSlam();
-      setTimeout(playCelebrationChime, 240);
-
-      // Slam the DELIVERED stamp onto the card
-      if (deliveredStamp) {
-        deliveredStamp.classList.remove('stamped');
-        void deliveredStamp.offsetWidth; // trigger reflow
-        deliveredStamp.classList.add('stamped');
+      if (!email || !message) {
+        showToast('⚠️ Please enter a valid email and project notes.');
+        return;
       }
 
-      if (stampToggleLabel) {
-        stampToggleLabel.textContent = 'Hide DELIVERED Stamp';
-      }
+      // Enter loading state
+      if (submitBtn) submitBtn.disabled = true;
+      if (tapeText) tapeText.textContent = 'TRANSMITTING...';
 
-      showToast(`📭 Postcard Dispatched! Marked DELIVERED for ${firstName} ${lastName}.`);
+      const payload = {
+        "Sender Name": `${firstName} ${lastName}`.trim() || 'Anonymous Client',
+        "First Name": firstName || 'N/A',
+        "Last Name": lastName || 'N/A',
+        "Company / Organization": company || 'Independent / Direct',
+        "Street Address": address || 'Not Provided',
+        "City": city || 'Not Provided',
+        "State / Region": state || 'Not Provided',
+        "ZIP / Postal Code": zip || 'Not Provided',
+        "Country": country || 'Not Provided',
+        "Full Location Summary": [address, city, state, zip, country].filter(Boolean).join(', ') || 'Not Provided',
+        "Sender Email": email,
+        "Notes & Project Brief": message,
+        "Keep Updated via Email": emailOpt ? 'Yes, opted in' : 'No',
+        "Permission to Feature Comments": priorityOpt ? 'Yes, permission granted' : 'No',
+        "Dispatched At": new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'medium' }),
+        "_replyto": email,
+        "_subject": `[ALPHAKORE Studio Inquiry] New Postcard from ${firstName} ${lastName}${company ? ' (' + company + ')' : ''}`,
+        "_template": "table",
+        "_captcha": "false"
+      };
+
+      try {
+        const response = await fetch('https://formsubmit.co/ajax/contactus@alphakore.org', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        let result = {};
+        try {
+          result = await response.json();
+        } catch (parseErr) {
+          result = {};
+        }
+
+        const msg = (result.message || '').toLowerCase();
+        const isActivationNotice = msg.includes('activation') || msg.includes('activate') || msg.includes('confirm');
+        const isSuccess = (result.success === 'true' || result.success === true) && !isActivationNotice;
+
+        if (isSuccess) {
+          // Play authentic rubber stamp slam sound and celebration chime
+          playRubberStampSlam();
+          setTimeout(playCelebrationChime, 240);
+
+          // Slam the DELIVERED stamp onto the card
+          if (deliveredStamp) {
+            deliveredStamp.classList.remove('stamped');
+            void deliveredStamp.offsetWidth; // trigger reflow
+            deliveredStamp.classList.add('stamped');
+          }
+
+          if (stampToggleLabel) {
+            stampToggleLabel.textContent = 'Hide DELIVERED Stamp';
+          }
+
+          showToast(`📭 Postcard Transmitted! Delivered to contactus@alphakore.org.`);
+          contactForm.reset();
+        } else if (isActivationNotice) {
+          playRubberStampSlam();
+          if (deliveredStamp) {
+            deliveredStamp.classList.remove('stamped');
+            void deliveredStamp.offsetWidth;
+            deliveredStamp.classList.add('stamped');
+          }
+
+          if (stampToggleLabel) {
+            stampToggleLabel.textContent = 'Hide DELIVERED Stamp';
+          }
+
+          showToast(`📬 Activation Email Sent: Please open contactus@alphakore.org and click "Activate Form" once!`);
+        } else {
+          throw new Error(result.message || `Server returned status ${response.status}`);
+        }
+      } catch (err) {
+        console.error('Contact form submission error:', err);
+        showToast('⚠️ Transmission issue. Please email directly at contactus@alphakore.org');
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+        if (tapeText) tapeText.textContent = 'SUBMIT';
+      }
     });
   }
 }
