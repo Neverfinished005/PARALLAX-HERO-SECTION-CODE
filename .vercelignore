@@ -1,0 +1,10 @@
+scratch/
+test_*.py
+test_*.png
+test_*.html
+capture_*.png
+cdp_*.png
+scr_*.png
+.codebase-memory/
+server.py
+*.log

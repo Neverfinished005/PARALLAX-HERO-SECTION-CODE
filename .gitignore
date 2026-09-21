@@ -12,3 +12,5 @@ cdp_*.png
 scr_*.png
 scratch/
 .codebase-memory/
+.vercel
+.env*
