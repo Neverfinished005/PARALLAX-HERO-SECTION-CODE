@@ -1197,7 +1197,8 @@ function initSkiper39CrowdCanvas() {
     // 2. Add 38 background crowd peeps from remaining non-hoodie sprites (lively, rich crowd)
     const bgSprites = allSprites.filter((_, idx) => idx !== HOODIE_SPRITE_INDEX);
 
-    for (let i = 0; i < 38; i++) {
+    const bgCount = window.innerWidth <= 768 ? 16 : 38;
+    for (let i = 0; i < bgCount; i++) {
       const randomRect = bgSprites[randomIndex(bgSprites)];
       const peep = createPeep({
         isTeam: false,
@@ -1206,22 +1207,30 @@ function initSkiper39CrowdCanvas() {
       });
       resetPeep(peep);
       // Evenly distribute progress across the full width with slight random jitter
-      const progress = ((i / 38) + Math.random() * 0.05) % 1;
+      const progress = ((i / bgCount) + Math.random() * 0.05) % 1;
       peep.walk.progress(progress);
       crowd.push(peep);
     }
 
     // Start GSAP Ticker only when team section is visible (Zero CPU usage when off-screen)
     let isTickerRunning = false;
+    let lastDrawTime = 0;
+    function tickRender(time) {
+      if (window.innerWidth <= 768) {
+        if (time - lastDrawTime < 0.033) return;
+        lastDrawTime = time;
+      }
+      render();
+    }
     function startTicker() {
       if (!isTickerRunning) {
-        gsap.ticker.add(render);
+        gsap.ticker.add(tickRender);
         isTickerRunning = true;
       }
     }
     function stopTicker() {
       if (isTickerRunning) {
-        gsap.ticker.remove(render);
+        gsap.ticker.remove(tickRender);
         isTickerRunning = false;
       }
     }
@@ -1248,13 +1257,18 @@ function initSkiper39CrowdCanvas() {
   }
 
   function resizeCanvas() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    stage.width = wrapper.clientWidth;
-    stage.height = wrapper.clientHeight;
+    const mobile = window.innerWidth <= 768;
+    const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2);
+    const w = wrapper.clientWidth;
+    const h = wrapper.clientHeight;
+    // Android address-bar show/hide fires resize with the same width: don't rebuild the canvas for it
+    if (w === stage.width && Math.abs(h - stage.height) < 80 && canvas.width) return;
+    stage.width = w;
+    stage.height = h;
 
-    canvas.width = stage.width * dpr;
-    canvas.height = stage.height * dpr;
-    ctx.scale(dpr, dpr);
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   function render() {
@@ -1382,11 +1396,14 @@ function initSkiper39CrowdCanvas() {
     const nameText = peep.teamData.name;
     const roleText = '· ' + peep.teamData.role.split('&')[0].trim();
 
-    ctx.font = 'bold 11px "Space Grotesk", sans-serif';
-    const nameWidth = ctx.measureText(nameText).width;
-
-    ctx.font = '500 9px "Space Mono", monospace';
-    const roleWidth = ctx.measureText(roleText).width;
+    if (!peep.teamData._lw) {
+      ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+      const n = ctx.measureText(nameText).width;
+      ctx.font = '500 9px "Space Mono", monospace';
+      peep.teamData._lw = { n, r: ctx.measureText(roleText).width };
+    }
+    const nameWidth = peep.teamData._lw.n;
+    const roleWidth = peep.teamData._lw.r;
 
     const totalContentWidth = 14 + nameWidth + 6 + roleWidth + 14;
     const pillWidth = Math.max(totalContentWidth, 120);
@@ -1396,9 +1413,11 @@ function initSkiper39CrowdCanvas() {
     const radius = 11;
 
     // Subtle drop shadow for clarity
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetY = 2;
+    if (window.innerWidth > 768) {
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 2;
+    }
 
     // Draw Rounded Pill
     ctx.beginPath();
@@ -1543,8 +1562,10 @@ function initSkiper39CrowdCanvas() {
     }
 
     // Resize handling
+    let crowdResizeTimer = null;
     window.addEventListener('resize', () => {
-      resizeCanvas();
+      clearTimeout(crowdResizeTimer);
+      crowdResizeTimer = setTimeout(resizeCanvas, 150);
     });
   }
 
@@ -1807,134 +1828,95 @@ window.toggleDeliveredStamp = function() {
 };
 
 function initContactForm() {
-  const stampBox = document.querySelector('.postcard-stamp-box');
-  if (stampBox) {
-    stampBox.addEventListener('click', () => {
-      stampBox.classList.add('stamp-wiggle');
-      setTimeout(() => stampBox.classList.remove('stamp-wiggle'), 600);
-      showToast('✉️ Ceylon 10¢ Commemorative Stamp — Authenticated & Affixed');
-      playStampWiggleSound(0.06);
+  const form = document.getElementById('contactForm');
+  if (!form) return;
+
+  const submitBtn = document.getElementById('contactSubmit');
+  const label = submitBtn ? submitBtn.querySelector('.contact-submit-label') : null;
+  const status = document.getElementById('contactStatus');
+
+  const setStatus = (text, kind) => {
+    if (!status) return;
+    status.textContent = text;
+    status.classList.remove('is-success', 'is-error');
+    if (kind) status.classList.add(kind === 'success' ? 'is-success' : 'is-error');
+  };
+
+  const seg = document.getElementById('contactSeg');
+  const topicInput = document.getElementById('contactTopic');
+  if (seg && topicInput) {
+    seg.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      seg.querySelectorAll('button').forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle('on', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      topicInput.value = btn.textContent.trim();
     });
   }
 
-  const contactForm = document.getElementById('contactForm');
-  const deliveredStamp = document.getElementById('deliveredStamp');
-  const stampToggleLabel = document.getElementById('stampToggleLabel');
-  const submitBtn = document.getElementById('submitPostcardBtn');
-  const tapeText = submitBtn ? submitBtn.querySelector('.tape-text') : null;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-  if (contactForm) {
-    contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    const val = (id) => document.getElementById(id)?.value.trim() || '';
+    const name = val('contactName');
+    const email = val('contactEmail');
+    const topic = val('contactTopic');
+    const message = val('contactMessage');
 
-      const firstName = document.getElementById('contactFirstName')?.value.trim() || '';
-      const lastName = document.getElementById('contactLastName')?.value.trim() || '';
-      const company = document.getElementById('contactCompany')?.value.trim() || '';
-      const address = document.getElementById('contactAddress')?.value.trim() || '';
-      const city = document.getElementById('contactCity')?.value.trim() || '';
-      const state = document.getElementById('contactState')?.value.trim() || '';
-      const zip = document.getElementById('contactZip')?.value.trim() || '';
-      const country = document.getElementById('contactCountry')?.value.trim() || '';
-      const email = document.getElementById('contactEmail')?.value.trim() || '';
-      const message = document.getElementById('contactMessage')?.value.trim() || '';
-      const emailOpt = document.getElementById('contactEmailOpt')?.checked ?? false;
-      const priorityOpt = document.getElementById('contactPriorityOpt')?.checked ?? false;
+    if (!name || !email || !message) {
+      setStatus('Please add your name, email and a short brief.', 'error');
+      return;
+    }
 
-      if (!email || !message) {
-        showToast('⚠️ Please enter a valid email and project notes.');
-        return;
+    if (submitBtn) submitBtn.disabled = true;
+    if (label) label.textContent = 'Sending...';
+    setStatus('', null);
+
+    const payload = {
+      "Name": name,
+      "Email": email,
+      "Needs help with": topic,
+      "Project brief": message,
+      "Sent at": new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'medium' }),
+      "_replyto": email,
+      "_subject": `[ALPHAKORE] New inquiry from ${name}`,
+      "_template": "table",
+      "_captcha": "false"
+    };
+
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/contactus@alphakore.org', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      let result = {};
+      try { result = await response.json(); } catch (parseErr) { result = {}; }
+
+      const msg = (result.message || '').toLowerCase();
+      const isActivationNotice = msg.includes('activation') || msg.includes('activate') || msg.includes('confirm');
+      const isSuccess = (result.success === 'true' || result.success === true) && !isActivationNotice;
+
+      if (isSuccess) {
+        setStatus('Thanks, your message is in. We will get back to you soon.', 'success');
+        form.reset();
+      } else if (isActivationNotice) {
+        setStatus('Form activation pending: open the activation email sent to contactus@alphakore.org and confirm it once.', 'error');
+      } else {
+        throw new Error(result.message || `Server returned status ${response.status}`);
       }
-
-      // Enter loading state
-      if (submitBtn) submitBtn.disabled = true;
-      if (tapeText) tapeText.textContent = 'TRANSMITTING...';
-
-      const payload = {
-        "Sender Name": `${firstName} ${lastName}`.trim() || 'Anonymous Client',
-        "First Name": firstName || 'N/A',
-        "Last Name": lastName || 'N/A',
-        "Company / Organization": company || 'Independent / Direct',
-        "Street Address": address || 'Not Provided',
-        "City": city || 'Not Provided',
-        "State / Region": state || 'Not Provided',
-        "ZIP / Postal Code": zip || 'Not Provided',
-        "Country": country || 'Not Provided',
-        "Full Location Summary": [address, city, state, zip, country].filter(Boolean).join(', ') || 'Not Provided',
-        "Sender Email": email,
-        "Notes & Project Brief": message,
-        "Keep Updated via Email": emailOpt ? 'Yes, opted in' : 'No',
-        "Permission to Feature Comments": priorityOpt ? 'Yes, permission granted' : 'No',
-        "Dispatched At": new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'medium' }),
-        "_replyto": email,
-        "_subject": `[ALPHAKORE Studio Inquiry] New Postcard from ${firstName} ${lastName}${company ? ' (' + company + ')' : ''}`,
-        "_template": "table",
-        "_captcha": "false"
-      };
-
-      try {
-        const response = await fetch('https://formsubmit.co/ajax/contactus@alphakore.org', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        let result = {};
-        try {
-          result = await response.json();
-        } catch (parseErr) {
-          result = {};
-        }
-
-        const msg = (result.message || '').toLowerCase();
-        const isActivationNotice = msg.includes('activation') || msg.includes('activate') || msg.includes('confirm');
-        const isSuccess = (result.success === 'true' || result.success === true) && !isActivationNotice;
-
-        if (isSuccess) {
-          // Play authentic rubber stamp slam sound and celebration chime
-          playRubberStampSlam();
-          setTimeout(playCelebrationChime, 240);
-
-          // Slam the DELIVERED stamp onto the card
-          if (deliveredStamp) {
-            deliveredStamp.classList.remove('stamped');
-            void deliveredStamp.offsetWidth; // trigger reflow
-            deliveredStamp.classList.add('stamped');
-          }
-
-          if (stampToggleLabel) {
-            stampToggleLabel.textContent = 'Hide DELIVERED Stamp';
-          }
-
-          showToast(`📭 Postcard Transmitted! Delivered to contactus@alphakore.org.`);
-          contactForm.reset();
-        } else if (isActivationNotice) {
-          playRubberStampSlam();
-          if (deliveredStamp) {
-            deliveredStamp.classList.remove('stamped');
-            void deliveredStamp.offsetWidth;
-            deliveredStamp.classList.add('stamped');
-          }
-
-          if (stampToggleLabel) {
-            stampToggleLabel.textContent = 'Hide DELIVERED Stamp';
-          }
-
-          showToast(`📬 Activation Email Sent: Please open contactus@alphakore.org and click "Activate Form" once!`);
-        } else {
-          throw new Error(result.message || `Server returned status ${response.status}`);
-        }
-      } catch (err) {
-        console.error('Contact form submission error:', err);
-        showToast('⚠️ Transmission issue. Please email directly at contactus@alphakore.org');
-      } finally {
-        if (submitBtn) submitBtn.disabled = false;
-        if (tapeText) tapeText.textContent = 'SUBMIT';
-      }
-    });
-  }
+    } catch (err) {
+      console.error('Contact form submission error:', err);
+      setStatus('Could not send right now. Please email alpha.kore25@gmail.com directly.', 'error');
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+      if (label) label.textContent = 'Send message';
+    }
+  });
 }
 
 // ============================================================================
