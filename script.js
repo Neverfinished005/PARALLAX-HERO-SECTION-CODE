@@ -858,6 +858,7 @@ function initSkiper39CrowdCanvas() {
   const TEAM_MEMBERS = [
     {
       id: 'hitarth',
+      photo: 'assets/team/t_hitarth.jpg',
       name: 'Hitarth Trivedi',
       badge: 'Hitarth Trivedi · Lead Architect',
       role: 'Lead Architect & Full Stack',
@@ -875,6 +876,7 @@ function initSkiper39CrowdCanvas() {
     },
     {
       id: 'harsh',
+      photo: 'assets/team/t_harsh.jpg',
       name: 'Harsh Patel',
       badge: 'Harsh Patel · AI Architect',
       role: 'AI & Full-Stack Builder',
@@ -892,6 +894,7 @@ function initSkiper39CrowdCanvas() {
     },
     {
       id: 'meet',
+      photo: 'assets/team/t_meet.jpg',
       name: 'Meet Shah',
       badge: 'Meet Shah · Systems Engineer',
       role: 'Core Systems Engineer',
@@ -939,6 +942,7 @@ function initSkiper39CrowdCanvas() {
     },
     {
       id: 'parth',
+      photo: 'assets/team/t_parth.jpg',
       name: 'Parth Soni',
       badge: 'Parth Soni · Cloud Architect',
       role: 'Systems & Cloud Engineer',
@@ -956,6 +960,7 @@ function initSkiper39CrowdCanvas() {
     },
     {
       id: 'om',
+      photo: 'assets/team/t_om.jpg',
       name: 'Om Bhonsle',
       badge: 'Om Bhonsle · DevOps Engineer',
       role: 'DevOps & Cloud Systems',
@@ -972,6 +977,7 @@ function initSkiper39CrowdCanvas() {
     },
     {
       id: 'shlok',
+      photo: 'assets/team/t_shlok.jpg',
       name: 'Shlok Patel',
       badge: 'Shlok Patel · Product Designer',
       role: 'Product Designer & UX',
@@ -989,6 +995,7 @@ function initSkiper39CrowdCanvas() {
     },
     {
       id: 'manav',
+      photo: 'assets/team/t_manav.jpg',
       name: 'Manav Patel',
       badge: 'Manav Patel · AI Researcher',
       role: 'Research & Engineering',
@@ -1607,73 +1614,47 @@ function initSkiper39CrowdCanvas() {
     `;
   }
 
+  const LINK_LABEL = { in: 'LinkedIn', gh: 'GitHub', ig: 'Instagram', '\u2197': 'Portfolio' };
+
   function showDossier(peep) {
     if (!dossier) return;
     const data = peep.teamData;
+    const $ = (id) => document.getElementById(id);
+    const frameEl = $('dossierAvatarFrame');
+    const photoEl = $('dossierPhoto');
+    const avatarEl = $('dossierAvatar');
 
-    // Populate Dossier Content
-    const frameEl = document.getElementById('dossierAvatarFrame');
-    const avatarEl = document.getElementById('dossierAvatar');
-    const nameEl = document.getElementById('dossierName');
-    const roleEl = document.getElementById('dossierRole');
-    const statusEl = document.getElementById('dossierStatus');
-    const bioEl = document.getElementById('dossierBio');
-    const bioBar = document.getElementById('dossierBioBar');
-    const tagsEl = document.getElementById('dossierTags');
-    const socialsEl = document.getElementById('dossierSocials');
+    dossier.style.setProperty('--dc', data.color);
 
-    // 1. Render Hooded Avatar Canvas Thumbnail
-    if (frameEl && data.tintedCanvas) {
-      frameEl.style.borderColor = hexToRgba(data.color, 0.45);
-      frameEl.style.boxShadow = `0 4px 16px ${hexToRgba(data.color, 0.22)}`;
-      
+    // Photo when we have one, otherwise the cartoon's face (big) or initials
+    frameEl.querySelectorAll('canvas').forEach((cv) => cv.remove());
+    if (data.photo) {
+      if (photoEl.getAttribute('src') !== data.photo) photoEl.src = data.photo;
+      photoEl.alt = data.name;
+      photoEl.hidden = false;
+      avatarEl.textContent = '';
+    } else if (data.tintedCanvas) {
+      photoEl.hidden = true;
       const thumb = document.createElement('canvas');
-      thumb.width = 52;
-      thumb.height = 52;
+      thumb.width = 312; thumb.height = 312;
       const tCtx = thumb.getContext('2d');
-      // TintedCanvas is 240x324, head is at sx: 35, sy: 8, sw: 170, sh: 170
-      tCtx.drawImage(data.tintedCanvas, 35, 8, 170, 170, 0, 0, 52, 52);
-      frameEl.innerHTML = '';
-      frameEl.appendChild(thumb);
-    } else if (avatarEl) {
+      tCtx.fillStyle = hexToRgba(data.color, 0.14);
+      tCtx.fillRect(0, 0, 312, 312);
+      tCtx.drawImage(data.tintedCanvas, 35, 8, 170, 170, 0, 0, 312, 312);
+      frameEl.insertBefore(thumb, avatarEl);
+      avatarEl.textContent = '';
+    } else {
+      photoEl.hidden = true;
       avatarEl.textContent = data.initials;
-      avatarEl.style.backgroundColor = data.color;
     }
 
-    // 2. Name & Role
-    if (nameEl) nameEl.textContent = data.name;
-    if (roleEl) {
-      roleEl.textContent = data.role;
-      roleEl.style.color = data.color;
-      roleEl.style.borderColor = hexToRgba(data.color, 0.35);
-      roleEl.style.backgroundColor = hexToRgba(data.color, 0.08);
-    }
-
-    // 3. Status Pill
-    if (statusEl) {
-      statusEl.style.borderColor = hexToRgba(data.color, 0.35);
-      statusEl.style.color = data.color;
-      statusEl.style.backgroundColor = hexToRgba(data.color, 0.09);
-    }
-
-    // 4. Bio with Accent Bar
-    if (bioEl) bioEl.textContent = data.bio;
-    if (bioBar) bioBar.style.backgroundColor = data.color;
-
-    // 5. Domain Tags
-    if (tagsEl) {
-      tagsEl.innerHTML = data.tags.map(t => `<span class="dossier-tag"><span class="tag-hash">#</span>${t}</span>`).join('');
-    }
-
-    // 6. Formatted Social / Action Buttons
-    if (socialsEl) {
-      socialsEl.innerHTML = data.links.map(l => formatSocialButton(l, data.color)).join('');
-    }
-
-    // Dynamic Card Accent & Ambient Glow
-    dossier.style.borderTopColor = data.color;
-    dossier.style.borderBottomColor = data.color;
-    dossier.style.background = `radial-gradient(circle at 90% 10%, ${hexToRgba(data.color, 0.12)} 0%, transparent 62%), #ffffff`;
+    $('dossierName').textContent = data.name;
+    $('dossierRole').textContent = data.role;
+    $('dossierBio').textContent = data.bio;
+    $('dossierTags').innerHTML = data.tags.join('<span class="sep">\u25C6</span>');
+    $('dossierSocials').innerHTML = data.links.map((l) =>
+      `<a class="dossier-link" href="${l.url}" target="_blank" rel="noopener noreferrer">${LINK_LABEL[l.label] || l.label}<i> \u2197</i></a>`
+    ).join('');
 
     updateDossierPosition(peep);
     dossier.classList.add('visible');
@@ -1683,7 +1664,7 @@ function initSkiper39CrowdCanvas() {
     if (!dossier) return;
     const cardRect = dossier.getBoundingClientRect();
     const cardWidth = cardRect.width || 310;
-    const cardHeight = cardRect.height || 260;
+    const cardHeight = (cardRect.height || 260) + 96;   // + photo overhang above the card
 
     const peepHeadY = peep.y - (peep.height * peep.scale);
     const availableHeadroom = peepHeadY;
@@ -1919,7 +1900,7 @@ function initContactForm() {
       }
     } catch (err) {
       console.error('Contact form submission error:', err);
-      setStatus('Could not send right now. Please email alpha.kore25@gmail.com directly.', 'error');
+      setStatus('Could not send right now. Please email contactus@alphakore.org directly.', 'error');
     } finally {
       if (submitBtn) submitBtn.disabled = false;
       if (label) label.textContent = 'Send message';

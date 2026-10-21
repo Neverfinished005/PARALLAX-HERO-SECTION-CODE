@@ -403,54 +403,18 @@
 
       <!-- Dynamic Floating Dossier Card (Anchors to hovered team person) -->
       <div id="crowdDossierCard" class="crowd-dossier-popover" aria-hidden="true">
+        <div class="dossier-avatar-frame" id="dossierAvatarFrame">
+          <img id="dossierPhoto" class="dossier-photo" alt="" width="156" height="156" decoding="async">
+          <div class="dossier-avatar" id="dossierAvatar"></div>
+        </div>
         <div class="dossier-caret"></div>
 
-        <!-- Top Classification Ribbon -->
-        <div class="dossier-meta-ribbon">
-          <div class="dossier-meta-badge">
-            <span class="dossier-meta-dot"></span>
-            <span class="dossier-meta-label">ALPHAKORE CORE TEAM</span>
-          </div>
-          <div class="dossier-status-pill" id="dossierStatus">
-            <span class="status-pulse-dot"></span>
-            <span class="status-text">ACTIVE</span>
-          </div>
-        </div>
-
-        <!-- Main Character Header -->
-        <div class="dossier-header">
-          <div class="dossier-avatar-frame" id="dossierAvatarFrame">
-            <div class="dossier-avatar" id="dossierAvatar">HT</div>
-          </div>
-          <div class="dossier-headline">
-            <h4 class="dossier-name" id="dossierName">Hitarth Trivedi</h4>
-            <div class="dossier-role-wrap">
-              <span class="dossier-role-tag" id="dossierRole">Lead Architect &amp; Full Stack</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bio Brief with Left Accent Line -->
-        <div class="dossier-bio-wrap">
-          <span class="bio-accent-bar" id="dossierBioBar"></span>
-          <p class="dossier-bio" id="dossierBio">Spearheading core architectural decisions, multi-agent frameworks, and
-            distributed system design.</p>
-        </div>
-
-        <!-- Domain Focus / Skills -->
-        <div class="dossier-section-row">
-          <span class="dossier-section-title">CORE CAPABILITIES</span>
-        </div>
-        <div class="dossier-tags" id="dossierTags">
-          <!-- Dynamic tags -->
-        </div>
-
-        <!-- Interactive Links / Actions -->
-        <div class="dossier-footer">
-          <div class="dossier-socials" id="dossierSocials">
-            <!-- Dynamic links -->
-          </div>
-        </div>
+        <h4 class="dossier-name" id="dossierName"></h4>
+        <div class="dossier-role" id="dossierRole"></div>
+        <span class="dossier-rule" id="dossierRule"></span>
+        <p class="dossier-bio" id="dossierBio"></p>
+        <p class="dossier-skills" id="dossierTags"></p>
+        <div class="dossier-links" id="dossierSocials"></div>
       </div>
 
       <!-- Interactive Instruction Badge -->
@@ -481,7 +445,7 @@
           <dl class="contact-details">
             <div>
               <dt>Email</dt>
-              <dd><a href="mailto:alpha.kore25@gmail.com">alpha.kore25@gmail.com</a></dd>
+              <dd><a href="mailto:contactus@alphakore.org">contactus@alphakore.org</a></dd>
             </div>
             <div>
               <dt>Studio</dt>
@@ -560,7 +524,7 @@
 
         <div class="footer-reach">
           <span class="footer-reach-label">GET IN TOUCH</span>
-          <a href="mailto:alpha.kore25@gmail.com">alpha.kore25@gmail.com</a>
+          <a href="mailto:contactus@alphakore.org">contactus@alphakore.org</a>
           <span>33 NarHari Park, Vadodara, Gujarat, India</span>
           <span>Mon&ndash;Fri &middot; 10:00&ndash;18:00 IST</span>
           <div class="footer-social">
@@ -577,7 +541,7 @@
             <a href="https://x.com/alphakore10" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
-            <a href="mailto:alpha.kore25@gmail.com" aria-label="Email" title="Email">
+            <a href="mailto:contactus@alphakore.org" aria-label="Email" title="Email">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             </a>
           </div>
