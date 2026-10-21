@@ -296,7 +296,11 @@ function updateNavState() {
   const scrollY = window.scrollY;
   const vh = window.innerHeight;
   
-  const shouldBeScrolled = scrollY > 50;
+  // Stay transparent for the whole hero; turn solid only once the next section reaches the nav
+  const heroEnd = (elements.impactSec || document.getElementById('impact'))
+    ? (elements.impactSec || document.getElementById('impact')).offsetTop - 90
+    : 50;
+  const shouldBeScrolled = scrollY > Math.max(50, heroEnd);
   if (shouldBeScrolled !== isNavScrolled) {
     isNavScrolled = shouldBeScrolled;
     if (isNavScrolled) {
@@ -858,7 +862,7 @@ function initSkiper39CrowdCanvas() {
       badge: 'Hitarth Trivedi · Lead Architect',
       role: 'Lead Architect & Full Stack',
       category: 'lead engineer',
-      color: '#c84826', // Terracotta
+      color: '#c08f14', // Terracotta
       spriteIndex: HOODIE_SPRITE_INDEX,
       initials: 'HT',
       bio: 'Spearheading core architectural decisions, multi-agent frameworks, and distributed system design.',
@@ -1395,9 +1399,9 @@ function initSkiper39CrowdCanvas() {
     const roleText = '· ' + peep.teamData.role.split('&')[0].trim();
 
     if (!peep.teamData._lw) {
-      ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+      ctx.font = 'bold 11px "Hind", sans-serif';
       const n = ctx.measureText(nameText).width;
-      ctx.font = '500 9px "Space Mono", monospace';
+      ctx.font = '500 9px "Hind", monospace';
       peep.teamData._lw = { n, r: ctx.measureText(roleText).width };
     }
     const nameWidth = peep.teamData._lw.n;
@@ -1444,12 +1448,12 @@ function initSkiper39CrowdCanvas() {
     ctx.fill();
 
     // Name text
-    ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+    ctx.font = 'bold 11px "Hind", sans-serif';
     ctx.fillStyle = peep.isHovered ? '#ffffff' : '#151413';
     ctx.fillText(nameText, pillX + 20, pillY + 14.5);
 
     // Role text
-    ctx.font = '500 9px "Space Mono", monospace';
+    ctx.font = '500 9px "Hind", monospace';
     ctx.fillStyle = peep.isHovered ? 'rgba(255, 255, 255, 0.9)' : '#7a756c';
     ctx.fillText(roleText, pillX + 20 + nameWidth + 5, pillY + 14.5);
 
@@ -1527,6 +1531,12 @@ function initSkiper39CrowdCanvas() {
         }
         canvas.style.cursor = 'default';
       }
+    });
+
+    // Touch: a tap runs the same hit-test as hovering
+    canvas.addEventListener('click', (e) => {
+      if (!window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
+      canvas.dispatchEvent(new MouseEvent('mousemove', { clientX: e.clientX, clientY: e.clientY, bubbles: true }));
     });
 
     // Leave canvas
@@ -1928,6 +1938,8 @@ function initMetricCounters() {
     entries.forEach(entry => {
       if (entry.isIntersecting && !animated) {
         animated = true;
+        const bn = document.querySelector('.metrics-banner');
+        if (bn) bn.classList.add('metrics-in');
         metricValues.forEach(el => {
           const target = parseFloat(el.getAttribute('data-target') || '0');
           const isDecimal = target % 1 !== 0;
@@ -2079,6 +2091,13 @@ function initPixelTransitions() {
     const activeLayer = card.querySelector('.pixel-card__active');
     if (!gridContainer || !defaultLayer || !activeLayer) return;
 
+    // Touch screens: no hover, so a single tap toggles the card with a plain fade
+    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    if (isTouch) {
+      const hint = card.querySelector('.pixel-card__hint span:first-child');
+      if (hint) hint.textContent = 'TAP TO REVEAL INFO';
+    }
+
     // Read configured density & colors
     const lite = window.innerWidth <= 960;
     const cols = lite ? 6 : parseInt(card.getAttribute('data-grid-cols') || '10', 10);
@@ -2125,7 +2144,7 @@ function initPixelTransitions() {
         return;
       }
 
-      if (currentTl) currentTl.kill();
+      if (currentTl) { currentTl.kill(); gsap.set(tiles, { opacity: 0, scale: 0.6 }); }
 
       currentTl = gsap.timeline({
         defaults: { ease: 'power2.inOut' },
@@ -2174,7 +2193,7 @@ function initPixelTransitions() {
         return;
       }
 
-      if (currentTl) currentTl.kill();
+      if (currentTl) { currentTl.kill(); gsap.set(tiles, { opacity: 0, scale: 0.6 }); }
 
       currentTl = gsap.timeline({
         defaults: { ease: 'power2.inOut' },
@@ -2212,25 +2231,40 @@ function initPixelTransitions() {
       });
     }
 
+    if (isTouch) {
+      // One tap = one toggle. Crossfade, no pixel tiles, no hover/focus handlers.
+      let touchFlipped = false;
+      let touchBusy = false;
+      gridContainer.style.display = 'none';
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return;
+        if (touchBusy) return;
+        touchBusy = true;
+        touchFlipped = !touchFlipped;
+        const show = touchFlipped ? activeLayer : defaultLayer;
+        const hide = touchFlipped ? defaultLayer : activeLayer;
+        show.style.pointerEvents = 'auto';
+        hide.style.pointerEvents = 'none';
+        if (typeof gsap !== 'undefined') {
+          gsap.to(show, { opacity: 1, duration: 0.28, ease: 'power1.out' });
+          gsap.to(hide, { opacity: 0, duration: 0.28, ease: 'power1.out', onComplete: () => { touchBusy = false; } });
+        } else {
+          show.style.opacity = '1';
+          hide.style.opacity = '0';
+          touchBusy = false;
+        }
+      });
+      return;
+    }
+
     // Mouse hover events (Desktop)
     card.addEventListener('mouseenter', flipToActive);
     card.addEventListener('mouseleave', flipToDefault);
 
-    // Keyboard accessibility (focus / blur)
+    // Keyboard accessibility (focus / blur) for keyboard users only
     card.setAttribute('tabindex', '0');
-    card.addEventListener('focus', flipToActive);
+    card.addEventListener('focus', () => { if (card.matches(':focus-visible')) flipToActive(); });
     card.addEventListener('blur', flipToDefault);
-
-    // Mobile / Touch tap toggle
-    card.addEventListener('click', (e) => {
-      // Don't toggle card state if clicking directly on link CTA
-      if (e.target.closest('a')) return;
-      if (isFlipped) {
-        flipToDefault();
-      } else {
-        flipToActive();
-      }
-    });
   });
 }
 
@@ -2461,3 +2495,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { toast.remove(); }, 2700);
   }
 })();
+
+
+// Touch screens: wording that matches how people interact
+if (window.matchMedia('(hover: none), (pointer: coarse)').matches) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const t = document.querySelector('.team-hint-text');
+    if (t) t.textContent = 'Tap a highlighted member to view their details';
+  });
+}
