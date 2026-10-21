@@ -20,8 +20,6 @@ const elements = {
   drawLineInner: document.getElementById('drawLineInner'),
   scrollImg: document.getElementById('scrollImg'),
   navBar: document.getElementById('mainNav'),
-  musicToggle: document.getElementById('musicToggle'),
-  speakerIcon: document.getElementById('speakerIcon'),
   
   // Nav links & dots
   dots: {
@@ -447,7 +445,7 @@ function initNavClickSmoothScroll() {
   }
 
   // Vision circular explore button
-  const impactCircleBtn = document.querySelector('.impact-circle-btn');
+  const impactCircleBtn = document.querySelector('.about-explore');
   if (impactCircleBtn) {
     impactCircleBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -1967,103 +1965,6 @@ function initMetricCounters() {
 // 8. PROCEDURAL ATMOSPHERIC AUDIO SYNTHESIZER (WEB AUDIO API)
 // ============================================================================
 let audioCtx = null;
-let isAudioPlaying = false;
-let audioNodes = [];
-
-function toggleThemeAudio() {
-  if (isAudioPlaying) {
-    stopThemeAudio();
-  } else {
-    startThemeAudio();
-  }
-}
-
-function startThemeAudio() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-
-  isAudioPlaying = true;
-  if (elements.musicToggle) elements.musicToggle.classList.add('playing');
-
-  const masterGain = audioCtx.createGain();
-  masterGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-  masterGain.connect(audioCtx.destination);
-  audioNodes.push(masterGain);
-
-  // Sea Breeze Pink Noise Generator
-  const bufferSize = audioCtx.sampleRate * 2;
-  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const output = noiseBuffer.getChannelData(0);
-  let b0 = 0, b1 = 0, b2 = 0;
-  for (let i = 0; i < bufferSize; i++) {
-    const white = Math.random() * 2 - 1;
-    b0 = 0.99 * b0 + white * 0.05;
-    b1 = 0.96 * b1 + white * 0.08;
-    b2 = 0.88 * b2 + white * 0.12;
-    output[i] = (b0 + b1 + b2) * 0.3;
-  }
-
-  const whiteNoise = audioCtx.createBufferSource();
-  whiteNoise.buffer = noiseBuffer;
-  whiteNoise.loop = true;
-
-  const noiseFilter = audioCtx.createBiquadFilter();
-  noiseFilter.type = 'lowpass';
-  noiseFilter.frequency.setValueAtTime(320, audioCtx.currentTime);
-
-  const noiseGain = audioCtx.createGain();
-  noiseGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-
-  whiteNoise.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
-  noiseGain.connect(masterGain);
-  whiteNoise.start();
-  audioNodes.push(whiteNoise, noiseGain);
-
-  // Warm Synth Pad (Pentatonic harmony D - F# - A - B)
-  const notes = [146.83, 220.00, 293.66, 369.99]; // D3, A3, D4, F#4
-  notes.forEach((freq, idx) => {
-    const osc = audioCtx.createOscillator();
-    osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-    const padGain = audioCtx.createGain();
-    padGain.gain.setValueAtTime(0.035, audioCtx.currentTime);
-
-    // Subtle LFO vibrato
-    const lfo = audioCtx.createOscillator();
-    lfo.frequency.setValueAtTime(0.2 + idx * 0.1, audioCtx.currentTime);
-    const lfoGain = audioCtx.createGain();
-    lfoGain.gain.setValueAtTime(1.5, audioCtx.currentTime);
-
-    lfo.connect(lfoGain);
-    lfoGain.connect(osc.frequency);
-    lfo.start();
-
-    osc.connect(padGain);
-    padGain.connect(masterGain);
-    osc.start();
-
-    audioNodes.push(osc, padGain, lfo, lfoGain);
-  });
-}
-
-function stopThemeAudio() {
-  isAudioPlaying = false;
-  if (elements.musicToggle) elements.musicToggle.classList.remove('playing');
-  audioNodes.forEach(node => {
-    try {
-      if (node.stop) node.stop();
-      if (node.disconnect) node.disconnect();
-    } catch (e) {}
-  });
-  audioNodes = [];
-}
-
 function playCelebrationChime() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -2089,125 +1990,80 @@ function playCelebrationChime() {
   });
 }
 
-if (elements.musicToggle) {
-  elements.musicToggle.addEventListener('click', toggleThemeAudio);
-}
 
 // ============================================================================
 // 8.5. SITE INTRO LOADER: VENGENCE UI KINETIC TEXT LOADER
 // ============================================================================
-let isLoaderDismissed = true;
+let isLoaderDismissed = false;
 
 function initSiteLoader() {
   const loader = document.getElementById('siteLoader');
-  if (!loader) {
+  const unlock = () => {
     document.body.classList.remove('loading-active');
     document.body.style.overflow = '';
-    return;
-  }
+  };
 
-  // Deep-link / direct section bypass: if URL hash or noloader flag is set, skip loader immediately
+  if (!loader) { unlock(); isLoaderDismissed = true; return; }
+
+  // Deep-link / ?noloader=1: skip straight to the site
   if (window.location.hash || window.location.search.includes('noloader=1')) {
+    loader.dataset.done = '1';
     loader.style.display = 'none';
-    document.body.classList.remove('loading-active');
-    document.body.style.overflow = '';
+    unlock();
     isLoaderDismissed = true;
     return;
   }
 
-  // Lock scroll while loader is visible
-  document.body.classList.add('loading-active');
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
 
-  // Progressive count from 0 to 100%
-  let progress = 0;
-  const progressInterval = setInterval(() => {
-    progress += Math.floor(Math.random() * 8) + 5;
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(progressInterval);
-      if (enterBtn) {
-        enterBtn.classList.add('ready');
-      }
-    }
-    if (percentEl) percentEl.textContent = `${progress}%`;
-    if (progressBar) progressBar.style.width = `${progress}%`;
-  }, 35);
+  const bar = document.getElementById('loaderBar');
+  const pct = document.getElementById('loaderPct');
+  const MIN_SHOW = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 600 : 2600;
+  const startTime = performance.now();
+  let shown = 0;          // value on screen
+  let pageReady = document.readyState === 'complete';
+  if (!pageReady) window.addEventListener('load', () => { pageReady = true; }, { once: true });
 
-  function dismissLoader() {
+  function paint(v) {
+    shown = v;
+    if (bar) bar.style.width = v + '%';
+    if (pct) pct.textContent = Math.round(v) + '%';
+  }
+
+  function finish() {
     if (isLoaderDismissed) return;
     isLoaderDismissed = true;
+    loader.dataset.done = '1';
+    paint(100);
 
-    // Subtle harmonic audio feedback on user entry
-    try {
-      const actx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = actx.createOscillator();
-      const g = actx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(440, actx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(880, actx.currentTime + 0.15);
-      g.gain.setValueAtTime(0.06, actx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.18);
-      osc.connect(g);
-      g.connect(actx.destination);
-      osc.start();
-      osc.stop(actx.currentTime + 0.2);
-    } catch (e) {}
+    // hero text starts as the doors open
+    setTimeout(animateHeroLanding, 350);
+    loader.classList.add('is-opening');
 
-    // Trigger cinematic landing text effect as curtain lifts
-    animateHeroLanding();
-
-    // Lift curtain to reveal Hero section
-    if (typeof gsap !== 'undefined') {
-      gsap.to(loader, {
-        yPercent: -100,
-        duration: 0.9,
-        ease: 'power3.inOut',
-        onComplete: () => {
-          loader.style.display = 'none';
-          document.body.classList.remove('loading-active');
-          document.body.style.overflow = '';
-
-          // Refresh ScrollTrigger and prime parallax
-          if (typeof ScrollTrigger !== 'undefined') {
-            ScrollTrigger.refresh();
-          }
-          targetProgress = calculateProgress();
-          currentProgress = targetProgress;
-          updateParallax();
-          updateNavState();
-        }
-      });
-    } else {
-      loader.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
-      loader.style.transform = 'translateY(-100%)';
-      setTimeout(() => {
-        loader.style.display = 'none';
-        document.body.classList.remove('loading-active');
-        document.body.style.overflow = '';
-      }, 800);
-    }
+    setTimeout(() => {
+      loader.style.display = 'none';
+      unlock();
+      window.scrollTo(0, 0);
+      if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+      targetProgress = calculateProgress();
+      currentProgress = targetProgress;
+      updateParallax();
+      updateNavState();
+    }, 1200);
   }
 
-  // Click anywhere on loader to open hero
-  loader.addEventListener('click', dismissLoader);
-
-  // Click on enter button
-  if (enterBtn) {
-    enterBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      dismissLoader();
-    });
-  }
-
-  // Keyboard Enter or Space key
-  document.addEventListener('keydown', function loaderKeyHandler(e) {
-    if (!isLoaderDismissed && (e.key === 'Enter' || e.key === ' ')) {
-      e.preventDefault();
-      dismissLoader();
-      document.removeEventListener('keydown', loaderKeyHandler);
-    }
-  });
+  (function tick() {
+    if (isLoaderDismissed) return;
+    const elapsed = performance.now() - startTime;
+    // eased time-based ramp; holds at 92% until the page is really loaded
+    const ramp = Math.min(1, elapsed / MIN_SHOW);
+    let target = 92 * (1 - Math.pow(1 - ramp, 2.2));
+    if (pageReady && elapsed >= MIN_SHOW) target = 100;
+    paint(shown + (target - shown) * 0.2);
+    if (pageReady && elapsed >= MIN_SHOW && shown > 99.4) { finish(); return; }
+    requestAnimationFrame(tick);
+  })();
 }
 
 // ============================================================================
@@ -2224,8 +2080,9 @@ function initPixelTransitions() {
     if (!gridContainer || !defaultLayer || !activeLayer) return;
 
     // Read configured density & colors
-    const cols = parseInt(card.getAttribute('data-grid-cols') || '10', 10);
-    const rows = parseInt(card.getAttribute('data-grid-rows') || '7', 10);
+    const lite = window.innerWidth <= 960;
+    const cols = lite ? 6 : parseInt(card.getAttribute('data-grid-cols') || '10', 10);
+    const rows = lite ? 4 : parseInt(card.getAttribute('data-grid-rows') || '7', 10);
     const pixelColor = card.getAttribute('data-pixel-color') || '#0b0d11';
     const totalTiles = cols * rows;
 
