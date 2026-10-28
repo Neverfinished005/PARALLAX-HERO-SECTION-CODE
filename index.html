@@ -8,10 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Doto:wght,ROND@100..900,0..100&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css?v=1792984300">
+  <link rel="stylesheet" href="assets/style.css?v=1793205663">
   <meta name="theme-color" content="#EEEDEA">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 789 480'%3E%3Cpath d='M0,479 L295,480 L366,374 L330,312 L260,418 L106,417 L282,126 L387,302 L486,480 L789,480 L653,240 L787,18 L499,18 L420,134 L463,185 L531,75 L680,76 L577,245 L682,419 L521,417 L374,153 L283,0Z'/%3E%3C/svg%3E">
-  <noscript><style>.rv { opacity: 1 !important; transform: none !important; } .pre .pill { opacity: 1 !important; } .diagram.pre .tile svg { opacity: 1 !important; }</style></noscript>
+  <noscript><style>#loader { display: none !important; } .rv { opacity: 1 !important; transform: none !important; } .pre .pill { opacity: 1 !important; } .diagram.pre .tile svg { opacity: 1 !important; }</style></noscript>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -20,6 +20,22 @@
   <symbol id="dots9" viewBox="0 0 18 18"><g fill="#fff"><rect x="3" y="3" width="2.4" height="2.4"/><rect x="7.8" y="3" width="2.4" height="2.4"/><rect x="12.6" y="3" width="2.4" height="2.4"/><rect x="3" y="7.8" width="2.4" height="2.4"/><rect x="7.8" y="7.8" width="2.4" height="2.4"/><rect x="12.6" y="7.8" width="2.4" height="2.4"/><rect x="3" y="12.6" width="2.4" height="2.4"/><rect x="7.8" y="12.6" width="2.4" height="2.4"/><rect x="12.6" y="12.6" width="2.4" height="2.4"/></g></symbol>
 </defs></svg>
 <a class="skip" href="#top">Skip to content</a>
+<div id="loader" role="status" aria-label="Loading AlphaKore"><div class="ldr"><div class="ldr-name" aria-hidden="true"><span style="--d:0.00s">A</span><span style="--d:0.09s">L</span><span style="--d:0.18s">P</span><span style="--d:0.27s">H</span><span style="--d:0.36s">A</span><span style="--d:0.45s">&nbsp;</span><span style="--d:0.54s">K</span><span style="--d:0.63s">O</span><span style="--d:0.72s">R</span><span style="--d:0.81s">E</span></div><div class="ldr-bar" aria-hidden="true"><i></i></div></div></div>
+<script>
+(function () {
+  var l = document.getElementById('loader'); if (!l) { window.akReady = Promise.resolve(); return; }
+  var seen = false; try { seen = sessionStorage.getItem('akLoaded'); } catch (e) {}
+  if (seen || matchMedia('(prefers-reduced-motion: reduce)').matches) { l.remove(); window.akReady = Promise.resolve(); return; }
+  var root = document.documentElement, t0 = performance.now(); root.classList.add('loading');
+  var fonts = (document.fonts && document.fonts.load) ? document.fonts.load('800 60px Doto', 'ALPHA KORE').catch(function () {}) : Promise.resolve();
+  var win = new Promise(function (r) { if (document.readyState === 'complete') r(); else addEventListener('load', r); });
+  var cap = new Promise(function (r) { setTimeout(r, 4500); });
+  window.akReady = Promise.race([Promise.all([fonts, win]), cap])
+    .then(function () { return new Promise(function (r) { setTimeout(r, Math.max(0, 1900 - (performance.now() - t0))); }); })
+    .then(function () { l.classList.add('out'); try { sessionStorage.setItem('akLoaded', 1); } catch (e) {} return new Promise(function (r) { setTimeout(function () { l.remove(); root.classList.remove('loading'); r(); }, 650); }); });
+})();
+</script>
+
 
 
 <header class="nav on-light">
@@ -57,20 +73,24 @@
       <div class="art rv"><canvas id="halftone"></canvas></div>
     </div>
 
-    <div class="slot todo wide rv" data-src="assets/media/story.mp4"><div class="hint"><span><b>video to add</b>assets/media/story.mp4</span></div><span class="cap"><i></i>AlphaKore in one minute</span></div>
+    <div class="slot loaded vidslot wide rv" data-src="assets/media/story.mp4"><img class="pimg" src="assets/media/story-poster.jpg" alt="" width="1280" height="720" decoding="async"><span class="cap"><i></i>Inside the studio</span></div>
 
     <div class="sechead rv"><span class="label">Our journey</span>
       <h2 class="big" style="margin-top:18px">Where we started,<br><span class="g">and where we're going</span></h2></div>
-    <div class="journey">
-      <article class="ms rv"><div class="node"></div>
-        <div class="slot todo " data-src="assets/media/2024.jpg"><div class="hint"><span><b>image to add</b>assets/media/2024.jpg</span></div><span class="cap"><i class="img"></i>Day one</span></div>
-        <div class="dotx">2024</div><h3>The first commit</h3><p>A handful of engineers, designers and editors start building together.</p></article>
-      <article class="ms rv"><div class="node"></div>
-        <div class="slot todo " data-src="assets/media/prism-story.mp4"><div class="hint"><span><b>video to add</b>assets/media/prism-story.mp4</span></div><span class="cap"><i></i>Prism goes live</span></div>
-        <div class="dotx">Prism</div><h3>The first thing we ship</h3><p>Prism goes live and does real work end to end.</p></article>
-      <article class="ms rv"><div class="node"></div>
-        <div class="slot todo " data-src="assets/media/delta.jpg"><div class="hint"><span><b>image to add</b>assets/media/delta.jpg</span></div><span class="cap"><i class="img"></i>What's next</span></div>
-        <div class="dotx">Delta</div><h3>Second product in the making</h3><p>Same way of working, a different person to help.</p></article>
+    <div class="road flow" id="road">
+      <article class="rs rv"><div class="rin">
+        <div class="rmed"><div class="slot loaded vidslot r916" data-src="assets/media/reel.mp4"><img class="pimg" src="assets/media/reel-poster.jpg" alt="" width="1280" height="720" decoding="async"><span class="cap"><i></i>Building ROME in one day</span></div></div>
+        <div class="rtx"><div class="dotx">2024</div><h3>The first commit</h3><p>A handful of engineers, designers and editors start building together.</p></div></div></article>
+      <article class="rs rv"><div class="rin">
+        <div class="rtx"><div class="dotx">02</div><h3>A team comes together</h3><p>More builders join, and the work starts to take shape.</p></div></div></article>
+      <article class="rs rv"><div class="rin">
+        <div class="rtx"><div class="dotx">03</div><h3>The first product takes shape</h3><p>Prism: an AI workbench for small manufacturing teams.</p></div></div></article>
+      <article class="rs rv"><div class="rin">
+        <div class="rmed"><div class="slot loaded vidslot r169" data-src="assets/media/prism-story.mp4"><img class="pimg" src="assets/media/prism-story-poster.jpg" alt="" width="1280" height="720" decoding="async"><span class="cap"><i></i>The team at work</span></div></div>
+        <div class="rtx"><div class="dotx">04</div><h3>Prism goes live</h3><p>Real inquiries, real quotes, handled from start to finish.</p></div></div></article>
+      <article class="rs rv"><div class="rin">
+        <div class="rmed"><div class="slot todo r34" data-src="assets/media/isb.jpg"><div class="hint"><span><b>image to add</b>assets/media/isb.jpg</span></div><span class="cap"><i class="img"></i>Indian School of Business</span></div></div>
+        <div class="rtx"><div class="dotx">05</div><h3>A visit to ISB</h3><p>Our trip to the Indian School of Business, on the road to Delta.</p></div></div></article>
     </div>
 
   </div>
@@ -83,9 +103,9 @@
       <p class="p m">What we've built so far, and what's next.</p>
     </div>
 
-    <div class="pnode"><span class="npill"><b>01</b> Prism &middot; Live</span></div>
+    <div class="pnode"><span class="npill"><b>01</b></span></div>
     <div class="prod rv" id="prism">
-      <div class="vid" data-video="assets/video/prism.mp4" data-branch>
+      <div class="vid" data-branch>
         <div class="poster art"><svg class="prismart" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A prism splitting a beam of white light into the colours of the rainbow">
   <defs>
     <linearGradient id="pgFront" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".20"/><stop offset=".45" stop-color="#cfe3ff" stop-opacity=".05"/><stop offset="1" stop-color="#fff" stop-opacity=".13"/></linearGradient>
@@ -144,32 +164,34 @@
   <circle class="flare" cx="217.5" cy="180.0" r="20" fill="url(#flare)"/>
   <circle class="flare f2" cx="322.5" cy="180.0" r="24" fill="url(#flare)"/>
 </svg></div>
-        <span class="play"><i></i>Prism video</span>
       </div>
       <div>
-        <span class="pname"><i style="background:#101820;color:#D99A3A;font-size:18px">&#9650;</i>Prism <span class="tagp live">Live</span></span>
-        <div class="for"><span>For MSMEs</span><span>Manufacturing</span><span>Engineering teams</span></div>
-        <p class="p">Describe a task and Prism reads your email, drawings and rate list, then drafts the BOQ, the quotation and the follow-up.</p>
-        <ul class="ticks"><li>Add-ons from BOQ and BOM to Gerber and STEP</li><li>Runs on Windows, Mac and Linux</li><li>Works with a free Groq key, no subscription</li></ul>
+        <span class="pname"><svg class="plogo" viewBox="0 0 260 340" aria-hidden="true"><g stroke-linejoin="round">
+<polygon points="68,66 80,26 222,84 150,130" fill="#86EBD3"/>
+<polygon points="68,66 150,130 148,198 92,206" fill="#22A887"/>
+<polygon points="150,130 222,84 214,168 148,198" fill="#4EDDB3"/>
+<polygon points="96,208 214,168 150,262 100,238" fill="#3EC9A0"/>
+<polygon points="92,206 100,238 88,248" fill="#13896E"/>
+<polygon points="28,60 80,14 106,296 58,332" fill="none" stroke="#4EDBB8" stroke-width="13"/></g></svg>Prism <span class="tagp live">Live</span></span>
+        <p class="p">Reads the inquiry and the drawing, then drafts the quote for your team to check.</p>
+        <p class="pmeta">Small manufacturing teams &middot; Windows, Mac, Linux</p>
         <a class="btn dark" href="https://calendly.com/alpha-kore25/new-meeting" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 18 18"><use href="#arrow"/></svg></span>Book a Prism demo</a>
       </div>
     </div>
 
-    <div class="pnode"><span class="npill"><b>02</b> Delta &middot; Coming soon</span></div>
+    <div class="pnode"><span class="npill"><b>02</b></span></div>
     <div class="prod flip rv" id="delta">
-      <div class="vid" data-video="assets/video/delta.mp4" data-branch>
+      <div class="vid" data-branch>
         <div class="poster" style="background:linear-gradient(176deg,#8B8378 0%,#9C6F68 45%,#7D252B 100%)">
           <div class="app de"><div class="bar"><i></i><i></i><i></i></div>
             <div class="body"><span class="k">Week 6 &middot; Frontend track</span><h6>Ship one portfolio page and apply to three roles.</h6>
               <div class="t d">Build a responsive portfolio page</div><div class="t d">Solve 5 array problems</div><div class="t">Mock interview, Friday</div></div></div>
         </div>
-        <span class="play"><i></i>Delta video</span>
       </div>
       <div>
-        <span class="pname"><i style="background:#7D252B;color:#fff;font:600 20px var(--sans)">&Delta;</i>Delta <span class="tagp soon">Coming soon</span></span>
-        <div class="for"><span>For colleges</span><span>Schools</span><span>Students</span></div>
-        <p class="p">An AI career coach. One conversation builds a profile it remembers, and from then on it plans your weeks.</p>
-        <ul class="ticks"><li>Plans use real job-market signals</li><li>Adjusts when you skip a task or ask for changes</li><li>Finished work becomes resume entries you can back up</li></ul>
+        <span class="pname"><svg class="plogo" viewBox="190 80 370 560" aria-hidden="true"><path fill="#111110" fill-rule="evenodd" d="M287,90 L544,348 L258,632 L200,575 L313,462 L200,348 L315,234 L278,197 L250,225 L200,175 Z M372,292 L428,348 L372,404 L316,348 Z"/></svg>Delta <span class="tagp soon">Coming soon</span></span>
+        <p class="p">A weekly plan for your career, built from one conversation.</p>
+        <p class="pmeta">Students and colleges</p>
         <a class="btn light" href="mailto:contactus@alphakore.org?subject=Delta%20early%20access"><span class="ic"><svg viewBox="0 0 18 18"><use href="#dots9"/></svg></span>Get early access</a>
       </div>
     </div>
@@ -189,10 +211,15 @@
   <div class="wrap">
     <div class="thead rv">
       <h2 class="big">Ten builders<br><span class="g">who ship together</span></h2>
-      <div class="tnav"><button id="tp" type="button" aria-label="Previous">&#8249;</button><button id="tn" type="button" aria-label="Next">&#8250;</button></div>
+      <div class="ttabs" role="tablist" aria-label="Team groups">
+        <button type="button" role="tab" data-g="founders" aria-selected="true">Founders</button>
+        <button type="button" role="tab" data-g="developers" aria-selected="false">Developers</button>
+        <button type="button" role="tab" data-g="creative" aria-selected="false">Creative</button>
+        <button type="button" role="tab" data-g="marketing" aria-selected="false">Marketing</button>
+      </div>
     </div>
-    <div class="tcar rv" id="tcar" tabindex="0" role="region" aria-label="Team members, scroll sideways"></div>
   </div>
+  <div class="tmq rv" id="tmq" role="region" aria-label="Team members. Scroll sideways or let it drift."><div class="tmq-track" id="tmqTrack"></div></div>
 </section>
 
 </main>
@@ -210,7 +237,7 @@
         </div>
       </div>
       <div><h4>Products</h4><ul><li><a href="#prism">Prism</a></li><li><a href="#delta">Delta</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="portfolio.html">Portfolio</a></li><li><a href="careers.html">Careers</a></li><li><a href="company.html">About the company</a></li><li><a href="contact.html">Contact us</a></li><li><a href="terms.html">Terms &amp; Conditions</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="portfolio.html">Portfolio</a></li><li><a href="careers.html">Careers</a></li><li><a href="contact.html">Contact us</a></li><li><a href="terms.html">Terms &amp; Conditions</a></li></ul></div>
     </div>
     <div class="marq" aria-hidden="true"><div class="marq-track"><div class="marq-set"><span>Ship it.</span><i></i><span>Less admin.</span><i></i><span>Fewer tabs.</span><i></i><span>Done by Friday.</span><i></i><span>No more copy-paste.</span><i></i></div><div class="marq-set"><span>Ship it.</span><i></i><span>Less admin.</span><i></i><span>Fewer tabs.</span><i></i><span>Done by Friday.</span><i></i><span>No more copy-paste.</span><i></i></div></div></div>
     <div class="bottom">
@@ -389,25 +416,37 @@
     ['Rudra Vable', 'rudra', 'ML Engineer & Creative Developer', [['in', 'https://www.linkedin.com/in/rudra-vable'], ['gh', 'https://github.com/Neverfinished005'], ['ig', 'https://www.instagram.com/rudr_a.25']]],
   ];
   const HAVE = new Set(['hitarth', 'parth', 'harsh', 'meet', 'om', 'shlok', 'manav']);   /* photos present in assets/team */
-  const car = document.getElementById('tcar');
-  if (car) {
-    const ini = n => n.split(' ').map(w => w[0]).join('').slice(0, 2);
-    car.innerHTML = TEAM.map(([n, f, role, links]) => {
-      const icons = links.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener" aria-label="${n} on ${LABEL[t]}" title="${LABEL[t]}">${IC[t]}</a>`).join('');
+  const GROUPS = {
+    founders: ['Hitarth Trivedi', 'Parth Soni', 'Harsh Patel', 'Het Vaghela'],
+    developers: ['Hitarth Trivedi', 'Parth Soni', 'Harsh Patel', 'Meet Shah', 'Manav Patel', 'Rudra Vable'],
+    creative: ['Het Vaghela', 'Deep', 'Shlok Patel'],
+    marketing: ['Shlok Patel', 'Om Bhonsle'],
+  };
+  const track = document.getElementById('tmqTrack');
+  if (track) {
+    const byName = n => TEAM.find(m => m[0] === n), ini = n => n.split(' ').map(w => w[0]).join('').slice(0, 2);
+    const cardOf = ([n, f, role, links]) => {
+      const icons = links.map(([k, u]) => `<a href="${u}" target="_blank" rel="noopener" aria-label="${n} on ${LABEL[k]}" title="${LABEL[k]}">${IC[k]}</a>`).join('');
       const face = HAVE.has(f) ? `<img src="assets/team/t_${f}.jpg" alt="${n}" width="240" height="270" loading="lazy" decoding="async">` : ini(n);
       return `<article class="tc"><span class="ph">${face}</span><b>${n}</b><small>${role}</small><div class="ico">${icons}</div></article>`;
-    }).join('');
-    const prev = document.getElementById('tp'), next = document.getElementById('tn');
-    const step = () => car.querySelector('.tc').offsetWidth + parseFloat(getComputedStyle(car).columnGap || 16);
-    const sync = () => { const max = car.scrollWidth - car.clientWidth - 2; prev.disabled = car.scrollLeft <= 2; next.disabled = car.scrollLeft >= max; car.classList.toggle('end', car.scrollLeft >= max); };
-    prev.onclick = () => car.scrollBy({ left: -step() * 2, behavior: 'smooth' }); next.onclick = () => car.scrollBy({ left: step() * 2, behavior: 'smooth' });
-    car.addEventListener('scroll', sync, { passive: true }); addEventListener('resize', sync); sync();
-    car.addEventListener('keydown', e => { if (e.key === 'ArrowRight') { e.preventDefault(); next.click(); } if (e.key === 'ArrowLeft') { e.preventDefault(); prev.click(); } });
-    /* drag with a mouse (touch already scrolls natively) */
-    let down = false, sx = 0, sl = 0, moved = false;
-    car.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; down = true; moved = false; sx = e.clientX; sl = car.scrollLeft; });
-    addEventListener('pointermove', e => { if (!down) return; const d = e.clientX - sx; if (!moved && Math.abs(d) > 4) { moved = true; car.classList.add('drag'); } if (moved) car.scrollLeft = sl - d; });
-    addEventListener('pointerup', () => { if (!down) return; down = false; car.classList.remove('drag'); });
+    };
+    let cur = 'founders';
+    function render(g) {
+      cur = g; const ms = GROUPS[g].map(byName), one = ms.map(cardOf).join('');
+      /* repeat the set until it is wider than the screen, then double it so the loop has no seam */
+      const per = Math.max(1, Math.ceil((innerWidth + 240) / (ms.length * 214)));
+      track.innerHTML = `<div class="half">${one.repeat(per)}</div><div class="half" aria-hidden="true">${one.repeat(per)}</div>`;
+      track.style.setProperty('--dur', Math.max(24, ms.length * per * 214 / 50) + 's');
+      track.querySelectorAll('.half:last-child a').forEach(a => a.tabIndex = -1);
+      document.querySelectorAll('.ttabs [role=tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.g === g));
+    }
+    /* touch: freeze the row the moment a finger lands so a tap hits the icon it was aimed at */
+    const mq = document.getElementById('tmq');
+    mq.addEventListener('touchstart', () => track.classList.add('hold'), { passive: true });
+    mq.addEventListener('touchend', () => setTimeout(() => track.classList.remove('hold'), 1800), { passive: true });
+    document.querySelector('.ttabs').addEventListener('click', e => { const b = e.target.closest('[role=tab]'); if (b && b.dataset.g !== cur) render(b.dataset.g); });
+    let rz = 0; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => render(cur), 250); });
+    render('founders');
   }
 
   /* ---------- products: spine from the first product node to the end, branches out to each video ---------- */
@@ -424,12 +463,38 @@
   });
 
 
+  /* ---------- journey road: a snake, left, right, left ... joined by one winding line ---------- */
+  const road = document.getElementById('road');
+  if (road) mountFlow(road, (host, W) => {
+    const mob = W < 760, rows = [...host.querySelectorAll('.rs')], pts = [];
+    rows.forEach((row, i) => {
+      const r = rel(row.querySelector('.rin'), host), mid = r.t + Math.min(r.h / 2, 150);
+      pts.push(mob ? [7, r.t + 14] : (i % 2 === 0 ? [Math.min(W - 10, r.r + 34), mid] : [Math.max(10, r.l - 34), mid]));
+    });
+    let d = `M${pts[0][0]},${Math.max(0, pts[0][1] - 40)} L${pts[0][0]},${pts[0][1]}`;
+    for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], h = (y1 - y0) / 2; d += ` C${x0},${y0 + h} ${x1},${y1 - h} ${x1},${y1}`; }
+    const last = pts[pts.length - 1]; d += ` L${last[0]},${last[1] + 40}`;
+    return { wires: [d], dots: pts.map(q => [q[0], q[1], 'sq']), comets: [{ d, n: 3, speed: 200 }] };
+  });
+
+  /* ---------- Instagram reel: the embed (and Instagram's scripts) only load when the card is about to be seen ---------- */
+  document.querySelectorAll('.slot[data-reel]').forEach(sl => {
+    new IntersectionObserver((es, ob) => es.forEach(e => { if (!e.isIntersecting) return; ob.disconnect();
+      const f = document.createElement('iframe'); f.src = sl.dataset.reel; f.title = 'AlphaKore on Instagram'; f.loading = 'lazy'; f.allow = 'autoplay; encrypted-media; fullscreen'; f.allowFullscreen = true; f.setAttribute('scrolling', 'no'); f.referrerPolicy = 'strict-origin-when-cross-origin';
+      f.addEventListener('load', () => sl.classList.add('ready')); sl.prepend(f); }), { rootMargin: '400px' }).observe(sl);
+  });
+
   /* ---------- photo / video slots: put the file in assets/media and the slot fills itself ---------- */
   document.querySelectorAll('.slot[data-src]').forEach(sl => {
     const src = sl.dataset.src, done = el => { sl.prepend(el); sl.classList.add('loaded'); sl.classList.remove('todo'); };
     if (/\.(mp4|webm|mov)$/i.test(src)) {
-      const v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'metadata'; v.src = src;
-      v.addEventListener('loadeddata', () => { done(v); new IntersectionObserver(([e]) => e.isIntersecting ? v.play().catch(() => {}) : v.pause()).observe(sl); });
+      const v = document.createElement('video'); v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'none';
+      const pi = sl.querySelector('.pimg'); if (pi) v.poster = pi.getAttribute('src');
+      v.addEventListener('loadeddata', () => { done(v); if (pi) setTimeout(() => pi.remove(), 400); });
+      /* load the file only when the screen is about to come into view, play only while it is on screen */
+      new IntersectionObserver((es, ob) => es.forEach(e => {
+        if (e.isIntersecting) { if (!v.src) { v.src = src; v.load(); } v.play().catch(() => {}); } else if (v.src) v.pause();
+      }), { rootMargin: '300px' }).observe(sl);
     } else { const im = new Image(); im.alt = ''; im.onload = () => done(im); im.src = src; }
   });
 
@@ -444,7 +509,7 @@
     if (REDUCE) return done();
     const wait = ms => new Promise(r => setTimeout(r, ms)), ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
     const tween = (ms, fn) => new Promise(res => { const t0 = performance.now(); const f = now => { const k = Math.min(1, (now - t0) / ms); fn(k); k < 1 ? requestAnimationFrame(f) : res(); }; requestAnimationFrame(f); });
-    await (document.fonts ? document.fonts.ready : Promise.resolve()); await wait(300);
+    await (window.akReady || Promise.resolve()); await (document.fonts ? document.fonts.ready : Promise.resolve()); await wait(250);
     const P = panel.clientWidth, s = .58 * P / 789, ox = P * .21, oy = P / 2 - 240 * s, dpr = Math.min(2, devicePixelRatio || 1), step = Math.max(4, P / 34);
     const box = document.createElement('div'); box.className = 'land'; const cv = document.createElement('canvas'); box.appendChild(cv); panel.appendChild(box);
     cv.width = P * dpr; cv.height = P * dpr; const c = cv.getContext('2d'); c.scale(dpr, dpr);
@@ -471,6 +536,6 @@
   })();
 })();
 </script>
-<script src="assets/glass.js?v=1792984300"></script>
+<script src="assets/glass.js?v=1793205663"></script>
 </body>
 </html>

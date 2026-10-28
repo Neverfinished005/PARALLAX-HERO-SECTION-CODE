@@ -9,10 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Doto:wght,ROND@100..900,0..100&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/style.css?v=1792984300">
+  <link rel="stylesheet" href="/assets/style.css?v=1793205663">
   <meta name="theme-color" content="#EEEDEA">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 789 480'%3E%3Cpath d='M0,479 L295,480 L366,374 L330,312 L260,418 L106,417 L282,126 L387,302 L486,480 L789,480 L653,240 L787,18 L499,18 L420,134 L463,185 L531,75 L680,76 L577,245 L682,419 L521,417 L374,153 L283,0Z'/%3E%3C/svg%3E">
-  <noscript><style>.rv { opacity: 1 !important; transform: none !important; } .pre .pill { opacity: 1 !important; } .diagram.pre .tile svg { opacity: 1 !important; }</style></noscript>
+  <noscript><style>#loader { display: none !important; } .rv { opacity: 1 !important; transform: none !important; } .pre .pill { opacity: 1 !important; } .diagram.pre .tile svg { opacity: 1 !important; }</style></noscript>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -21,6 +21,22 @@
   <symbol id="dots9" viewBox="0 0 18 18"><g fill="#fff"><rect x="3" y="3" width="2.4" height="2.4"/><rect x="7.8" y="3" width="2.4" height="2.4"/><rect x="12.6" y="3" width="2.4" height="2.4"/><rect x="3" y="7.8" width="2.4" height="2.4"/><rect x="7.8" y="7.8" width="2.4" height="2.4"/><rect x="12.6" y="7.8" width="2.4" height="2.4"/><rect x="3" y="12.6" width="2.4" height="2.4"/><rect x="7.8" y="12.6" width="2.4" height="2.4"/><rect x="12.6" y="12.6" width="2.4" height="2.4"/></g></symbol>
 </defs></svg>
 <a class="skip" href="/">Skip to content</a>
+<div id="loader" role="status" aria-label="Loading AlphaKore"><div class="ldr"><div class="ldr-name" aria-hidden="true"><span style="--d:0.00s">A</span><span style="--d:0.09s">L</span><span style="--d:0.18s">P</span><span style="--d:0.27s">H</span><span style="--d:0.36s">A</span><span style="--d:0.45s">&nbsp;</span><span style="--d:0.54s">K</span><span style="--d:0.63s">O</span><span style="--d:0.72s">R</span><span style="--d:0.81s">E</span></div><div class="ldr-bar" aria-hidden="true"><i></i></div></div></div>
+<script>
+(function () {
+  var l = document.getElementById('loader'); if (!l) { window.akReady = Promise.resolve(); return; }
+  var seen = false; try { seen = sessionStorage.getItem('akLoaded'); } catch (e) {}
+  if (seen || matchMedia('(prefers-reduced-motion: reduce)').matches) { l.remove(); window.akReady = Promise.resolve(); return; }
+  var root = document.documentElement, t0 = performance.now(); root.classList.add('loading');
+  var fonts = (document.fonts && document.fonts.load) ? document.fonts.load('800 60px Doto', 'ALPHA KORE').catch(function () {}) : Promise.resolve();
+  var win = new Promise(function (r) { if (document.readyState === 'complete') r(); else addEventListener('load', r); });
+  var cap = new Promise(function (r) { setTimeout(r, 4500); });
+  window.akReady = Promise.race([Promise.all([fonts, win]), cap])
+    .then(function () { return new Promise(function (r) { setTimeout(r, Math.max(0, 1900 - (performance.now() - t0))); }); })
+    .then(function () { l.classList.add('out'); try { sessionStorage.setItem('akLoaded', 1); } catch (e) {} return new Promise(function (r) { setTimeout(function () { l.remove(); root.classList.remove('loading'); r(); }, 650); }); });
+})();
+</script>
+
 
 <header class="nav on-light">
   <a class="logo" href="/" aria-label="AlphaKore home"><svg viewBox="0 0 789 480"><use href="#ak"/></svg>AlphaKore</a>
@@ -53,7 +69,7 @@
         </div>
       </div>
       <div><h4>Products</h4><ul><li><a href="/#prism">Prism</a></li><li><a href="/#delta">Delta</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="/portfolio.html">Portfolio</a></li><li><a href="/careers.html">Careers</a></li><li><a href="/company.html">About the company</a></li><li><a href="/contact.html">Contact us</a></li><li><a href="/terms.html">Terms &amp; Conditions</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="/portfolio.html">Portfolio</a></li><li><a href="/careers.html">Careers</a></li><li><a href="/contact.html">Contact us</a></li><li><a href="/terms.html">Terms &amp; Conditions</a></li></ul></div>
     </div>
     <div class="marq" aria-hidden="true"><div class="marq-track"><div class="marq-set"><span>Ship it.</span><i></i><span>Less admin.</span><i></i><span>Fewer tabs.</span><i></i><span>Done by Friday.</span><i></i><span>No more copy-paste.</span><i></i></div><div class="marq-set"><span>Ship it.</span><i></i><span>Less admin.</span><i></i><span>Fewer tabs.</span><i></i><span>Done by Friday.</span><i></i><span>No more copy-paste.</span><i></i></div></div></div>
     <div class="bottom">
@@ -63,7 +79,7 @@
   </div>
 </footer>
 
-<script src="/assets/common.js?v=1792984300"></script>
-<script src="/assets/glass.js?v=1792984300"></script>
+<script src="/assets/common.js?v=1793205663"></script>
+<script src="/assets/glass.js?v=1793205663"></script>
 </body>
 </html>
