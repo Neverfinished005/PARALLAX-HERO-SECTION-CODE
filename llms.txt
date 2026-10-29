@@ -1,0 +1,26 @@
+# AlphaKore
+
+> AlphaKore is an AI product company in Vadodara, Gujarat, India, founded in 2024. We build AI software that does repeat work so people don't have to.
+
+## Products
+- Prism (live): a desktop AI workbench for small manufacturing and engineering teams. It reads an inquiry and its drawing and drafts the quote for a person to check. Runs on Windows, Mac and Linux. https://www.alphakore.org/#prism
+- Delta (coming soon): an AI career guide for students and colleges that builds a weekly plan from one conversation. https://www.alphakore.org/#delta
+
+## Pages
+- Home: https://www.alphakore.org/
+- Portfolio: https://www.alphakore.org/portfolio.html
+- Careers: https://www.alphakore.org/careers.html
+- Contact: https://www.alphakore.org/contact.html
+- Terms and Conditions: https://www.alphakore.org/terms.html
+
+## Contact
+- Email: contactus@alphakore.org
+- Address: 33 NarHari Park, Vadodara, Gujarat, India
+- Hours: Monday to Friday, 10:00 to 18:00 IST
+
+## Facts
+- What is AlphaKore? AlphaKore is an AI product company in Vadodara, Gujarat, India, founded in 2024. We build AI software that does repeat work so people don't have to. Our products are Prism and Delta.
+- What does Prism do? Prism is a desktop AI workbench for small manufacturing and engineering teams. It reads an inquiry and its drawing, then drafts the quote for your team to check. It runs on Windows, Mac and Linux.
+- What is Delta? Delta is an AI career guide for students and colleges that builds a weekly plan from one conversation. It is coming soon, and you can ask for early access by email.
+- How do I book a demo? Use the Book a demo button on the site to pick a time on our calendar, or write to contactus@alphakore.org.
+- Where is AlphaKore based? AlphaKore is at 33 NarHari Park, Vadodara, Gujarat, India. We are available Monday to Friday, 10:00 to 18:00 IST.

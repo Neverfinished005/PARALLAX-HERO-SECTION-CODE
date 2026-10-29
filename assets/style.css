@@ -734,3 +734,5 @@ main { padding-bottom: clamp(48px, 6vw, 88px); }
 
 .rin { min-width: 44%; } .rs:nth-of-type(odd) .rin { padding-left: 2%; } .rs:nth-of-type(even) .rin { padding-right: 2%; }
 @media (max-width: 760px) { .rin { min-width: 0; padding: 0 !important; } }
+
+.faqx { margin-top: clamp(56px, 7vw, 96px); max-width: 760px; }
