@@ -760,3 +760,7 @@ html.lite .lens, html.lite .nav, html.lite .btn { -webkit-backdrop-filter: blur(
 html.lite .hero .dotx.glow::before, html.lite .hero .dotx.glow::after { filter: blur(8px); }
 html.lite footer.reveal .giant::after { display: none; }
 html .tcover.lens, html.lite .tcover, html.scrolling .tcover, html .tcover { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+/* hero headlines: one line each, sized to the screen so neither is ever cut or wrapped */
+.hero .dotx.glow { font-size: min(clamp(52px, 8.6vw, 112px), calc((100vw - 40px) / 6.95)) !important; white-space: nowrap; max-width: 100%; }
+/* footer strip: the words are gone, the space (and its two rules) stay */
+footer.reveal .marq-track { visibility: hidden; animation: none !important; }
