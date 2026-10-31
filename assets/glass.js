@@ -128,3 +128,15 @@
   document.addEventListener('click', e => { if (sheet.classList.contains('open') && !sheet.contains(e.target) && !menu.contains(e.target)) close(); });
   addEventListener('resize', () => { if (innerWidth > 980) close(); });
 })();
+
+/* ---- scroll performance: do the cheap thing while the page is moving ---- */
+(() => {
+  const root = document.documentElement; let t = 0, on = false;
+  addEventListener('scroll', () => { if (!on) { on = true; root.classList.add('scrolling'); } clearTimeout(t); t = setTimeout(() => { on = false; root.classList.remove('scrolling'); }, 140); }, { passive: true });
+  if (matchMedia('(pointer: coarse), (max-width: 820px)').matches) root.classList.add('lite');
+  /* only what is near the screen is allowed to animate */
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('idle', !e.isIntersecting)), { rootMargin: '160px 0px' });
+    document.querySelectorAll('.flow, .road, .diagram, .tmq, .hero, .marq, .legal, footer.reveal').forEach(el => io.observe(el));
+  }
+})();
