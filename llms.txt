@@ -8,7 +8,6 @@
 
 ## Pages
 - Home: https://www.alphakore.org/
-- Portfolio: https://www.alphakore.org/portfolio.html
 - Careers: https://www.alphakore.org/careers.html
 - Contact: https://www.alphakore.org/contact.html
 - Terms and Conditions: https://www.alphakore.org/terms.html
