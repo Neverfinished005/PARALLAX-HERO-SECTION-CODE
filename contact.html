@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Doto:wght,ROND@100..900,0..100&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css?v=1793452634">
+  <link rel="stylesheet" href="assets/style.css?v=1793453017">
   <meta name="theme-color" content="#EEEDEA">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 789 480'%3E%3Cpath d='M0,479 L295,480 L366,374 L330,312 L260,418 L106,417 L282,126 L387,302 L486,480 L789,480 L653,240 L787,18 L499,18 L420,134 L463,185 L531,75 L680,76 L577,245 L682,419 L521,417 L374,153 L283,0Z'/%3E%3C/svg%3E">
   <noscript><style>#loader { display: none !important; } .rv { opacity: 1 !important; transform: none !important; } .pre .pill { opacity: 1 !important; } .diagram.pre .tile svg { opacity: 1 !important; }</style></noscript>
@@ -77,7 +77,17 @@
       <div class="row"><span class="k">Hours</span><span>Mon&ndash;Fri<br>10:00&ndash;18:00 IST</span></div>
     </div></div>
   <div>
-  <div class="cbtns" style="margin-top:24px"><a class="btn dark" href="https://calendly.com/alpha-kore25/new-meeting" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 18 18"><use href="#arrow"/></svg></span>Book a demo</a><a class="btn light" href="mailto:contacts@alphakore.org?subject=Delta%20early%20access"><span class="ic"><svg viewBox="0 0 18 18"><use href="#dots9"/></svg></span>Delta early access</a></div></div></div><div class="faqx"><span class="label">Questions</span><h2 class="big" style="margin:14px 0 24px">Quick answers</h2><div class="terms"><details><summary>What is AlphaKore?</summary><p>AlphaKore is an AI product company in Vadodara, Gujarat, India, founded in 2024. We build AI software that does repeat work so people don&#x27;t have to. Our products are Prism and Delta.</p></details><details><summary>What does Prism do?</summary><p>Prism is a desktop AI workbench for small manufacturing and engineering teams. It reads an inquiry and its drawing, then drafts the quote for your team to check. It runs on Windows, Mac and Linux.</p></details><details><summary>What is Delta?</summary><p>Delta is an AI career guide for students and colleges that builds a weekly plan from one conversation. It is coming soon, and you can ask for early access by email.</p></details><details><summary>How do I book a demo?</summary><p>Use the Book a demo button on the site to pick a time on our calendar, or write to contacts@alphakore.org.</p></details><details><summary>Where is AlphaKore based?</summary><p>AlphaKore is at 33 NarHari Park, Vadodara, Gujarat, India. We are available Monday to Friday, 10:00 to 18:00 IST.</p></details></div></div>
+  <div class="cbtns" style="margin-top:24px"><a class="btn dark" href="https://calendly.com/alpha-kore25/new-meeting" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 18 18"><use href="#arrow"/></svg></span>Book a demo</a><a class="btn light" href="mailto:contacts@alphakore.org?subject=Delta%20early%20access"><span class="ic"><svg viewBox="0 0 18 18"><use href="#dots9"/></svg></span>Delta early access</a></div></div></div><form class="cform rv" id="cform" novalidate><span class="label">Write to us</span>
+    <label>Your name<input name="n" autocomplete="name" required></label>
+    <label>Your email<input name="e" type="email" autocomplete="email" required></label>
+    <label>How can we help?<textarea name="m" rows="5" required></textarea></label>
+    <button class="btn dark" type="submit">Send message</button><p class="fnote" id="fnote" role="status"></p></form>
+<script>document.getElementById('cform').addEventListener('submit', function (ev) {
+  ev.preventDefault(); var f = ev.target, n = f.n.value.trim(), e = f.e.value.trim(), m = f.m.value.trim(), o = document.getElementById('fnote');
+  if (!n || !/^\S+@\S+\.\S+$/.test(e) || !m) { o.textContent = 'Please add your name, a valid email and a message.'; return; }
+  o.textContent = 'Opening your email app. If nothing opens, write to contacts@alphakore.org.';
+  location.href = 'mailto:contacts@alphakore.org?subject=' + encodeURIComponent('Website message from ' + n) + '&body=' + encodeURIComponent(m + '\n\n' + n + ' (' + e + ')');
+});</script><div class="faqx"><span class="label">Questions</span><h2 class="big" style="margin:14px 0 24px">Quick answers</h2><div class="terms"><details><summary>What is AlphaKore?</summary><p>AlphaKore is an AI product company in Vadodara, Gujarat, India, founded in 2024. We build AI software that does repeat work so people don&#x27;t have to. Our products are Prism and Delta.</p></details><details><summary>What does Prism do?</summary><p>Prism is a desktop AI workbench for small manufacturing and engineering teams. It reads an inquiry and its drawing, then drafts the quote for your team to check. It runs on Windows, Mac and Linux.</p></details><details><summary>What is Delta?</summary><p>Delta is an AI career guide for students and colleges that builds a weekly plan from one conversation. It is coming soon, and you can ask for early access by email.</p></details><details><summary>How do I book a demo?</summary><p>Use the Book a demo button on the site to pick a time on our calendar, or write to contacts@alphakore.org.</p></details><details><summary>Where is AlphaKore based?</summary><p>AlphaKore is at 33 NarHari Park, Vadodara, Gujarat, India. We are available Monday to Friday, 10:00 to 18:00 IST.</p></details></div></div>
   </div></section>
 </main>
 
@@ -104,7 +114,7 @@
   </div>
 </footer>
 
-<script src="assets/common.js?v=1793452634"></script>
-<script src="assets/glass.js?v=1793452634"></script>
+<script src="assets/common.js?v=1793453017"></script>
+<script src="assets/glass.js?v=1793453017"></script>
 </body>
 </html>
