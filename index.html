@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Doto:wght,ROND@100..900,0..100&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css?v=1793448457">
+  <link rel="stylesheet" href="assets/style.css?v=1793448750">
   <meta name="theme-color" content="#EEEDEA">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 789 480'%3E%3Cpath d='M0,479 L295,480 L366,374 L330,312 L260,418 L106,417 L282,126 L387,302 L486,480 L789,480 L653,240 L787,18 L499,18 L420,134 L463,185 L531,75 L680,76 L577,245 L682,419 L521,417 L374,153 L283,0Z'/%3E%3C/svg%3E">
   <noscript><style>#loader { display: none !important; } .rv { opacity: 1 !important; transform: none !important; } .pre .pill { opacity: 1 !important; } .diagram.pre .tile svg { opacity: 1 !important; }</style></noscript>
@@ -120,65 +120,7 @@
 
     <div class="pnode"><span class="npill"><b>01</b></span></div>
     <div class="prod rv" id="prism">
-      <div class="vid" data-branch>
-        <div class="poster art"><svg class="prismart" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A prism splitting a beam of white light into the colours of the rainbow">
-  <defs>
-    <linearGradient id="pgFront" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".20"/><stop offset=".45" stop-color="#cfe3ff" stop-opacity=".05"/><stop offset="1" stop-color="#fff" stop-opacity=".13"/></linearGradient>
-    <linearGradient id="pgSide" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".34"/><stop offset="1" stop-color="#9ec4ff" stop-opacity=".06"/></linearGradient>
-    <linearGradient id="pgBase" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset="1" stop-color="#fff" stop-opacity=".10"/></linearGradient>
-    <linearGradient id="beamG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".25" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff"/></linearGradient>
-    <linearGradient id="fadeX" gradientUnits="userSpaceOnUse" x1="322" y1="0" x2="720" y2="0"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-    <mask id="mSpec" maskUnits="userSpaceOnUse" x="0" y="0" width="640" height="400"><rect width="640" height="400" fill="url(#fadeX)"/></mask>
-    <linearGradient id="fadeY" gradientUnits="userSpaceOnUse" x1="0" y1="300" x2="0" y2="400"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-    <mask id="mRef" maskUnits="userSpaceOnUse" x="0" y="300" width="640" height="100"><rect y="300" width="640" height="100" fill="url(#fadeY)"/></mask>
-    <radialGradient id="flare"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-    <radialGradient id="floorG" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-    <filter id="blur1" x="-5%" y="-30%" width="110%" height="160%"><feGaussianBlur stdDeviation="1.1"/></filter>
-    <filter id="blur6" x="-10%" y="-40%" width="120%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>
-    <filter id="blurS"><feGaussianBlur stdDeviation="2.2"/></filter>
-    <g id="pg">
-      <polygon points="165,300 375,300 437,278 227,278" fill="url(#pgBase)"/>
-      <polygon points="270,60 375,300 437,278 332,38" fill="url(#pgSide)"/>
-      <polygon points="270,60 165,300 375,300" fill="url(#pgFront)"/>
-      <polygon points="270,86 188,282 352,282" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="1.2"/>
-      <path d="M270,60 L165,300 L375,300 Z M270,60 L332,38 L437,278 L375,300 M332,38 L270,60" fill="none" stroke="#fff" stroke-opacity=".78" stroke-width="1.6" stroke-linejoin="round"/>
-      <path d="M165,300 L227,278 L437,278" fill="none" stroke="#fff" stroke-opacity=".30" stroke-width="1.1"/>
-      <path d="M270,60 L165,300" stroke="#fff" stroke-opacity=".95" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      <path d="M332,38 L437,278" stroke="#fff" stroke-opacity=".45" stroke-width="1.2" fill="none"/>
-    </g>
-  </defs>
-
-  <rect width="640" height="400" fill="#040405"/>
-  <ellipse cx="270" cy="304" rx="250" ry="26" fill="url(#floorG)"/>
-
-  <!-- floor reflection -->
-  <g mask="url(#mRef)" opacity=".5"><use href="#pg" transform="translate(0,600) scale(1,-1)"/></g>
-  <line x1="40" y1="300" x2="600" y2="300" stroke="#fff" stroke-opacity=".10"/>
-
-  <!-- the glass prism -->
-  <use href="#pg"/>
-
-  <!-- spectrum: seven colours, red bends least and violet most, fading with distance -->
-  <g mask="url(#mSpec)">
-    <g class="spec-glow" filter="url(#blur6)" opacity=".75" style="mix-blend-mode:screen"><polygon points="322.5,180.0 778.0,116.0 780.8,141.1" fill="#ff1f2d"/><polygon points="322.5,180.0 780.8,141.1 782.3,166.2" fill="#ff8a1c"/><polygon points="322.5,180.0 782.3,166.2 782.4,191.5" fill="#ffe61a"/><polygon points="322.5,180.0 782.4,191.5 781.0,216.7" fill="#22d84a"/><polygon points="322.5,180.0 781.0,216.7 778.3,241.7" fill="#1aa9ff"/><polygon points="322.5,180.0 778.3,241.7 774.3,266.6" fill="#4a2bff"/><polygon points="322.5,180.0 774.3,266.6 768.8,291.3" fill="#a02cff"/></g>
-    <g class="spec" filter="url(#blur1)" style="mix-blend-mode:screen"><polygon points="322.5,180.0 778.0,116.0 780.8,141.1" fill="#ff1f2d"/><polygon points="322.5,180.0 780.8,141.1 782.3,166.2" fill="#ff8a1c"/><polygon points="322.5,180.0 782.3,166.2 782.4,191.5" fill="#ffe61a"/><polygon points="322.5,180.0 782.4,191.5 781.0,216.7" fill="#22d84a"/><polygon points="322.5,180.0 781.0,216.7 778.3,241.7" fill="#1aa9ff"/><polygon points="322.5,180.0 778.3,241.7 774.3,266.6" fill="#4a2bff"/><polygon points="322.5,180.0 774.3,266.6 768.8,291.3" fill="#a02cff"/></g>
-  </g>
-
-  <!-- coloured rays travelling in and hitting the prism: together they make the white beam -->
-  <g class="rays-in" style="mix-blend-mode:screen"><line x1="8" y1="96" x2="217.5" y2="180.0" stroke="#ff4fa3" stroke-width="1.6" stroke-linecap="round" opacity=".38"/><line class="flow" style="animation-delay:0.00s" x1="8" y1="96" x2="217.5" y2="180.0" stroke="#ff4fa3" stroke-width="3" stroke-linecap="round" stroke-dasharray="16 34" filter="url(#blurS)"/><line class="flow" style="animation-delay:0.00s" x1="8" y1="96" x2="217.5" y2="180.0" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="6 44"/><line x1="8" y1="150" x2="217.5" y2="180.0" stroke="#2fd0ff" stroke-width="1.6" stroke-linecap="round" opacity=".38"/><line class="flow" style="animation-delay:-0.37s" x1="8" y1="150" x2="217.5" y2="180.0" stroke="#2fd0ff" stroke-width="3" stroke-linecap="round" stroke-dasharray="16 34" filter="url(#blurS)"/><line class="flow" style="animation-delay:-0.37s" x1="8" y1="150" x2="217.5" y2="180.0" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="6 44"/><line x1="8" y1="304" x2="217.5" y2="180.0" stroke="#ffb020" stroke-width="1.6" stroke-linecap="round" opacity=".38"/><line class="flow" style="animation-delay:-0.74s" x1="8" y1="304" x2="217.5" y2="180.0" stroke="#ffb020" stroke-width="3" stroke-linecap="round" stroke-dasharray="16 34" filter="url(#blurS)"/><line class="flow" style="animation-delay:-0.74s" x1="8" y1="304" x2="217.5" y2="180.0" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="6 44"/><line x1="8" y1="352" x2="217.5" y2="180.0" stroke="#7dff4a" stroke-width="1.6" stroke-linecap="round" opacity=".38"/><line class="flow" style="animation-delay:-1.11s" x1="8" y1="352" x2="217.5" y2="180.0" stroke="#7dff4a" stroke-width="3" stroke-linecap="round" stroke-dasharray="16 34" filter="url(#blurS)"/><line class="flow" style="animation-delay:-1.11s" x1="8" y1="352" x2="217.5" y2="180.0" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="6 44"/><line x1="8" y1="40" x2="217.5" y2="180.0" stroke="#b46bff" stroke-width="1.6" stroke-linecap="round" opacity=".38"/><line class="flow" style="animation-delay:-1.48s" x1="8" y1="40" x2="217.5" y2="180.0" stroke="#b46bff" stroke-width="3" stroke-linecap="round" stroke-dasharray="16 34" filter="url(#blurS)"/><line class="flow" style="animation-delay:-1.48s" x1="8" y1="40" x2="217.5" y2="180.0" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="6 44"/></g>
-  <!-- the colours leaving the glass, flowing outwards -->
-  <g class="rays-out" mask="url(#mSpec)" style="mix-blend-mode:screen"><line class="flowo" style="animation-delay:0.00s" x1="322.5" y1="180.0" x2="779.6" y2="128.5" stroke="#ff1f2d" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="18 58" filter="url(#blurS)"/><line class="flowo" style="animation-delay:0.00s" x1="322.5" y1="180.0" x2="779.6" y2="128.5" stroke="#fff" stroke-width="1.1" stroke-linecap="round" stroke-dasharray="5 71" opacity=".9"/><line class="flowo" style="animation-delay:-0.28s" x1="322.5" y1="180.0" x2="781.7" y2="153.6" stroke="#ff8a1c" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="18 58" filter="url(#blurS)"/><line class="flowo" style="animation-delay:-0.28s" x1="322.5" y1="180.0" x2="781.7" y2="153.6" stroke="#fff" stroke-width="1.1" stroke-linecap="round" stroke-dasharray="5 71" opacity=".9"/><line class="flowo" style="animation-delay:-0.56s" x1="322.5" y1="180.0" x2="782.5" y2="178.9" stroke="#ffe61a" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="18 58" filter="url(#blurS)"/><line class="flowo" style="animation-delay:-0.56s" x1="322.5" y1="180.0" x2="782.5" y2="178.9" stroke="#fff" stroke-width="1.1" stroke-linecap="round" stroke-dasharray="5 71" opacity=".9"/><line class="flowo" style="animation-delay:-0.84s" x1="322.5" y1="180.0" x2="781.9" y2="204.1" stroke="#22d84a" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="18 58" filter="url(#blurS)"/><line class="flowo" style="animation-delay:-0.84s" x1="322.5" y1="180.0" x2="781.9" y2="204.1" stroke="#fff" stroke-width="1.1" stroke-linecap="round" stroke-dasharray="5 71" opacity=".9"/><line class="flowo" style="animation-delay:-1.12s" x1="322.5" y1="180.0" x2="779.9" y2="229.2" stroke="#1aa9ff" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="18 58" filter="url(#blurS)"/><line class="flowo" style="animation-delay:-1.12s" x1="322.5" y1="180.0" x2="779.9" y2="229.2" stroke="#fff" stroke-width="1.1" stroke-linecap="round" stroke-dasharray="5 71" opacity=".9"/><line class="flowo" style="animation-delay:-1.40s" x1="322.5" y1="180.0" x2="776.5" y2="254.2" stroke="#4a2bff" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="18 58" filter="url(#blurS)"/><line class="flowo" style="animation-delay:-1.40s" x1="322.5" y1="180.0" x2="776.5" y2="254.2" stroke="#fff" stroke-width="1.1" stroke-linecap="round" stroke-dasharray="5 71" opacity=".9"/><line class="flowo" style="animation-delay:-1.68s" x1="322.5" y1="180.0" x2="771.7" y2="279.0" stroke="#a02cff" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="18 58" filter="url(#blurS)"/><line class="flowo" style="animation-delay:-1.68s" x1="322.5" y1="180.0" x2="771.7" y2="279.0" stroke="#fff" stroke-width="1.1" stroke-linecap="round" stroke-dasharray="5 71" opacity=".9"/></g>
-
-  <!-- the white beam in, and its path through the glass -->
-  <g class="beam">
-    <line x1="8" y1="247.4" x2="217.5" y2="180.0" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".28" filter="url(#blurS)"/>
-    <line x1="8" y1="247.4" x2="217.5" y2="180.0" stroke="url(#beamG)" stroke-width="2.6" stroke-linecap="round"/>
-    <line x1="217.5" y1="180.0" x2="322.5" y2="180.0" stroke="#fff" stroke-width="2.4" opacity=".85"/>
-    <line x1="217.5" y1="180.0" x2="322.5" y2="180.0" stroke="#fff" stroke-width="8" opacity=".25" filter="url(#blurS)"/>
-  </g>
-  <circle class="flare" cx="217.5" cy="180.0" r="20" fill="url(#flare)"/>
-  <circle class="flare f2" cx="322.5" cy="180.0" r="24" fill="url(#flare)"/>
-</svg></div>
+      <div class="vid" data-branch><img class="pshot" src="assets/media/prism-product.jpg" alt="Prism, the AI workbench for quotes" width="1024" height="576" loading="lazy" decoding="async">
       </div>
       <div>
         <span class="pname"><svg class="plogo" viewBox="0 0 260 340" aria-hidden="true"><g stroke-linejoin="round">
@@ -196,12 +138,7 @@
 
     <div class="pnode"><span class="npill"><b>02</b></span></div>
     <div class="prod flip rv" id="delta">
-      <div class="vid" data-branch>
-        <div class="poster" style="background:linear-gradient(176deg,#8B8378 0%,#9C6F68 45%,#7D252B 100%)">
-          <div class="app de"><div class="bar"><i></i><i></i><i></i></div>
-            <div class="body"><span class="k">Week 6 &middot; Frontend track</span><h6>Ship one portfolio page and apply to three roles.</h6>
-              <div class="t d">Build a responsive portfolio page</div><div class="t d">Solve 5 array problems</div><div class="t">Mock interview, Friday</div></div></div>
-        </div>
+      <div class="vid" data-branch><img class="pshot" src="assets/media/delta-product.jpg" alt="Delta, the AI career guide" width="1024" height="576" loading="lazy" decoding="async">
       </div>
       <div>
         <span class="pname"><svg class="plogo" viewBox="190 80 370 560" aria-hidden="true"><path fill="#111110" fill-rule="evenodd" d="M287,90 L544,348 L258,632 L200,575 L313,462 L200,348 L315,234 L278,197 L250,225 L200,175 Z M372,292 L428,348 L372,404 L316,348 Z"/></svg>Delta <span class="tagp soon">Coming soon</span></span>
@@ -551,6 +488,6 @@
   })();
 })();
 </script>
-<script src="assets/glass.js?v=1793448457"></script>
+<script src="assets/glass.js?v=1793448750"></script>
 </body>
 </html>
