@@ -771,3 +771,28 @@ footer.reveal .marq { border: 0 !important; -webkit-mask-image: none; mask-image
 .cform input, .cform textarea { font: 400 16px var(--sans); letter-spacing: 0; text-transform: none; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; width: 100%; resize: vertical; }
 .cform input:focus, .cform textarea:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
 .cform .btn { justify-self: start; } .fnote { font: 400 13px var(--mono); color: var(--mute); min-height: 1.4em; }
+
+/* team: big photo, info beside it, links under the info; six cards a screen with a scroller above */
+.tgrid { max-width: var(--w); margin: 28px auto 0; padding: 0 var(--g); }
+.tctl { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; } .tctl[hidden] { display: none; }
+.tbar { flex: 1; height: 3px; border-radius: 3px; background: rgba(20,20,18,.1); position: relative; overflow: hidden; }
+.tbar i { position: absolute; top: 0; bottom: 0; left: calc(var(--p, 0) * (1 - var(--w, 1)) * 100%); width: calc(var(--w, 1) * 100%); background: var(--ink); border-radius: 3px; transition: left .15s linear; }
+.tctl button { width: 40px; height: 40px; border-radius: 50%; border: 0; cursor: pointer; font: 400 17px var(--sans); color: var(--ink); background: rgba(255,255,255,.7); box-shadow: inset 0 0 0 1px rgba(20,20,18,.1); transition: background .2s, color .2s, opacity .2s; }
+.tctl button:hover:not(:disabled) { background: var(--ink); color: #fff; } .tctl button:disabled { opacity: .35; cursor: default; }
+.ttrack { --cols: 3; --rows: 2; --gap: 16px; display: grid; grid-template-rows: repeat(var(--rows), auto); grid-auto-flow: column; grid-auto-columns: calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); gap: var(--gap); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; overscroll-behavior-x: contain; padding-bottom: 4px; }
+.ttrack::-webkit-scrollbar { display: none; } .ttrack:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 18px; }
+.tk { scroll-snap-align: start; display: flex; gap: 16px; padding: 12px; border-radius: 22px; background: rgba(255,255,255,.6); box-shadow: inset 0 0 0 1px rgba(20,20,18,.07); min-width: 0; transition: background .25s, transform .3s; }
+.tk:hover { background: #fff; transform: translateY(-3px); }
+.tk-ph { flex: none; width: 44%; aspect-ratio: 3 / 4; border-radius: 15px; overflow: hidden; background: #E2E1DC; display: grid; place-items: center; }
+.tk-ph img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1) contrast(1.05); transition: filter .4s, transform .5s; } .tk:hover .tk-ph img { filter: none; transform: scale(1.04); }
+.tk-ph span { font: 800 34px var(--dot); font-variation-settings: 'ROND' 100; color: #A9A8A3; }
+.tk-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 4px 2px 2px 0; }
+.tk-g { font: 400 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--mute); display: flex; align-items: center; gap: 7px; } .tk-g::before { content: ''; width: 6px; height: 6px; background: var(--ink); }
+.tk-tx b { font: 400 21px/1.15 var(--sans); letter-spacing: -.03em; color: var(--ink); margin-top: 12px; }
+.tk-tx p { font: 400 12px/1.5 var(--mono); color: var(--mute); margin-top: 8px; }
+.tk-ico { margin-top: auto; padding-top: 14px; display: flex; flex-wrap: wrap; gap: 7px; } .tk-ico small { font: 400 11px var(--mono); color: var(--mute); }
+.tk-ico a { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); background: rgba(255,255,255,.8); box-shadow: inset 0 0 0 1px rgba(20,20,18,.12); transition: background .2s, color .2s, transform .2s; }
+.tk-ico a:hover { background: var(--ink); color: #fff; transform: translateY(-2px); } .tk-ico svg { width: 15px; height: 15px; }
+@media (max-width: 1100px) { .ttrack { --cols: 2; --rows: 3; } }
+@media (max-width: 700px) { .ttrack { --cols: 1; --rows: 1; grid-auto-columns: 88%; scroll-snap-type: x mandatory; } .tk-tx b { font-size: 20px; } .tk-ico a { width: 38px; height: 38px; } }
+.tmq, .tmq-track { display: none !important; }

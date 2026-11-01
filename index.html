@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Doto:wght,ROND@100..900,0..100&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css?v=1793453544">
+  <link rel="stylesheet" href="assets/style.css?v=1793501169">
   <meta name="theme-color" content="#EEEDEA">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 789 480'%3E%3Cpath d='M0,479 L295,480 L366,374 L330,312 L260,418 L106,417 L282,126 L387,302 L486,480 L789,480 L653,240 L787,18 L499,18 L420,134 L463,185 L531,75 L680,76 L577,245 L682,419 L521,417 L374,153 L283,0Z'/%3E%3C/svg%3E">
   <noscript><style>#loader { display: none !important; } .rv { opacity: 1 !important; transform: none !important; } .pre .pill { opacity: 1 !important; } .diagram.pre .tile svg { opacity: 1 !important; }</style></noscript>
@@ -171,7 +171,11 @@
       </div>
     </div>
   </div>
-  <div class="tmq rv" id="tmq" role="region" aria-label="Team members. Scroll sideways or let it drift."><div class="tmq-track" id="tmqTrack"></div></div>
+  <div class="tgrid rv" id="tmq">
+    <div class="tctl" id="tCtl" hidden><div class="tbar" id="tBar" aria-hidden="true"><i></i></div>
+      <button type="button" id="tPrev" aria-label="Previous">&larr;</button><button type="button" id="tNext" aria-label="Next">&rarr;</button></div>
+    <div class="ttrack" id="tmqTrack" role="region" aria-label="Team members" tabindex="0"></div>
+  </div>
 </section>
 
 </main>
@@ -377,27 +381,30 @@
   const track = document.getElementById('tmqTrack');
   if (track) {
     const byName = n => TEAM.find(m => m[0] === n), ini = n => n.split(' ').map(w => w[0]).join('').slice(0, 2);
-    const cardOf = ([n, f, role, links]) => {
+    const TAG = { founders: 'Founder', developers: 'Developer', creative: 'Creative', marketing: 'Marketing' };
+    const cardOf = ([n, f, role, links], g) => {
       const icons = links.map(([k, u]) => `<a href="${u}" target="_blank" rel="noopener" aria-label="${n} on ${LABEL[k]}" title="${LABEL[k]}">${IC[k]}</a>`).join('');
-      const face = HAVE.has(f) ? `<img src="assets/team/t_${f}.jpg" alt="${n}" width="240" height="270" loading="lazy" decoding="async">` : ini(n);
-      return `<article class="tc"><span class="ph">${face}</span><b>${n}</b><small>${role}</small><div class="ico">${icons}</div></article>`;
+      const face = HAVE.has(f) ? `<img src="assets/team/t_${f}.jpg" alt="${n}" width="240" height="300" loading="lazy" decoding="async">` : `<span>${ini(n)}</span>`;
+      return `<article class="tk"><div class="tk-ph">${face}</div><div class="tk-tx"><span class="tk-g">${TAG[g]}</span><b>${n}</b><p>${role}</p><div class="tk-ico">${icons || '<small>No public links yet</small>'}</div></div></article>`;
     };
+    const prev = document.getElementById('tPrev'), next = document.getElementById('tNext'), bar = document.getElementById('tBar'), ctl = document.getElementById('tCtl');
     let cur = 'founders';
+    const sync = () => {
+      const max = track.scrollWidth - track.clientWidth; ctl.hidden = max < 4;
+      const p = max > 0 ? track.scrollLeft / max : 0; bar.style.setProperty('--p', p); bar.style.setProperty('--w', Math.min(1, track.clientWidth / track.scrollWidth));
+      prev.disabled = track.scrollLeft < 4; next.disabled = track.scrollLeft > max - 4;
+    };
     function render(g) {
-      cur = g; const ms = GROUPS[g].map(byName), one = ms.map(cardOf).join('');
-      /* repeat the set until it is wider than the screen, then double it so the loop has no seam */
-      const per = Math.max(1, Math.ceil((innerWidth + 240) / (ms.length * 214)));
-      track.innerHTML = `<div class="half">${one.repeat(per)}</div><div class="half" aria-hidden="true">${one.repeat(per)}</div>`;
-      track.style.setProperty('--dur', Math.max(24, ms.length * per * 214 / 50) + 's');
-      track.querySelectorAll('.half:last-child a').forEach(a => a.tabIndex = -1);
+      cur = g; track.scrollLeft = 0;
+      track.innerHTML = GROUPS[g].map(byName).map(m => cardOf(m, g)).join('');
       document.querySelectorAll('.ttabs [role=tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.g === g));
+      requestAnimationFrame(sync);
     }
-    /* touch: freeze the row the moment a finger lands so a tap hits the icon it was aimed at */
-    const mq = document.getElementById('tmq');
-    mq.addEventListener('touchstart', () => track.classList.add('hold'), { passive: true });
-    mq.addEventListener('touchend', () => setTimeout(() => track.classList.remove('hold'), 1800), { passive: true });
+    const page = d => track.scrollBy({ left: d * (track.clientWidth + 16), behavior: 'smooth' });
+    prev.addEventListener('click', () => page(-1)); next.addEventListener('click', () => page(1));
+    track.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
     document.querySelector('.ttabs').addEventListener('click', e => { const b = e.target.closest('[role=tab]'); if (b && b.dataset.g !== cur) render(b.dataset.g); });
-    let rz = 0; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => render(cur), 250); });
+    let rz = 0; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(sync, 200); });
     render('founders');
   }
 
@@ -488,6 +495,6 @@
   })();
 })();
 </script>
-<script src="assets/glass.js?v=1793453544"></script>
+<script src="assets/glass.js?v=1793501169"></script>
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script><script defer src="/_vercel/insights/script.js"></script></body>
 </html>
