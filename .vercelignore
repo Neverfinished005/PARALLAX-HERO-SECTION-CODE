@@ -8,3 +8,6 @@ scr_*.png
 .codebase-memory/
 server.py
 *.log
+README.md
+assets/media/README.txt
+llms.txt.bak
