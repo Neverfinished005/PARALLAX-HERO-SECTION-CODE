@@ -132,7 +132,7 @@
 <polygon points="28,60 80,14 106,296 58,332" fill="none" stroke="#4EDBB8" stroke-width="13"/></g></svg>Prism <span class="tagp live">Live</span></span>
         <p class="p">Reads the inquiry and the drawing, then drafts the quote for your team to check.</p>
         <p class="pmeta">Small manufacturing teams &middot; Windows, Mac, Linux</p>
-        <a class="btn dark" href="https://calendly.com/alpha-kore25/new-meeting" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 18 18"><use href="#arrow"/></svg></span>Book a Prism demo</a>
+        <a class="btn dark" href="https://prism-landing-page-site-3bco.vercel.app/" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 18 18"><use href="#arrow"/></svg></span>Explore Prism</a>
       </div>
     </div>
 
@@ -164,9 +164,9 @@
     <div class="thead rv">
       <h2 class="big">Ten builders<br><span class="g">who ship together</span></h2>
       <div class="ttabs" role="tablist" aria-label="Team groups">
-        <button type="button" role="tab" data-g="founders" aria-selected="true">Founders</button>
-        <button type="button" role="tab" data-g="developers" aria-selected="false">Developers</button>
-        <button type="button" role="tab" data-g="creative" aria-selected="false">Creative</button>
+        <button type="button" role="tab" data-g="leadership" aria-selected="true">Leadership</button>
+        <button type="button" role="tab" data-g="engineering" aria-selected="false">Engineering</button>
+        <button type="button" role="tab" data-g="sales" aria-selected="false">Sales</button>
         <button type="button" role="tab" data-g="marketing" aria-selected="false">Marketing</button>
       </div>
     </div>
@@ -192,7 +192,7 @@
           <a href="https://x.com/alphakore10" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2.3h3.3l-7.2 8.2 8.5 11.2h-6.6l-5.2-6.8-6 6.8H1.7l7.7-8.8L1.3 2.3h6.8l4.7 6.2zm-1.1 17.5h1.8L7.1 4.1h-2z"/></svg></a>
         </div>
       </div>
-      <div><h4>Products</h4><ul><li><a href="#prism">Prism</a></li><li><a href="#delta">Delta</a></li></ul></div>
+      <div><h4>Products</h4><ul><li><a href="https://prism-landing-page-site-3bco.vercel.app/" target="_blank" rel="noopener">Prism</a></li><li><a href="#delta">Delta</a></li></ul></div>
       <div><h4>Company</h4><ul><li><a href="careers.html">Careers</a></li><li><a href="contact.html">Contact us</a></li><li><a href="terms.html">Terms &amp; Conditions</a></li></ul></div>
     </div>
     <div class="marq" aria-hidden="true"><div class="marq-track"><div class="marq-set"><span>Ship it.</span><i></i><span>Less admin.</span><i></i><span>Fewer tabs.</span><i></i><span>Done by Friday.</span><i></i><span>No more copy-paste.</span><i></i></div><div class="marq-set"><span>Ship it.</span><i></i><span>Less admin.</span><i></i><span>Fewer tabs.</span><i></i><span>Done by Friday.</span><i></i><span>No more copy-paste.</span><i></i></div></div></div>
@@ -359,36 +359,53 @@
   };
   const LABEL = { in: 'LinkedIn', gh: 'GitHub', ig: 'Instagram', web: 'Portfolio' };
   /* [name, photo id, role, [[type, url], ...]]. A photo is picked up from assets/team/t_<id>.jpg when the file exists, otherwise initials show. */
-  const TEAM = [
-    ['Hitarth Trivedi', 'hitarth', 'Lead Architect & Full Stack', [['in', 'https://www.linkedin.com/in/hitarth-trivedi-ba1986300'], ['gh', 'https://github.com/HitarthTrivedi'], ['ig', 'https://www.instagram.com/htrivedi_']]],
-    ['Parth Soni', 'parth', 'Systems & Cloud Engineer', [['in', 'https://www.linkedin.com/in/parth-soni-54a974288'], ['web', 'https://parth-soni.vercel.app'], ['ig', 'https://www.instagram.com/parth_soni3010']]],
-    ['Harsh', 'harsh', 'AI Systems & Backend Engineer', [['in', 'https://www.linkedin.com/in/harsh8818198'], ['web', 'https://harsh8818198portfolio.netlify.app/'], ['ig', 'https://www.instagram.com/0_8818198']]],
-    ['Meet Shah', 'meet', 'Core Systems Engineer', [['in', 'https://www.linkedin.com/in/meetshah0656'], ['gh', 'https://github.com/MeetShah0656']]],
-    ['Het Vaghela', 'het', 'Creative Technologist & Frontend', [['in', 'https://www.linkedin.com/in/het-vaghela-8a8647339/'], ['web', 'https://portfolio-website-sigma-lac-93.vercel.app/']]],
-    ['Om Bhonsle', 'om', 'DevOps & Cloud Systems', [['in', 'https://www.linkedin.com/in/om-bhonsle-a674133a3'], ['ig', 'https://www.instagram.com/ombhonsle2306']]],
-    ['Deep', 'deep', 'Creative & Technical Direction', []],
-    ['Shlok Patel', 'shlok', 'Product Designer & UX', [['in', 'https://www.linkedin.com/in/shlok-patel-051b162b2'], ['ig', 'https://www.instagram.com/shlok_1125']]],
-    ['Manav Patel', 'manav', 'Research & Engineering', [['in', 'https://www.linkedin.com/in/manav-patel-4930132a6']]],
-    ['Rudra Vable', 'rudra', 'ML Engineer & Creative Developer', [['in', 'https://www.linkedin.com/in/rudra-vable'], ['gh', 'https://github.com/Neverfinished005'], ['ig', 'https://www.instagram.com/rudr_a.25']]],
-  ];
+  const TEAM = {
+    'Hitarth Trivedi': ['hitarth', [['in', 'https://www.linkedin.com/in/hitarth-trivedi-ba1986300'], ['gh', 'https://github.com/HitarthTrivedi'], ['ig', 'https://www.instagram.com/htrivedi_']]],
+    'Parth Soni': ['parth', [['in', 'https://www.linkedin.com/in/parth-soni-54a974288'], ['web', 'https://parth-soni.vercel.app'], ['ig', 'https://www.instagram.com/parth_soni3010']]],
+    'Harsh': ['harsh', [['in', 'https://www.linkedin.com/in/harsh8818198'], ['web', 'https://harsh8818198portfolio.netlify.app/'], ['ig', 'https://www.instagram.com/0_8818198']]],
+    'Het Vaghela': ['het', [['in', 'https://www.linkedin.com/in/het-vaghela-8a8647339/'], ['web', 'https://portfolio-website-sigma-lac-93.vercel.app/']]],
+    'Rudra Vable': ['rudra', [['in', 'https://www.linkedin.com/in/rudra-vable'], ['gh', 'https://github.com/Neverfinished005'], ['ig', 'https://www.instagram.com/rudr_a.25']]],
+    'Meet Shah': ['meet', [['in', 'https://www.linkedin.com/in/meetshah0656'], ['gh', 'https://github.com/MeetShah0656']]],
+    'Shlok Patel': ['shlok', [['in', 'https://www.linkedin.com/in/shlok-patel-051b162b2'], ['ig', 'https://www.instagram.com/shlok_1125']]],
+    'Om Bhonsle': ['om', [['in', 'https://www.linkedin.com/in/om-bhonsle-a674133a3'], ['ig', 'https://www.instagram.com/ombhonsle2306']]],
+    'Deep': ['deep', []],
+    'Tanmay': ['tanmay', []],
+  };
   const HAVE = new Set(['hitarth', 'parth', 'harsh', 'meet', 'om', 'shlok', 'het', 'rudra']);   /* photos present in assets/team */
+  /* group -> [name, role, what they do] */
   const GROUPS = {
-    founders: ['Hitarth Trivedi', 'Parth Soni', 'Harsh', 'Het Vaghela'],
-    developers: ['Hitarth Trivedi', 'Parth Soni', 'Harsh', 'Meet Shah', 'Het Vaghela', 'Rudra Vable'],
-    creative: ['Het Vaghela', 'Deep', 'Shlok Patel', 'Manav Patel'],
-    marketing: ['Shlok Patel', 'Om Bhonsle', 'Manav Patel'],
+    leadership: [
+      ['Hitarth Trivedi', 'Chief Executive Officer (CEO)', 'Leads company strategy, business direction, and overall organizational growth.'],
+      ['Parth Soni', 'Chief Technology Officer (CTO)', 'Leads technology strategy, software architecture, database engineering, frontend development, and system performance.'],
+      ['Harsh', 'Chief Information Officer (CIO)', 'Oversees backend engineering, AI systems, core platform development, and information systems.'],
+      ['Het Vaghela', 'Chief Operating Officer (COO)', 'Oversees operational strategy, system architecture, database engineering, and operational optimization.'],
+    ],
+    engineering: [
+      ['Rudra Vable', 'Frontend Engineer', 'Focuses on frontend development and user interface implementation.'],
+      ['Meet Shah', 'Frontend Engineer', 'Works on frontend development and user interface implementation.'],
+    ],
+    sales: [
+      ['Shlok Patel', 'Chief Business Officer (CBO)', 'Sales & Business Development'],
+      ['Om Bhonsle', 'Sales & Business Development', ''],
+    ],
+    marketing: [
+      ['Meet Shah', 'Marketing & Technical Marketing', ''],
+      ['Deep', 'Creative Direction & Technical Strategy', ''],
+      ['Tanmay', 'Marketing & Brand Communication', ''],
+    ],
   };
   const track = document.getElementById('tmqTrack');
   if (track) {
-    const byName = n => TEAM.find(m => m[0] === n), ini = n => n.split(' ').map(w => w[0]).join('').slice(0, 2);
-    const TAG = { founders: 'Founder', developers: 'Developer', creative: 'Creative', marketing: 'Marketing' };
-    const cardOf = ([n, f, role, links], g) => {
+    const ini = n => n.split(' ').map(w => w[0]).join('').slice(0, 2);
+    const TAG = { leadership: 'Leadership', engineering: 'Engineering', sales: 'Sales', marketing: 'Marketing' };
+    const cardOf = ([n, role, desc], g) => {
+      const [f, links] = TEAM[n];
       const icons = links.map(([k, u]) => `<a href="${u}" target="_blank" rel="noopener" aria-label="${n} on ${LABEL[k]}" title="${LABEL[k]}">${IC[k]}</a>`).join('');
       const face = HAVE.has(f) ? `<img src="assets/team/t_${f}.jpg" alt="${n}" width="240" height="300" loading="lazy" decoding="async">` : `<span>${ini(n)}</span>`;
-      return `<article class="tk"><div class="tk-ph">${face}</div><div class="tk-tx"><span class="tk-g">${TAG[g]}</span><b>${n}</b><p>${role}</p><div class="tk-ico">${icons || '<small>No public links yet</small>'}</div></div></article>`;
+      return `<article class="tk"><div class="tk-ph">${face}</div><div class="tk-tx"><span class="tk-g">${TAG[g]}</span><b>${n}</b><strong class="tk-r">${role}</strong>${desc ? `<p>${desc}</p>` : ''}<div class="tk-ico">${icons}</div></div></article>`;
     };
     const prev = document.getElementById('tPrev'), next = document.getElementById('tNext'), bar = document.getElementById('tBar'), ctl = document.getElementById('tCtl');
-    let cur = 'founders';
+    let cur = 'leadership';
     const sync = () => {
       const max = track.scrollWidth - track.clientWidth; ctl.hidden = max < 4;
       const p = max > 0 ? track.scrollLeft / max : 0; bar.style.setProperty('--p', p); bar.style.setProperty('--w', Math.min(1, track.clientWidth / track.scrollWidth));
@@ -396,7 +413,7 @@
     };
     function render(g) {
       cur = g; track.scrollLeft = 0;
-      track.innerHTML = GROUPS[g].map(byName).map(m => cardOf(m, g)).join(''); track.dataset.n = GROUPS[g].length;
+      track.innerHTML = GROUPS[g].map(m => cardOf(m, g)).join(''); track.dataset.n = GROUPS[g].length;
       document.querySelectorAll('.ttabs [role=tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.g === g));
       requestAnimationFrame(sync);
     }
@@ -405,7 +422,7 @@
     track.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
     document.querySelector('.ttabs').addEventListener('click', e => { const b = e.target.closest('[role=tab]'); if (b && b.dataset.g !== cur) render(b.dataset.g); });
     let rz = 0; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(sync, 200); });
-    render('founders');
+    render('leadership');
   }
 
   /* ---------- products: spine from the first product node to the end, branches out to each video ---------- */
