@@ -400,7 +400,7 @@
     const TAG = { leadership: 'Leadership', engineering: 'Engineering', sales: 'Sales', marketing: 'Marketing' };
     const cardOf = ([n, role, desc], g) => {
       const [f, links] = TEAM[n];
-      const icons = links.map(([k, u]) => `<a href="${u}" target="_blank" rel="noopener" aria-label="${n} on ${LABEL[k]}" title="${LABEL[k]}">${IC[k]}</a>`).join('');
+      const icons = links.map(([k, u]) => `<a href="${u}" target="_blank" rel="noopener" aria-label="${n} on ${LABEL[k]}">${IC[k]}<span>${LABEL[k]}</span></a>`).join('');
       const face = HAVE.has(f) ? `<img src="assets/team/t_${f}.jpg" alt="${n}" width="240" height="300" loading="lazy" decoding="async">` : `<span>${ini(n)}</span>`;
       return `<article class="tk"><div class="tk-ph">${face}</div><div class="tk-tx"><span class="tk-g">${TAG[g]}</span><b>${n}</b><strong class="tk-r">${role}</strong>${desc ? `<p>${desc}</p>` : ''}<div class="tk-ico">${icons}</div></div></article>`;
     };

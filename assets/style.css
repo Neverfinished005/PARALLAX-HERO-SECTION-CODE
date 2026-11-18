@@ -826,3 +826,28 @@ footer.reveal .marq { border: 0 !important; -webkit-mask-image: none; mask-image
 .tk-r { display: block; font: 500 12px/1.4 var(--mono); color: var(--ink); margin-top: 8px; }
 .tk-tx p { margin-top: 6px; min-height: 0 !important; }
 .tk-ico:empty { display: none; }
+
+/* Team: big profile cards (photo left, details right), all people visible, no slider */
+#tmq .tctl { display: none !important; }
+#tmq .ttrack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-flow: row; grid-auto-columns: auto; gap: 28px 36px; overflow: visible; scroll-snap-type: none; padding: 0; }
+#tmq .ttrack .tk { display: grid; grid-template-columns: minmax(0, 42%) minmax(0, 1fr); gap: 28px; padding: 0; background: none; box-shadow: none; border-radius: 0; align-items: start; transform: none; }
+#tmq .ttrack .tk:hover { background: none; transform: none; }
+#tmq .ttrack .tk-ph { width: 100%; aspect-ratio: 4 / 5; border-radius: 22px; align-self: start; }
+#tmq .ttrack .tk-ph span { font-size: 52px; }
+#tmq .ttrack .tk-tx { padding: 6px 0 0; min-width: 0; }
+#tmq .ttrack .tk-g { font: 400 11px var(--mono); letter-spacing: .14em; }
+#tmq .ttrack .tk-g::before { display: none; }
+#tmq .ttrack .tk-tx b { font: 600 clamp(26px, 2.6vw, 34px)/1.1 var(--sans); letter-spacing: -.03em; margin-top: 12px; }
+#tmq .ttrack .tk-r { font: 400 12px/1.5 var(--mono); color: var(--mute); margin-top: 8px; }
+#tmq .ttrack .tk-tx p { font: 400 14.5px/1.6 var(--sans); color: var(--text); margin-top: 16px; min-height: 0; }
+#tmq .ttrack .tk-ico { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; }
+#tmq .ttrack .tk-ico:empty { display: none; }
+#tmq .ttrack .tk-ico a { width: auto; height: auto; padding: 7px 12px; gap: 7px; border-radius: 99px; display: inline-flex; align-items: center; font: 400 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; background: rgba(255,255,255,.7); box-shadow: inset 0 0 0 1px rgba(20,20,18,.14); }
+#tmq .ttrack .tk-ico a:hover { background: var(--ink); color: #fff; transform: none; }
+#tmq .ttrack .tk-ico svg { width: 13px; height: 13px; }
+@media (max-width: 1000px) { #tmq .ttrack { grid-template-columns: minmax(0, 1fr); gap: 40px; } }
+@media (max-width: 560px) {
+  #tmq .ttrack .tk { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  #tmq .ttrack .tk-ph { aspect-ratio: 4 / 4.4; }
+  #tmq .ttrack .tk-tx b { font-size: 28px; }
+}
