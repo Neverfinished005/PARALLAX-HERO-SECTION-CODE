@@ -871,3 +871,26 @@ footer.reveal .marq { border: 0 !important; -webkit-mask-image: none; mask-image
   #tmq .ttrack .tk-ph { width: 100%; }
 }
 @media (max-width: 560px) { #tmq .ttrack .tk-ph { aspect-ratio: 4 / 5; } }
+
+/* Team: photo left, details right, four in one line on wide desktop */
+@media (min-width: 1280px) {
+  #tmq.tgrid { max-width: 1480px; padding: 0 28px; }
+  #tmq .ttrack { gap: 20px; }
+  #tmq .ttrack .tk { display: grid; grid-template-columns: minmax(0, 40%) minmax(0, 1fr); gap: 16px; align-items: start; }
+  #tmq .ttrack .tk-ph { border-radius: 16px; }
+  #tmq .ttrack .tk-ph span { font-size: 34px; }
+  #tmq .ttrack .tk-tx { display: flex; flex-direction: column; padding: 2px 0 0; }
+  #tmq .ttrack .tk-g { font-size: 9.5px; letter-spacing: .12em; }
+  #tmq .ttrack .tk-tx b { font-size: 21px; margin-top: 8px; }
+  #tmq .ttrack .tk-r { font-size: 10.5px; margin-top: 6px; }
+  #tmq .ttrack .tk-tx p { font-size: 12.5px; line-height: 1.55; margin-top: 10px; }
+  #tmq .ttrack .tk-ico { margin-top: 12px; padding-top: 12px; gap: 6px; }
+  #tmq .ttrack .tk-ico a { width: 32px; height: 32px; padding: 0; justify-content: center; }
+  #tmq .ttrack .tk-ico a span { display: none; }
+  #tmq .ttrack .tk-ico svg { width: 14px; height: 14px; }
+}
+/* tablet and mobile: photo left, details right as well, one or two columns */
+@media (min-width: 561px) and (max-width: 1279px) {
+  #tmq .ttrack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #tmq .ttrack .tk { display: grid; grid-template-columns: minmax(0, 42%) minmax(0, 1fr); gap: 20px; align-items: start; }
+}
